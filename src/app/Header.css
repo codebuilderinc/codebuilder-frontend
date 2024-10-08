@@ -1,0 +1,29 @@
+.header {
+      height: 74px;
+      position: relative;
+      transition: all 0.3s ease; /* Smooth transition for the position */
+      box-shadow: none; /* Optional: Add shadow if desired */
+      display: flex;
+      align-items: center;
+      padding: 0 20px; /* Optional: Add padding */
+      z-index: 1000; /* Ensure the header is on top */
+    }
+    
+    .header.sticky {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      animation: slideDown 0.3s ease forwards; /* Slide down animation */
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional: Add shadow when sticky */
+    }
+    
+    @keyframes slideDown {
+      from {
+        transform: translateY(-100%); /* Start off-screen */
+      }
+      to {
+        transform: translateY(0); /* End at normal position */
+      }
+    }
+    
