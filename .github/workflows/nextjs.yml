@@ -4,7 +4,7 @@ name: Deploy Next.js site to Pages
 on:
   # Trigger on pushes to the default branch
   push:
-    branches: ["main"]
+    branches: ['main']
 
   # Allow manual triggering from the Actions tab
   workflow_dispatch:
@@ -17,7 +17,7 @@ permissions:
 
 # Allow only one deployment at a time
 concurrency:
-  group: "pages"
+  group: 'pages'
   cancel-in-progress: false
 
 jobs:
@@ -31,15 +31,15 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
-          cache: "yarn"
+          node-version: '20'
+          cache: 'yarn'
 
       - name: Install dependencies
         run: yarn install
 
       - name: Configure Next.js for GitHub Pages
         run: |
-          echo 'module.exports = { output: "export", basePath: "/<REPOSITORY-NAME>", trailingSlash: true }' > next.config.js
+          echo 'module.exports = { output: "export", basePath: "/codebuilder-frontend, trailingSlash: true }' > next.config.js
           cat next.config.js
 
       - name: Build Next.js site
