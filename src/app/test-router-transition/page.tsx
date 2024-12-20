@@ -1,11 +1,11 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { Link as TransitionLink } from 'next-transition-router'
-import { ButtonLink } from '@/components/button'
-import { Title } from '@/components/title'
-import { Programmatic } from '@/components/programmatic'
-import { Reveal } from '@/components/reveal'
-import { Back } from '@/components/back'
+import { ButtonLink } from '@/components/test-router-transition/button'
+import { Title } from '@/components/test-router-transition/title'
+import { Programmatic } from '@/components/test-router-transition/programmatic'
+import { Reveal } from '@/components/test-router-transition/reveal'
+import { Back } from '@/components/test-router-transition/back'
 
 export default function HomePage() {
   return (

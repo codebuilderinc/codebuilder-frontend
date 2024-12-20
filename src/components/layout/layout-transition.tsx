@@ -40,7 +40,7 @@ function FrozenRouter(props: { children: React.ReactNode }) {
 
 interface LayoutTransitionProps {
   children: React.ReactNode
-  className?: String
+  className?: string
   style?: React.HTMLAttributes<HTMLDivElement>['style']
   initial: React.ComponentProps<typeof motion.div>['initial']
   animate: React.ComponentProps<typeof motion.div>['animate']
@@ -60,6 +60,9 @@ export function LayoutTransition({
   }, [])
 
   const segment = useSelectedLayoutSegment()
+
+  // Check if the segment includes "test-router-transition"
+  const shouldSkipTransition = segment?.includes('test-router-transition')
 
   type TVariants = {
     initial: {
@@ -111,6 +114,11 @@ export function LayoutTransition({
       scale: 1.5,
       opacity: 0,
     },
+  }
+
+  // Render children without transition if the condition is met
+  if (shouldSkipTransition) {
+    return <>{children}</>
   }
 
   return (

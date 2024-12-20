@@ -1,7 +1,6 @@
 import localFont from 'next/font/local'
-import { Header } from '@/components/layout/header'
-import { Debug } from '@/components/debug'
-import { Providers } from './../providers'
+import { Debug } from '@/components/test-router-transition/debug'
+import { Providers } from './providers'
 import './styles.css'
 
 export const metadata = {
@@ -12,14 +11,9 @@ export const metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body>
-        <Providers>
-          <Header />
-          {children}
-          <Debug />
-        </Providers>
-      </body>
-    </html>
+    <Providers>
+      {children}
+      <Debug />
+    </Providers>
   )
 }
