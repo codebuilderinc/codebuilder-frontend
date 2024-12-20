@@ -1,0 +1,116 @@
+@keyframes fadeOut {
+  from {
+    opacity: 0.4;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOutLeft {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 0.4;
+  }
+}
+
+.fadeOut {
+  animation: fadeOut 0.5s forwards;
+}
+
+.slideInLeft {
+  animation:
+    slideInLeft 0.5s forwards,
+    fadeIn 0.5s forwards;
+}
+
+.slideInRight {
+  animation:
+    slideInRight 0.5s forwards,
+    fadeIn 0.5s forwards;
+}
+
+.slideOutLeft {
+  animation: slideOutLeft 0.5s forwards;
+}
+
+.slideOutRight {
+  animation: slideOutRight 0.5s forwards;
+}
+
+/* Shrink Animation: Shrinks the div to width 0% */
+@keyframes shrinkToZero {
+  0% {
+    width: 100%;
+    transform: scale(1); /* Ensure no scaling happens */
+  }
+  100% {
+    width: 0;
+    transform: scale(1);
+  }
+}
+
+@keyframes expandToFullWidth {
+  0% {
+    width: 0;
+    transform: scale(1);
+  }
+  100% {
+    width: 100%;
+    transform: scale(1);
+  }
+}
+
+/* Example Usage */
+.shrink-animation {
+  animation: shrinkToZero 1s forwards;
+}
+
+.expand-animation {
+  animation: expandToFullWidth 1s forwards;
+}
+
+/* Ensure consistent height and prevent any layout shifts */
+.slide-container {
+  height: 650px;
+  position: relative;
+  overflow: hidden;
+}
