@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #eef2f1;
+  --foreground: #171717;
+  --primary: tomato;
+}
+
+@media (min-width: 1900px) {
+  :root {
+    --font-size: 20px;
+  }
+}
+
+@media (min-width: 1600px) {
+  :root {
+    --font-size: 18px;
+  }
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  font-family: var(--font-primary), system-ui, sans-serif;
+  color: var(--foreground);
+  background-color: var(--background);
+  font-size: var(--font-size, 16px);
+}
