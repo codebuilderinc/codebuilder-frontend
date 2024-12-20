@@ -39,7 +39,7 @@ jobs:
 
       - name: Configure Next.js for GitHub Pages
         run: |
-          echo 'module.exports = { output: "export", basePath: "/codebuilder-frontend, trailingSlash: true }' > next.config.js
+          echo 'module.exports = { output: "export", basePath: "/codebuilder-frontend", trailingSlash: true }' > next.config.js
           cat next.config.js
 
       - name: Build Next.js site
