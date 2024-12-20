@@ -22,7 +22,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ mp4Src, webmSrc, posterSrc })
         </div>
       )}
       <video
-        className={`absolute top-0 left-1/2 transform -translate-x-1/2 w-full h-[500px] object-cover ${isLoading ? 'hidden' : 'block'}`}
+        className={`absolute top-0 left-1/2 transform -translate-x-1/2 w-full h-[375px] object-cover ${isLoading ? 'hidden' : 'block'}`}
         poster={posterSrc}
         onLoadedData={handleLoadedData}
         autoPlay={true}
