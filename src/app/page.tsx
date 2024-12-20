@@ -12,6 +12,7 @@ import { faConnectdevelop } from '@fortawesome/free-brands-svg-icons'
 import { Raleway } from './fonts'
 import FeatureSection from '../components/index/feature-section'
 import { motion, useAnimation } from 'framer-motion'
+import AutoScrollingPortfolio from '../components/scrolling-portfolio'
 export default function Home() {
   const [activeTab, setActiveTab] = useState('flexibility')
   // Defining the custom animation duration style
@@ -157,6 +158,23 @@ export default function Home() {
                 </div>
               </div>
             </div>
+          </div>
+        </section>
+
+        <section className="bg-gray-100 py-4 md:py-6">
+          <div className="container mx-auto py-4 px-8 md:px-20 lg:px-32">
+            <h1
+              className={`mb-2 text-2xl text-[#333333] font-normal tracking-normal ${Raleway.className}`}
+            >
+              Recent Clients
+            </h1>
+            <div className="separator-2 mb-2" />
+            <AutoScrollingPortfolio clients={clients} />
+          </div>
+        </section>
+
+        <section className="bg-gray-100 py-4 md:py-6">
+          <div className="container mx-auto py-4 px-8 md:px-20 lg:px-32">
             <h1
               className={`mb-2 text-2xl text-[#333333] font-normal tracking-normal ${Raleway.className}`}
             >
@@ -229,36 +247,6 @@ export default function Home() {
           </div>
         </section>
 
-        <div
-          className="hidden dark-translucent-bg footer-top animated-text default-hovered"
-          style={{ backgroundColor: 'rgba(0,0,0,0.6)' }}
-        >
-          <div className="container">
-            <div className="row">
-              <div className="col-md-12">
-                <div className="call-to-action text-center">
-                  <div className="row">
-                    <div className="col-sm-8">
-                      <h2>Reach out and get in touch with us today!</h2>
-                      <h2>Don't hesitate—seize the moment!</h2>
-                    </div>
-                    <div className="col-sm-4">
-                      <p className="mt-10">
-                        <a
-                          href="/contact"
-                          className="pjax btn btn-animated btn-lg btn-gray-transparent"
-                        >
-                          Contact Us
-                          <i className="fa fa-envelope pl-20"></i>
-                        </a>
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
         <motion.div
           className="h-24 bg-blue-500 text-white flex items-center justify-center relative overflow-hidden"
           onHoverStart={handleHoverStart}
@@ -307,27 +295,6 @@ export default function Home() {
             </div>
           </div>
         </motion.div>
-
-        <div className="bg-black bg-opacity-60 py-10">
-          <div className="container mx-auto">
-            <div className="flex flex-wrap justify-center text-center text-white">
-              <div className="w-full md:w-2/3">
-                <h2 className="text-2xl font-semibold">
-                  Reach out and get in touch with us today!
-                </h2>
-                <h2 className="text-2xl font-semibold">Don't hesitate—seize the moment!</h2>
-              </div>
-              <div className="w-full md:w-1/3 mt-4 md:mt-0 flex justify-center items-center">
-                <a
-                  href="/contact"
-                  className="px-6 py-3 text-lg bg-transparent border border-gray-300 text-white hover:bg-gray-300 hover:text-black rounded transition"
-                >
-                  Contact Us <i className="fas fa-envelope ml-2"></i>
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   )

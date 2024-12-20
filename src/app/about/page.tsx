@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import VideoPlayer from '../../components/VideoPlayer'
+import VideoPlayer from '../../components/video-player'
 
 export default function About() {
   return (

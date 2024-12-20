@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import './globals.css'
-import Header from './Header'
+import Header from '@/components/layout/header'
 import { geistMono, geistSans, Raleway } from './fonts'
 import 'animate.css/animate.min.css'
 //import LoadingBar from './LoadingBar'
@@ -69,14 +69,13 @@ export default function RootLayout({
               {' '}
               <div className="w-screen">{children}</div>
             </main>
+            {/* Footer */}
+            <footer className="bg-gray-800 text-white py-4">
+              <div className="container mx-auto px-4">
+                <p>Footer Content</p>
+              </div>
+            </footer>
           </LayoutTransition>
-
-          {/* Footer */}
-          <footer className="bg-gray-800 text-white py-4">
-            <div className="container mx-auto px-4">
-              <p>Footer Content</p>
-            </div>
-          </footer>
         </div>
       </body>
     </html>
