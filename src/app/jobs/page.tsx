@@ -1,10 +1,10 @@
 import { PrismaClient } from '@prisma/client'
-import PostsTable from '@/components/PostsTable'
+import PostsTable from '@/components/jobs/PostsTable'
 
 const prisma = new PrismaClient()
 
 export default async function Home(props: { searchParams: Promise<{ page?: string }> }) {
-  const searchParams = await props.searchParams;
+  const searchParams = await props.searchParams
   const postsPerPage = 10
   const currentPage = parseInt(searchParams.page || '1', 10)
 
