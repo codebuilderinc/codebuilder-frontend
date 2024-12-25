@@ -1,54 +1,57 @@
 'use client'
-import { useState, useEffect, useRef } from 'react'
+
+import { useRef, useState, useEffect } from 'react'
 import { motion, AnimatePresence, Variants } from 'framer-motion'
 import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faCheck,
-  faCode,
   faBatteryFull,
   faLock,
   faBug,
   faCubes,
   faLaptop,
+  faChevronRight,
 } from '@fortawesome/free-solid-svg-icons'
 import { faBitcoin } from '@fortawesome/free-brands-svg-icons'
+import CustomButton from '../button'
 
-const slideTransitionVariants = (direction: 'next' | 'prev') => ({
-  initial: {
+const slideTransitionVariants: Variants = {
+  initial: (direction: 'next' | 'prev') => ({
     x: direction === 'next' ? '100%' : '-100%',
     opacity: 0,
-  },
+  }),
   animate: {
     x: 0,
     opacity: 1,
-    transition: { duration: 1, ease: 'easeOut' },
+    transition: { duration: 0.8, ease: [0.42, 0, 0.58, 1] },
   },
-  exit: {
+  exit: (direction: 'next' | 'prev') => ({
     x: direction === 'next' ? '-100%' : '100%',
-    opacity: 0.4,
-    transition: { duration: 1, ease: 'easeIn' },
-  },
-})
+    opacity: 0,
+    transition: { duration: 0.8, ease: [0.42, 0, 0.58, 1] },
+  }),
+}
 
 const staggerContainerVariants: Variants = {
+  initial: { opacity: 0 },
   animate: {
+    opacity: 1,
     transition: {
-      staggerChildren: 0.2,
-      delayChildren: 0.5,
+      delay: 0.8,
+      staggerChildren: 0.3,
     },
   },
 }
 
 const childVariants: Variants = {
   initial: { y: -20, opacity: 0 },
-  animate: { y: 0, opacity: 1, transition: { duration: 0.6, ease: 'easeOut' } },
+  animate: { y: 0, opacity: 1, transition: { duration: 1, ease: 'easeOut' } },
 }
 
-// Updated slides data with FontAwesome icons
 const slides = [
   {
-    image: '/images/hero-slides/slide-1-iphone.jpg',
+    image: '/images/hero-slides/slide-2-macbook.webp',
     title: 'Web Engineering',
     items: [
       { text: 'Responsive Design', icon: faLock },
@@ -58,7 +61,7 @@ const slides = [
     ],
   },
   {
-    image: '/images/hero-slides/slide-2-macbook.jpg',
+    image: '/images/hero-slides/slide-1-iphone.jpg',
     title: 'Powerful MacBook for your needs',
     items: [
       { text: 'High Performance', icon: faBatteryFull },
@@ -81,149 +84,210 @@ const slides = [
 
 const MotionDiv = motion(styled.div``)
 
-/**
- * CarouselSlider is a React functional component that renders a carousel slider with animations.
- * It allows users to navigate through slides using "Next" and "Prev" buttons.
- *
- * @component
- *
- * @example
- * return (
- *   <CarouselSlider />
- * )
- *
- * @returns {JSX.Element} The rendered carousel slider component.
- *
- * @remarks
- * - The component uses `useState` to manage the current slide index, animation direction, animation state, and content visibility.
- * - The `useEffect` hook is used to handle the initial content visibility delay.
- * - The `AnimatePresence` and `motion.div` from Framer Motion are used for slide transition animations.
- * - The `isFirstRender` ref is used to ensure the initial content visibility delay only occurs on the first render.
- * - The `nextSlide` and `prevSlide` functions handle slide navigation and prevent navigation during animations.
- *
- * @dependencies
- * - `useState`, `useEffect`, `useRef` from React
- * - `AnimatePresence`, `motion` from Framer Motion
- * - `FontAwesomeIcon` from FontAwesome
- *
- * @param {Object} props - The component props.
- *
- * @property {Array} slides - An array of slide objects, each containing `image`, `title`, and `items`.
- * @property {string} slides[].image - The URL of the slide image.
- * @property {string} slides[].title - The title of the slide.
- * @property {Array} slides[].items - An array of items to be displayed on the slide.
- * @property {Object} slides[].items[].icon - The icon to be displayed for each item.
- * @property {string} slides[].items[].text - The text to be displayed for each item.
- */
 const CarouselSlider: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [direction, setDirection] = useState<'next' | 'prev'>('next')
   const [isAnimating, setIsAnimating] = useState(false)
   const [isContentVisible, setIsContentVisible] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
   const isFirstRender = useRef(true)
+  const timerRef = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
     if (isFirstRender.current) {
-      setTimeout(() => setIsContentVisible(true), 1000)
+      const img = new Image()
+      img.src = slides[currentIndex].image
+      img.onload = () => {
+        setIsLoading(false)
+        setIsContentVisible(true)
+      }
       isFirstRender.current = false
     }
   }, [])
 
-  const nextSlide = () => {
-    if (isAnimating) return
-    setDirection('next')
-    setIsContentVisible(false)
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % slides.length)
+  useEffect(() => {
+    startTimer()
+
+    return () => {
+      stopTimer()
+    }
+  }, [currentIndex])
+
+  const startTimer = () => {
+    stopTimer() // Clear any existing timer before starting a new one
+    timerRef.current = setTimeout(() => {
+      handleSlideChange('next')
+    }, 5000)
   }
 
-  const prevSlide = () => {
+  const stopTimer = () => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current)
+    }
+  }
+
+  const handleSlideChange = (newDirection: 'next' | 'prev') => {
     if (isAnimating) return
-    setDirection('prev')
+    setDirection(newDirection)
+    setIsAnimating(true)
     setIsContentVisible(false)
-    setCurrentIndex((prevIndex) => (prevIndex === 0 ? slides.length - 1 : prevIndex - 1))
+
+    setTimeout(() => {
+      setCurrentIndex((prevIndex) =>
+        newDirection === 'next'
+          ? (prevIndex + 1) % slides.length
+          : prevIndex === 0
+            ? slides.length - 1
+            : prevIndex - 1
+      )
+      setIsAnimating(false)
+    }, 500)
+  }
+
+  const handleManualSlideChange = (newDirection: 'next' | 'prev') => {
+    stopTimer() // Stop the timer on manual change
+    handleSlideChange(newDirection)
   }
 
   return (
-    <div id="slider" className="relative z-0 bg-black">
-      <button
-        onClick={prevSlide}
-        disabled={isAnimating}
-        className="z-50 absolute left-0 top-1/2 transform -translate-y-1/2 p-2 text-white bg-black bg-opacity-50 hover:bg-opacity-75 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        Prev
-      </button>
+    <div id="slider" className="relative z-10 bg-black">
+      {isLoading && (
+        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-75 z-50">
+          <span className="text-white text-2xl">Loading...</span>
+        </div>
+      )}
 
-      <div className="relative w-screen h-[650px] flex items-center bg-black justify-center ">
-        <AnimatePresence
-          initial={false}
-          custom={direction}
-          mode="sync"
-          onExitComplete={() => setIsAnimating(false)}
-        >
-          <motion.div
-            key={currentIndex}
-            variants={slideTransitionVariants(direction)}
-            initial="initial"
-            animate="animate"
-            exit="exit"
-            onAnimationStart={() => setIsAnimating(true)}
-            onAnimationComplete={() => setIsContentVisible(true)}
-            className="w-screen h-full relative flex"
+      {!isLoading && (
+        <>
+          <div
+            className="preview2"
+            style={{
+              overflow: 'visible',
+              position: 'absolute',
+              top: '125px',
+              marginTop: '-30px',
+              left: '0px',
+              width: '60px',
+              zIndex: '20',
+            }}
           >
-            {/* Background Image with Pseudo-element for opacity */}
             <div
               style={{
-                backgroundImage: `url(${slides[currentIndex].image})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'top',
-                opacity: 0.65, // Opacity applies only to the background layer
+                position: 'absolute',
+                top: '125px',
+                marginTop: '-30px',
+                left: '0px',
+                width: '60px',
+                zIndex: '20',
               }}
-              className="absolute top-0 left-0 w-full h-full z-0"
-            ></div>
+              className="z-100 tp-leftarrow tparrows default preview2 hashoveralready"
+            >
+              <div className="tp-arr-allwrapper">
+                <div className="tp-arr-iwrapper">
+                  <div
+                    className="tp-arr-imgholder"
+                    style={{
+                      visibility: 'inherit',
+                      opacity: 1,
+                      backgroundImage: 'url(/images/bitcoin-advantages.jpg)',
+                    }}
+                  ></div>
+                  <div className="tp-arr-imgholder2"></div>
+                  <div className="tp-arr-titleholder">Crypto Applications</div>
+                  <div className="tp-arr-subtitleholder"></div>
+                </div>
+              </div>
+            </div>
+          </div>
 
-            {/* Foreground Content */}
-            {isContentVisible && (
+          <button
+            onClick={() => handleManualSlideChange('prev')}
+            disabled={isAnimating}
+            className="z-50 absolute left-0 top-1/2 transform -translate-y-1/2 p-2 text-white bg-black bg-opacity-50 hover:bg-opacity-75 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Prev
+          </button>
+
+          <div className="relative w-screen h-[650px] flex items-center bg-black justify-center">
+            <AnimatePresence
+              initial={false}
+              custom={direction}
+              mode="popLayout"
+              onExitComplete={() => setIsAnimating(false)}
+            >
               <motion.div
-                variants={staggerContainerVariants}
+                key={`slide-${currentIndex}`}
+                custom={direction}
+                variants={slideTransitionVariants}
                 initial="initial"
                 animate="animate"
-                className="relative z-10 flex flex-col container mx-auto items-start justify-center px-8 md:px-20 lg:px-32"
+                exit="exit"
+                className="w-screen h-full relative flex"
+                onAnimationStart={() => setIsAnimating(true)}
+                onAnimationComplete={() => setIsContentVisible(true)}
               >
-                <div className="relative top-[-60px]">
-                  <motion.h2
-                    variants={childVariants}
-                    className="text-white text-5xl mb-6 font-thin"
-                  >
-                    {slides[currentIndex].title}
-                  </motion.h2>
-                  <ul className="text-white list-none p-0 m-0">
-                    {slides[currentIndex].items.map((item, index) => (
-                      <motion.li
-                        key={index}
-                        variants={childVariants}
-                        className="mb-4 flex items-center gap-2 text-lg"
-                      >
-                        <span className="bg-[#09afdf] rounded-full h-[34px] w-[34px] flex items-center justify-center">
-                          <FontAwesomeIcon icon={item.icon} className="text-white" />
-                        </span>
-                        <span>{item.text}</span>
-                      </motion.li>
-                    ))}
-                  </ul>
-                </div>
-              </motion.div>
-            )}
-          </motion.div>
-        </AnimatePresence>
-      </div>
+                <div
+                  style={{
+                    backgroundImage: `url(${slides[currentIndex].image})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'top',
+                    opacity: 0.65,
+                  }}
+                  className="absolute top-0 left-0 w-full h-full z-0"
+                ></div>
 
-      <button
-        onClick={nextSlide}
-        disabled={isAnimating}
-        className="z-50 absolute right-0 top-1/2 transform -translate-y-1/2 p-2 text-white bg-black bg-opacity-50 hover:bg-opacity-75 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        Next
-      </button>
+                {isContentVisible && (
+                  <motion.div
+                    variants={staggerContainerVariants}
+                    initial="initial"
+                    animate="animate"
+                    className="relative z-10 flex flex-col container mx-auto items-start justify-center px-8 md:px-20 lg:px-32"
+                  >
+                    <motion.h2
+                      variants={childVariants}
+                      className="text-white text-5xl mb-6 font-light"
+                    >
+                      {slides[currentIndex].title}
+                    </motion.h2>
+                    <ul className="text-white list-none p-0 m-0">
+                      {slides[currentIndex].items.map((item, index) => (
+                        <motion.li
+                          key={index}
+                          variants={childVariants}
+                          className="mb-6 flex items-center gap-2 text-2xl font-light"
+                        >
+                          <span className="bg-[#09afdf] rounded-full h-[45px] w-[45px] flex items-center justify-center">
+                            <FontAwesomeIcon icon={item.icon} className="text-white text-[18px]" />
+                          </span>
+                          <span>{item.text}</span>
+                        </motion.li>
+                      ))}
+                      <motion.li variants={childVariants} className="mt-6">
+                        <CustomButton
+                          text="Read More"
+                          link={'/test'}
+                          icon={faChevronRight}
+                          size="xl"
+                          textColor="#FFFFFF"
+                          type="animatedIconHover"
+                        />
+                      </motion.li>
+                    </ul>
+                  </motion.div>
+                )}
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
+          <button
+            onClick={() => handleManualSlideChange('next')}
+            disabled={isAnimating}
+            className="z-50 absolute right-0 top-1/2 transform -translate-y-1/2 p-2 text-white bg-black bg-opacity-50 hover:bg-opacity-75 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Next
+          </button>
+        </>
+      )}
     </div>
   )
 }
