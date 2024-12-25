@@ -6,6 +6,8 @@ import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
 import { faConnectdevelop } from '@fortawesome/free-brands-svg-icons'
 import { Raleway } from '@/app/fonts'
 import 'animate.css' // Import Animate.css for the slideInDown animation
+import ButtonLink from '../button'
+import CustomButton from '../button'
 
 const FeatureSection = () => {
   const features = [
@@ -19,7 +21,7 @@ const FeatureSection = () => {
     },
     {
       icon: faConnectdevelop,
-      iconProps: { style: { color: '#09afdf' } },
+      iconProps: { style: { color: '#09afdf' }, beatFade: true },
       title: 'Extremely Flexible',
       description:
         'Flexibility is the foundation of every solution we build. Whether your needs change or grow, our modular approach ensures your project is ready for what’s next. Let’s evolve together, one step at a time.',
@@ -27,7 +29,11 @@ const FeatureSection = () => {
     },
     {
       icon: faChevronRight,
-      iconProps: { className: 'group-hover:translate-x-[7px]', style: { color: '#09afdf' } },
+      iconProps: {
+        className: 'group-hover:translate-x-[7px]',
+        style: { color: '#09afdf' },
+        beatFade: true,
+      },
       title: 'Cutting-Edge Technologies',
       description:
         'Harness the power of the latest technologies to stay ahead of the curve. From advanced tools to modern frameworks, we craft solutions that are innovative, scalable, and perfectly aligned with your vision. Experience the future, built for today.',
@@ -61,7 +67,7 @@ const FeatureSection = () => {
   return (
     <section className="bg-gray-100 py-4 md:py-6">
       <div className="container mx-auto px-8 md:px-20 lg:px-32">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-2 items-stretch">
+        <div className="z-5 grid grid-cols-1 md:grid-cols-3 gap-2 items-stretch">
           {features.map((feature, index) => (
             <div
               key={index}
@@ -81,24 +87,20 @@ const FeatureSection = () => {
                 </span>
                 <div className="flex flex-col flex-1">
                   <h4
-                    className={`${Raleway.className} text-[#333333] leading-[1.2] text-[19px] font-medium`}
+                    className={`${Raleway.className} text-[#333333] leading-[1.2] text-[19px] font-normal`}
                   >
                     {feature.title}
                   </h4>
-                  <p className="mt-2 text-[#999999] text-[16px] font-extralight">
+                  <p className="mt-2 mb-3 text-[#999999] text-[16px] font-light">
                     {feature.description}
                   </p>
-                  <a
-                    href={feature.link}
-                    className="group relative inline-flex items-center text-[#777777] bg-transparent border border-[#09afdf] max-w-[133px] min-w-0 pr-11 py-[7px] px-[20px] text-sm leading-[1.4666666667] rounded-[3px] mt-4 transition-all duration-200 ease-in-out font-normal text-center whitespace-nowrap align-middle cursor-pointer select-none hover:text-white hover:bg-[#0c9ec7]"
-                  >
-                    <span className="z-10">Read More</span>
-                    <FontAwesomeIcon
-                      icon={faChevronRight}
-                      className="ml-3 z-10 transform transition-transform duration-300 ease-in-out group-hover:translate-x-[7px]"
-                    />
-                    <span className="absolute top-0 right-0 w-[35px] h-full bg-[#0b8eb3] opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-100 rounded-r-[3px] pointer-events-none z-0"></span>
-                  </a>
+                  <CustomButton
+                    text="Read More"
+                    link={feature.link}
+                    icon={faChevronRight}
+                    size="md"
+                    type="animatedIconHover"
+                  />
                 </div>
               </div>
             </div>
