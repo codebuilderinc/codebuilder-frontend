@@ -1,11 +1,12 @@
 import type { Metadata } from 'next'
-import './globals.css'
+import '@/assets/css/globals.css'
 import Header from '@/components/layout/header'
 import { geistMono, geistSans, Raleway } from './fonts'
 import 'animate.css/animate.min.css'
 //import LoadingBar from './LoadingBar'
 import { LayoutTransition } from '@/components/layout/layout-transition'
 import Script from 'next/script'
+import Footer from '../components/layout/footer'
 
 export const metadata: Metadata = {
   title: 'CodeBuilder, Inc. - Software Engineering Solutions.',
@@ -70,6 +71,7 @@ export default function RootLayout({
               <div className="w-screen">{children}</div>
             </main>
             {/* Footer */}
+            <Footer />
             <footer className="bg-gray-800 text-white py-4">
               <div className="container mx-auto px-4">
                 <p>Footer Content</p>
