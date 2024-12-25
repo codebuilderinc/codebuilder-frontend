@@ -20,24 +20,24 @@ export function Providers({ children }: { children: React.ReactNode }) {
           })
           .fromTo(
             firstLayer.current,
-            { y: '100%' },
+            { y: '100%', opacity: 0 },
             {
               y: 0,
-              duration: 0.5,
-              ease: 'circ.inOut',
+              opacity: 1,
+              duration: 0.8,
+              ease: 'power2.out',
             }
           )
           .fromTo(
             secondLayer.current,
-            {
-              y: '100%',
-            },
+            { y: '100%', opacity: 0.5 },
             {
               y: 0,
-              duration: 0.5,
-              ease: 'circ.inOut',
+              opacity: 1,
+              duration: 0.8,
+              ease: 'power2.out',
             },
-            '<50%'
+            '<40%'
           )
 
         return () => {
@@ -49,24 +49,27 @@ export function Providers({ children }: { children: React.ReactNode }) {
           .timeline()
           .fromTo(
             secondLayer.current,
-            { y: 0 },
+            { y: 0, opacity: 1 },
             {
               y: '-100%',
-              duration: 0.5,
-              ease: 'circ.inOut',
+              opacity: 0,
+              duration: 0.8,
+              ease: 'power2.inOut',
             }
           )
           .fromTo(
             firstLayer.current,
-            { y: 0 },
+            { y: 0, scale: 1, opacity: 1 },
             {
               y: '-100%',
-              duration: 0.5,
-              ease: 'circ.inOut',
+              scale: 0.95,
+              opacity: 0,
+              duration: 0.8,
+              ease: 'power2.inOut',
             },
-            '<50%'
+            '<40%'
           )
-          .call(next, undefined, '<50%')
+          .call(next, undefined, '<40%')
 
         return () => {
           tl.kill()
@@ -75,8 +78,14 @@ export function Providers({ children }: { children: React.ReactNode }) {
     >
       <main>{children}</main>
 
-      <div ref={firstLayer} className="fixed inset-0 z-50 translate-y-full bg-primary" />
-      <div ref={secondLayer} className="fixed inset-0 z-50 translate-y-full bg-foreground" />
+      <div
+        ref={firstLayer}
+        className="fixed inset-0 z-50 translate-y-full bg-primary transition-transform"
+      />
+      <div
+        ref={secondLayer}
+        className="fixed inset-0 z-50 translate-y-full bg-foreground transition-transform"
+      />
     </TransitionRouter>
   )
 }
