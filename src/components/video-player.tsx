@@ -22,13 +22,13 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ mp4Src, webmSrc, posterSrc })
         </div>
       )}
       <video
-        className={`absolute top-0 left-1/2 transform -translate-x-1/2 w-full h-[375px] object-cover ${isLoading ? 'hidden' : 'block'}`}
+        className={`absolute top-0 left-1/2 transform -translate-x-1/2 w-full h-[420px] object-cover ${isLoading ? 'hidden' : 'block'}`}
         poster={posterSrc}
         onLoadedData={handleLoadedData}
         autoPlay={true}
         loop
         muted
-        controls={true}
+        controls={false}
       >
         <source src={webmSrc} type="video/webm" />
         <source src={mp4Src} type="video/mp4" />
