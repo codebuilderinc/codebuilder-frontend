@@ -5,7 +5,7 @@ export default function About() {
   return (
     <div className="font-[family-name:var(--font-geist-sans)]">
       {/* Hero Slider */}
-      <div className="relative top-[-75px] w-screen h-[375px] overflow-hidden bg-black">
+      <div className="relative top-[-75px] w-screen h-[420px] overflow-hidden bg-black">
         <div className="opacity-40">
           <VideoPlayer
             mp4Src="/videos/macbook-typing-about-us.mp4"
