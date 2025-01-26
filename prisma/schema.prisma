@@ -14,11 +14,73 @@ model Post {
   subreddit String
   url       String   @unique @db.VarChar(350)
   createdAt DateTime @default(now())
+  postedAt  DateTime @default(now())
+  type      String   @default("reddit") @db.VarChar(50)
+
+  body      String? @db.Text
+  body_html String? @db.Text
+  upvotes   Int     @default(0)
+  downvotes Int     @default(0)
+
+  @@map("posts")
+}
+
+enum SubscriptionType {
+  web
+  fcm
 }
 
 model Subscription {
-  id        Int      @id @default(autoincrement())
-  endpoint  String   @unique @db.VarChar(350)
-  keys      Json
+  id        Int              @id @default(autoincrement())
+  ipAddress String           @db.VarChar(150)
+  type      SubscriptionType @default(web)
+  endpoint  String           @unique @db.VarChar(350)
+  keys      Json?
+  createdAt DateTime         @default(now())
+
+  // Relation to Location
+  locations Location[]
+
+  @@unique([endpoint, type, keys], name: "endpoint_type_keys")
+  @@map("subscriptions")
+}
+
+model Location {
+  id             Int    @id @default(autoincrement())
+  subscriptionId Int // Foreign key to Subscription
+  ipAddress      String @db.VarChar(150)
+
+  // Coords fields
+  accuracy         Float?
+  altitude         Float?
+  altitudeAccuracy Float?
+  heading          Float?
+  latitude         Float?
+  longitude        Float?
+  speed            Float?
+
+  // Additional fields
+  mocked    Boolean // Indicates if the location is mocked
+  timestamp BigInt? // Stores the timestamp
+
+  // Address fields
+  city             String? @db.VarChar(150)
+  country          String? @db.VarChar(150)
+  district         String? @db.VarChar(150)
+  formattedAddress String? @db.Text
+  isoCountryCode   String? @db.VarChar(10)
+  name             String? @db.VarChar(150)
+  postalCode       String? @db.VarChar(20)
+  region           String? @db.VarChar(150)
+  street           String? @db.VarChar(150)
+  streetNumber     String? @db.VarChar(50)
+  subregion        String? @db.VarChar(150)
+  timezone         String? @db.VarChar(100)
+
   createdAt DateTime @default(now())
+
+  // Relation to Subscription
+  subscription Subscription @relation(fields: [subscriptionId], references: [id])
+
+  @@map("locations")
 }
