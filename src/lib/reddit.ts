@@ -13,6 +13,10 @@ export const fetchRedditPosts = async (subreddits: string[]) => {
       subreddit: child.data.subreddit,
       url: child.data.url,
       createdAt: new Date(child.data.created_utc * 1000),
+      body: child.data.selftext,
+      body_html: child.data.selftext_html,
+      upvotes: child.data.ups,
+      downvotes: child.data.downs,
     }))
     posts.push(...subredditPosts)
   }
