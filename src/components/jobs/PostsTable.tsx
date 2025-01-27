@@ -88,7 +88,7 @@ const PostsTable: React.FC<Props> = ({ posts, totalPosts, postsPerPage, currentP
   }
 
   return (
-    <div className="p-6 animate__animated animate__fadeIn">
+    <div className="animate__animated animate__fadeIn">
       <button
         onClick={handleSubscribe}
         disabled={isSubscribed}
@@ -100,7 +100,7 @@ const PostsTable: React.FC<Props> = ({ posts, totalPosts, postsPerPage, currentP
       >
         {isSubscribed ? 'Already Subscribed' : 'Subscribe to Notifications'}
       </button>
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto py-4">
         <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
           <thead className="bg-blue-600 text-white">
             <tr>
