@@ -85,18 +85,18 @@ const StickyHeader: React.FC = () => {
             >
               Services
             </Link>
-            <a
-              href="#"
+            <Link
+              href="/jobs"
               className="text-shadow text-[#f1f1f1] hover:text-[#09afdf] transition-transform duration-200 ease-in-out hover:scale-105"
             >
               Portfolio
-            </a>
-            <a
-              href="#"
+            </Link>
+            <Link
+              href="/web3career"
               className="text-shadow text-[#f1f1f1] hover:text-[#09afdf] transition-transform duration-200 ease-in-out hover:scale-105"
             >
               Contact
-            </a>
+            </Link>
             <button className="flex items-center justify-center text-white bg-[rgba(0,0,0,0.2)] border border-[rgba(0,0,0,0.1)] px-4 py-[5px] text-[12px] leading-[1.4666667] rounded-[3px] my-[5px] transition-transform duration-200 ease-in-out hover:bg-[rgba(0,0,0,0.3)] hover:scale-105 focus:outline-none">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
