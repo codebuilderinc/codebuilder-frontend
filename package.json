@@ -23,7 +23,7 @@
     "firebase-admin": "^13.0.2",
     "framer-motion": "12.0.0-alpha.1",
     "gsap": "^3.12.5",
-    "next": "^15.0.3",
+    "next": "^15.1.2",
     "next-nprogress-bar": "^2.3.13",
     "next-transition-router": "*",
     "prop-types": "^15.8.1",
