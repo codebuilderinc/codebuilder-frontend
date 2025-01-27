@@ -4,6 +4,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { fetchRedditPosts } from '@/lib/reddit'
 import { PrismaClient } from '@prisma/client'
 import webpush, { WebPushError } from 'web-push'
+import { messaging } from '@/lib/firebase'
+import { sendNotification } from '../../../lib/notifications'
 
 const prisma = new PrismaClient()
 
@@ -24,10 +26,6 @@ webpush.setVapidDetails(
   process.env.VAPID_PRIVATE_KEY!
 )
 
-// Define the URLs for the icon and badge images used in notifications
-const ICON_URL = 'https://new.codebuilder.org/images/logo2.png'
-const BADGE_URL = 'https://new.codebuilder.org/images/logo2.png'
-
 export async function GET(req: NextRequest) {
   try {
     // Fetch posts from the specified subreddits
@@ -38,62 +36,33 @@ export async function GET(req: NextRequest) {
 
     for (const post of posts) {
       // Check if the post is marked with '[Hiring]'
-      if (post.title.includes('[Hiring]')) {
-        // Ensure the post is not already in the database
-        const existingPost = await prisma.post.findUnique({
-          where: { url: post.url },
-        })
+      if (!post.title.includes('[Hiring]')) continue
 
-        if (!existingPost) {
-          // Add the post to the database if it's new
-          const createdPost = await prisma.post.create({ data: post })
+      // Ensure the post is not already in the database
+      const existingPost = await prisma.post.findUnique({
+        where: { url: post.url },
+      })
+      if (existingPost) continue
 
-          // Send notifications to all subscribed users
-          const notificationPromises = subscriptions.map(async (sub) => {
-            const notificationPayload = {
-              title: `New [Hiring] post in ${createdPost.subreddit}`,
-              body: createdPost.title,
-              icon: ICON_URL,
-              badge: BADGE_URL,
-              url: createdPost.url, // Include URL for click handling
-            }
+      // Add the post to the database if it's new
+      const createdPost = await prisma.post.create({ data: post })
 
-            try {
-              // Trigger web-push notification
-              await webpush.sendNotification(sub as any, JSON.stringify(notificationPayload))
-            } catch (error) {
-              // Handle WebPushError specifically
-              if (error instanceof webpush.WebPushError) {
-                if (error.statusCode === 410) {
-                  // Subscription has expired or unsubscribed, remove from database
-                  await prisma.subscription.delete({
-                    where: {
-                      id: sub.id,
-                    },
-                  })
-                  console.log(`Subscription with id ${sub.id} removed due to expiration.`)
-                } else {
-                  // Log other WebPushErrors
-                  console.error(
-                    `Failed to send notification to subscription id ${sub.id}:`,
-                    error.statusCode,
-                    error.body
-                  )
-                }
-              } else {
-                // Log other errors
-                console.error(
-                  `An error occurred while sending notification to subscription id ${sub.id}:`,
-                  error
-                )
-              }
-            }
-          })
-
-          // Wait for all notifications to be sent before proceeding
-          await Promise.all(notificationPromises)
-        }
+      // 2. Build your unified payload object
+      const notificationPayload = {
+        title: `${createdPost.title} (${createdPost.subreddit} - ${createdPost.author})`,
+        body: `${createdPost.title}`,
+        url: createdPost.url,
+        icon: 'https://new.codebuilder.org/images/logo2.png',
+        badge: 'https://new.codebuilder.org/images/logo2.png',
       }
+
+      // 3. Loop and send notifications concurrently
+      const notificationPromises = subscriptions.map((sub) =>
+        sendNotification(sub, notificationPayload)
+      )
+
+      // 4. Wait for all notifications to complete
+      await Promise.all(notificationPromises)
     }
 
     // Respond with success if posts fetched and processed successfully
