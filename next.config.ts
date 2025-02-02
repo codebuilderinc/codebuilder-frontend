@@ -9,7 +9,7 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
-  trailingSlash: true, // Ensures compatibility with GitHub Pages
+  // trailingSlash: true, // Ensures compatibility with GitHub Pages
   webpack: (config, { isServer }) => {
     // Modify Webpack's watchOptions
     config.watchOptions = {
