@@ -7,36 +7,34 @@ on:
 
 jobs:
   build-and-deploy:
-    # Run on your self-hosted runner so it has Docker
     runs-on: self-hosted
-    # Alternatively: runs-on: [self-hosted, linux]
 
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
 
-      # Create the google-services.json file from the secret.
       - name: Create google-services.json
         run: |
-          # Use printf to preserve formatting/newlines
+          # Use printf to preserve formatting and newlines
           printf "%s" "${{ secrets.GOOGLE_SERVICES_JSON }}" > google-services.json
 
-      # Optional: Create .env file from a secret (if needed)
       - name: Create .env file
         run: |
           printf "%s" "${{ secrets.ENV_FILE_CONTENT }}" > .env
 
-      # Debug step: check file size so we can verify something was written.
+      # Debug: Check file size
       - name: Check google-services.json file size
         run: wc -c google-services.json
 
+      # Debug: Validate JSON syntax (this will fail if the JSON is invalid)
+      - name: Validate google-services.json
+        run: node -e "JSON.parse(require('fs').readFileSync('google-services.json','utf8'))"
+
       - name: Build Docker image
-        run: |
-          docker build -t codebuilder-webapp:latest .
+        run: docker build -t codebuilder-webapp:latest .
 
       - name: Stop and remove old container (if running)
         run: |
-          # Find any running container based on the image
           OLD_CONTAINER_ID=$(docker ps -q --filter ancestor=codebuilder-webapp:latest)
           if [ -n "$OLD_CONTAINER_ID" ]; then
             echo "Stopping and removing container $OLD_CONTAINER_ID..."
@@ -47,5 +45,4 @@ jobs:
           fi
 
       - name: Start new container
-        run: |
-          docker run -d --network host -p 3000:3000 --name codebuilder-webapp codebuilder-webapp:latest
+        run: docker run -d --network host -p 3000:3000 --name codebuilder-webapp codebuilder-webapp:latest
