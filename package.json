@@ -15,6 +15,7 @@
     "@fortawesome/free-solid-svg-icons": "^6.7.0",
     "@fortawesome/react-fontawesome": "^0.2.2",
     "@prisma/client": "6.2.1",
+    "@prisma/extension-accelerate": "^1.2.1",
     "@socialgouv/matomo-next": "^1.9.2",
     "animate.css": "^4.1.1",
     "axios": "^1.7.7",
@@ -54,5 +55,5 @@
     "@types/react": "npm:types-react@19.0.0-rc.1",
     "@types/react-dom": "npm:types-react-dom@19.0.0-rc.1"
   },
-  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
+  "packageManager": "pnpm@9.12.1+sha512.e5a7e52a4183a02d5931057f7a0dbff9d5e9ce3161e33fa68ae392125b79282a8a8a470a51dfc8a0ed86221442eb2fb57019b0990ed24fab519bf0e1bc5ccfc4"
 }
