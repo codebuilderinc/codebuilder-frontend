@@ -13,10 +13,14 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v3
 
+      # Debug: Check length of the base64 secret
+      - name: Debug Check base64 secret length
+        run: echo -n "${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}" | wc -c
+
       # Decode the base64-encoded JSON secret into a file.
       - name: Create google-services.json
         run: |
-          echo "${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}" | base64 --decode > google-services.json
+          printf "%s" "${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}" | base64 --decode > google-services.json
 
       # Create the .env file from a secret (if needed)
       - name: Create .env file
@@ -27,7 +31,7 @@ jobs:
       - name: Check google-services.json file size
         run: wc -c google-services.json
 
-      # Debug: Validate JSON syntax (this will fail if the JSON is empty or invalid)
+      # Debug: Validate JSON syntax (this will fail if the file is empty or invalid)
       - name: Validate google-services.json
         run: node -e "JSON.parse(require('fs').readFileSync('google-services.json','utf8'))"
 
