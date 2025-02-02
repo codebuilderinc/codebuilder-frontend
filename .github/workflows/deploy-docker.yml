@@ -15,15 +15,20 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v3
 
+      # Create the google-services.json file from the secret.
       - name: Create google-services.json
         run: |
-          # Use printf to preserve the formatting and newlines
+          # Use printf to preserve formatting/newlines
           printf "%s" "${{ secrets.GOOGLE_SERVICES_JSON }}" > google-services.json
 
+      # Optional: Create .env file from a secret (if needed)
       - name: Create .env file
         run: |
-          # Similarly, create the .env file with proper formatting
           printf "%s" "${{ secrets.ENV_FILE_CONTENT }}" > .env
+
+      # Debug step: check file size so we can verify something was written.
+      - name: Check google-services.json file size
+        run: wc -c google-services.json
 
       - name: Build Docker image
         run: |
