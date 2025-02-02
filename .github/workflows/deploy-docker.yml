@@ -8,7 +8,7 @@ on:
 jobs:
   build-and-deploy:
     # Run on your self-hosted runner so it has Docker
-    runs-on: codebuilder-webapp
+    runs-on: [codebuilder-webapp, self-hosted, linux]
     # Alternatively: runs-on: [self-hosted, linux]
 
     steps:
