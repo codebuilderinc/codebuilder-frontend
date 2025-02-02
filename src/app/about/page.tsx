@@ -1,11 +1,21 @@
+'use client'
+
 import Image from 'next/image'
 import VideoPlayer from '../../components/video-player'
+import { useEffect } from 'react'
 
 export default function About() {
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      throw new Error('This is a simulated server error.')
+    }, 1000)
+
+    return () => clearTimeout(timer)
+  }, [])
   return (
     <div className="font-[family-name:var(--font-geist-sans)]">
       {/* Hero Slider */}
-      <div className="relative top-[-75px] w-screen h-[420px] overflow-hidden bg-black">
+      <div className="w-screen h-[320px] overflow-hidden bg-black">
         <div className="opacity-40">
           <VideoPlayer
             mp4Src="/videos/macbook-typing-about-us.mp4"
