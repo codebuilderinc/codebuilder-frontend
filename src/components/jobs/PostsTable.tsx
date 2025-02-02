@@ -20,7 +20,7 @@ const PostsTable: React.FC<Props> = ({ posts, totalPosts, postsPerPage, currentP
       navigator.serviceWorker
         .register('/sw.js')
         .then((registration) => console.log('Service Worker registered:', registration))
-        .catch((error) => console.error('Service Worker registration failed:', error))
+        .catch((error) => console.log('Service Worker registration failed:', error)) //error()
     }
   }, [])
 
@@ -46,7 +46,7 @@ const PostsTable: React.FC<Props> = ({ posts, totalPosts, postsPerPage, currentP
         if (!response.ok) throw new Error('Failed to fetch public key')
         const { publicKey } = await response.json()
 
-        // Convert VAPID key to the format required by PushManager
+        // Convert VAPID key to the format r
         const convertedVapidKey = urlBase64ToUint8Array(publicKey)
 
         // Subscribe the user to push notifications
@@ -68,7 +68,7 @@ const PostsTable: React.FC<Props> = ({ posts, totalPosts, postsPerPage, currentP
         alert('Successfully subscribed to notifications!')
         setIsSubscribed(true)
       } catch (error) {
-        console.error('Error during subscription:', error)
+        console.log('Error during subscription:', error) //error()
       }
     } else {
       alert('Push messaging is not supported in your browser.')
@@ -77,6 +77,9 @@ const PostsTable: React.FC<Props> = ({ posts, totalPosts, postsPerPage, currentP
 
   // Helper function to convert the VAPID key
   function urlBase64ToUint8Array(base64String: string) {
+    if (!base64String) {
+      throw new Error('base64String is undefined or null')
+    }
     const padding = '='.repeat((4 - (base64String.length % 4)) % 4)
     const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/')
     const rawData = atob(base64)
@@ -112,27 +115,30 @@ const PostsTable: React.FC<Props> = ({ posts, totalPosts, postsPerPage, currentP
             </tr>
           </thead>
           <tbody>
-            {posts.map((post: Post) => (
-              <tr
-                key={post.id}
-                className="border-b hover:bg-gray-100 transition duration-300 ease-in-out animate__animated animate__fadeInUp"
-              >
-                <td className="py-3 px-6">{post.title}</td>
-                <td className="py-3 px-6">{post.author}</td>
-                <td className="py-3 px-6">{post.subreddit}</td>
-                <td className="py-3 px-6">
-                  <Link
-                    href={post.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-500 hover:underline"
-                  >
-                    Link
-                  </Link>
-                </td>
-                <td className="py-3 px-6">{new Date(post.createdAt).toLocaleString()}</td>
-              </tr>
-            ))}
+            {posts.map((post: Post) => {
+              if (!post) return null // Skip undefined or null posts
+              return (
+                <tr
+                  key={post.id}
+                  className="border-b hover:bg-gray-100 transition duration-300 ease-in-out animate__animated animate__fadeInUp"
+                >
+                  <td className="py-3 px-6">{post.title}</td>
+                  <td className="py-3 px-6">{post.author}</td>
+                  <td className="py-3 px-6">{post.subreddit}</td>
+                  <td className="py-3 px-6">
+                    <Link
+                      href={post.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-500 hover:underline"
+                    >
+                      Link
+                    </Link>
+                  </td>
+                  <td className="py-3 px-6">{new Date(post.createdAt).toLocaleString()}</td>
+                </tr>
+              )
+            })}
           </tbody>
         </table>
         <div className="flex justify-center mt-4">
