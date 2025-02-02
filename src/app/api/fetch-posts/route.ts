@@ -69,7 +69,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ message: 'Posts fetched and stored successfully.' })
   } catch (error) {
     // Log any errors and respond with a 500 status code
-    console.error(error)
+    console.log(error) //error()
     return NextResponse.json({ error: 'An error occurred while fetching posts.' }, { status: 500 })
   } finally {
     // Ensure the Prisma client is disconnected after execution
