@@ -1,29 +1,34 @@
-# Use an official Node runtime as a parent image
-FROM node:18-alpine
-
-# Set the working directory in the container
+# ====================
+# 1) Build Stage
+# ====================
+FROM node:18-alpine AS builder
 WORKDIR /app
+RUN npm install -g pnpm
 
-# Copy dependency definitions
-COPY package.json package-lock.json* ./
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --strict-peer-dependencies=false
 
-# Install dependencies
-RUN npm install --legacy-peer-deps
-
-# Copy the rest of your application code
 COPY . .
-
-# Generate Prisma Client
 RUN npx prisma generate
+RUN pnpm run build
 
-# Optionally run migrations (if appropriate for your environment)
-# RUN npx prisma migrate deploy
+# ====================
+# 2) Production Stage
+# ====================
+FROM node:18-alpine
+WORKDIR /app
+RUN npm install -g pnpm
 
-# Build the Next.js application
-RUN npm run build
+# Copy only the necessary files from the builder stage
+COPY --from=builder /app/node_modules ./
+COPY --from=builder /app/package.json ./
+COPY --from=builder /app/pnpm-lock.yaml ./
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/public ./public
 
-# Expose port 3000 to the outside world
+# Install production-only dependencies
+RUN pnpm install --prod --strict-peer-dependencies=false
+
 EXPOSE 3000
-
-# Start the Next.js application
-CMD ["npm", "start"]
+CMD ["pnpm", "start"]
