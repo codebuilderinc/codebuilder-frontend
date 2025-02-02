@@ -8,7 +8,7 @@ on:
 jobs:
   build-and-deploy:
     # Run on your self-hosted runner so it has Docker
-    runs-on: [self-hosted, Linux, X64, Codebuilder]
+    runs-on: self-hosted
     # Alternatively: runs-on: [self-hosted, linux]
 
     steps:
