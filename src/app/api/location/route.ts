@@ -74,7 +74,8 @@ export async function POST(req: NextRequest) {
       { status: 201 }
     )
   } catch (error) {
-    console.error('Error saving location:', error)
+    console.log('Error saving location:', error) //error()
+    console.log(error.stack)
     return NextResponse.json({ error: 'Failed to save location.' }, { status: 500 })
   } finally {
     await prisma.$disconnect()
