@@ -7,6 +7,8 @@ export async function POST(req: NextRequest) {
   try {
     const subscription = await req.json()
 
+    console.log('Subscription data:', subscription)
+
     // Validate required fields
     if (!subscription.endpoint || !subscription.type) {
       return NextResponse.json({ error: 'Invalid subscription data.' }, { status: 400 })
@@ -35,26 +37,34 @@ export async function POST(req: NextRequest) {
     // Serialize keys if necessary
     const keys = subscription.keys ?? {}
 
+    // Declare the variable outside the if-else block
+    let newSubscription
+
     // Save the subscription to the database
-    const newSubscription = await prisma.subscription.upsert({
+    const existingSubscription = await prisma.subscription.findFirst({
       where: {
-        endpoint_type_keys: {
-          endpoint: subscription.endpoint,
-          type: subscription.type,
-          keys, // Ensure this matches your schema
-        },
-      },
-      update: {
-        ipAddress,
-        keys, // Update any fields that might have changed
-      },
-      create: {
-        type: subscription.type,
         endpoint: subscription.endpoint,
-        ipAddress,
-        keys,
+        type: subscription.type,
       },
     })
+
+    if (existingSubscription) {
+      // Update the existing record
+      newSubscription = await prisma.subscription.update({
+        where: { id: existingSubscription.id },
+        data: { ipAddress, keys },
+      })
+    } else {
+      // Create a new record
+      newSubscription = await prisma.subscription.create({
+        data: {
+          type: subscription.type,
+          endpoint: subscription.endpoint,
+          ipAddress,
+          keys,
+        },
+      })
+    }
 
     // Respond with the new subscription
     return NextResponse.json(
@@ -62,7 +72,8 @@ export async function POST(req: NextRequest) {
       { status: 201 }
     )
   } catch (error) {
-    console.error('Error saving subscription:', error)
+    console.log(error.stack)
+    console.log('Error saving subscription:', error)
     return NextResponse.json({ error: 'Failed to save subscription.' }, { status: 500 })
   } finally {
     await prisma.$disconnect()
