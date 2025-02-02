@@ -15,6 +15,14 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v3
 
+      # Create the secret file "google-services.json" from the repo secret
+      - name: Create google-services.json
+        run: echo "${{ secrets.GOOGLE_SERVICES_JSON }}" > google-services.json
+
+      # Create a .env file from a repo secret (if needed)
+      - name: Create .env file
+        run: echo "${{ secrets.ENV_FILE_CONTENT }}" > .env
+
       - name: Build Docker image
         run: |
           docker build -t codebuilder-webapp:latest .
