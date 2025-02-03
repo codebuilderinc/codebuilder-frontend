@@ -1,8 +1,19 @@
+# Codebuilder Webapp
+
+[![Deploy Production Docker Container](https://github.com/codebuilderinc/codebuilder-frontend/actions/workflows/deploy-docker.yml/badge.svg)](https://github.com/codebuilderinc/codebuilder-frontend/actions/workflows/deploy-docker.yml)
+
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
 
-First, run the development server:
+First, setup your mysql database and edit the .env.example file. 
+
+```bash 
+cp .env.example .env.local
+```
+
+Run the development server:
 
 ```bash
 npm run dev
@@ -13,6 +24,13 @@ pnpm dev
 # or
 bun dev
 ```
+
+Build the production Docker container:
+```bash
+docker run -d --network host -p 3000:3000 --env-file .env --name codebuilder-webapp codebuilder-webapp:latest
+```
+
+Note: The production website will automatically build & deploy through a GH action anytime a push is made to main.
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
