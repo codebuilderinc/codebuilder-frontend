@@ -20,6 +20,17 @@ const nextConfig: NextConfig = {
 
     return config
   },
+  env: {
+    // Server-side only variables
+    VAPID_PRIVATE_KEY: process.env.VAPID_PRIVATE_KEY,
+    DATABASE_URL: process.env.DATABASE_URL,
+    FCM_SERVER_KEY: process.env.FCM_SERVER_KEY,
+
+    // Public variables (exposed to client-side)
+    NEXT_PUBLIC_VAPID_PUBLIC_KEY: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
+    NEXT_PUBLIC_MATOMO_URL: process.env.NEXT_PUBLIC_MATOMO_URL,
+    NEXT_PUBLIC_MATOMO_SITE_ID: process.env.NEXT_PUBLIC_MATOMO_SITE_ID,
+  },
 }
 
 export default nextConfig
