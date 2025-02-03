@@ -13,19 +13,36 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v3
 
-      # Debug: Check length of the base64 secret
-      - name: Debug Check base64 secret length
-        run: echo -n "${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}" | wc -c
+      # Debug: Verify secret exists
+      - name: Check secret presence
+        run: |
+          if [ -z "${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}" ]; then
+            echo "❌ Critical error: GOOGLE_SERVICES_JSON_BASE64 secret is empty!"
+            exit 1
+          else
+            echo "✅ Secret exists (length: ${#GOOGLE_SERVICES_JSON_BASE64} chars)"
+          fi
+        env:
+          GOOGLE_SERVICES_JSON_BASE64: ${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}
 
-      # Decode the base64-encoded JSON secret into a file
+      # Decode with error handling
       - name: Create google-services.json
         run: |
-          echo -n "${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}" | base64 --decode > google-services.json
-          # Optional: Check if decode succeeded
+          set -e  # Exit immediately on error
+          echo "Decoding base64 secret..."
+          echo "$GOOGLE_SERVICES_JSON_BASE64" | base64 --decode > google-services.json
+
+          echo "Verifying file:"
+          ls -lh google-services.json
+          file google-services.json
+          head -n 2 google-services.json
+
           if [ ! -s google-services.json ]; then
-            echo "❌ Error: google-services.json is empty or not created"
+            echo "❌ File is empty!"
             exit 1
           fi
+        env:
+          GOOGLE_SERVICES_JSON_BASE64: ${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}
 
       # Create the .env file from a secret
       - name: Create .env file
