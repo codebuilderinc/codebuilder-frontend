@@ -44,10 +44,16 @@ jobs:
         env:
           GOOGLE_SERVICES_JSON_BASE64: ${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}
 
-      # Create the .env file from a secret
       - name: Create .env file
         run: |
-          echo -n "${{ secrets.ENV_FILE_CONTENT }}" > .env
+          echo "${{ secrets.ENV_FILE_CONTENT }}" > .env
+          echo "" >> .env  # Ensure file ends with a newline
+
+      - name: Debug .env file
+        run: |
+          echo "=== .env file content ==="
+          cat .env
+          echo "=== End of .env file ==="
 
       # Debug: Check file size of google-services.json
       - name: Check google-services.json file size
@@ -72,4 +78,4 @@ jobs:
           fi
 
       - name: Start new container
-        run: docker run -d --network host -p 3000:3000 --name codebuilder-webapp codebuilder-webapp:latest
+        run: docker run -d --network host -p 3000:3000 --env-file .env --name codebuilder-webapp codebuilder-webapp:latest
