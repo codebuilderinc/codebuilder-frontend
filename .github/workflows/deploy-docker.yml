@@ -62,7 +62,7 @@ jobs:
 
       - name: Stop and remove old container (if running)
         run: |
-          OLD_CONTAINER_ID=$(docker ps -q --filter ancestor=codebuilder-webapp:latest)
+          OLD_CONTAINER_ID=$(docker ps -aq --filter name=codebuilder-webapp)
           if [ -n "$OLD_CONTAINER_ID" ]; then
             echo "Stopping and removing container $OLD_CONTAINER_ID..."
             docker stop $OLD_CONTAINER_ID
