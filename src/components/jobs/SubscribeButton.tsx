@@ -9,10 +9,16 @@ const SubscribeButton: React.FC = () => {
         applicationServerKey: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
       })
 
+      // Convert PushSubscription to plain object
+      const subData = {
+        ...JSON.parse(JSON.stringify(subscription)),
+        type: 'web', // Add type explicitly
+      }
+
       await fetch('/api/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...subscription, type: 'web' }),
+        body: JSON.stringify(subData),
       })
       alert('Subscribed to notifications')
     } catch (error) {
