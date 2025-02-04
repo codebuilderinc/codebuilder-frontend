@@ -95,6 +95,15 @@ const CarouselSlider: React.FC = () => {
 
   useEffect(() => {
     if (isFirstRender.current) {
+      setTimeout(() => setIsContentVisible(true), 1000)
+      setIsLoading(false)
+
+      isFirstRender.current = false
+    }
+  }, [])
+
+  useEffect(() => {
+    if (isFirstRender.current) {
       const img = new Image()
       img.src = slides[currentIndex].image
       img.onload = () => {
@@ -159,56 +168,7 @@ const CarouselSlider: React.FC = () => {
 
       {!isLoading && (
         <>
-          <div
-            className="preview2"
-            style={{
-              overflow: 'visible',
-              position: 'absolute',
-              top: '125px',
-              marginTop: '-30px',
-              left: '0px',
-              width: '60px',
-              zIndex: '20',
-            }}
-          >
-            <div
-              style={{
-                position: 'absolute',
-                top: '125px',
-                marginTop: '-30px',
-                left: '0px',
-                width: '60px',
-                zIndex: '20',
-              }}
-              className="z-100 tp-leftarrow tparrows default preview2 hashoveralready"
-            >
-              <div className="tp-arr-allwrapper">
-                <div className="tp-arr-iwrapper">
-                  <div
-                    className="tp-arr-imgholder"
-                    style={{
-                      visibility: 'inherit',
-                      opacity: 1,
-                      backgroundImage: 'url(/images/bitcoin-advantages.jpg)',
-                    }}
-                  ></div>
-                  <div className="tp-arr-imgholder2"></div>
-                  <div className="tp-arr-titleholder">Crypto Applications</div>
-                  <div className="tp-arr-subtitleholder"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <button
-            onClick={() => handleManualSlideChange('prev')}
-            disabled={isAnimating}
-            className="z-50 absolute left-0 top-1/2 transform -translate-y-1/2 p-2 text-white bg-black bg-opacity-50 hover:bg-opacity-75 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Prev
-          </button>
-
-          <div className="relative w-screen h-[650px] flex items-center bg-black justify-center">
+          <div className="relative w-screen h-[650px] flex items-center bg-black justify-center animate__animated animate__slideInRight">
             <AnimatePresence
               initial={false}
               custom={direction}
@@ -279,13 +239,56 @@ const CarouselSlider: React.FC = () => {
             </AnimatePresence>
           </div>
 
-          <button
-            onClick={() => handleManualSlideChange('next')}
-            disabled={isAnimating}
-            className="z-50 absolute right-0 top-1/2 transform -translate-y-1/2 p-2 text-white bg-black bg-opacity-50 hover:bg-opacity-75 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+          <div className="carousel-button z-50 justify-end  absolute right-0 top-1/2 transform -translate-y-1/2 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-auto">
+            <motion.button
+              onClick={() => handleManualSlideChange('next')}
+              disabled={isAnimating}
+              className="flex items-center justify-end overflow-hidden h-12 text-white rounded-r-full shadow-lg"
+              initial={{ width: 50 }}
+              whileHover={{ width: 220 }}
+              transition={{ ease: 'easeOut', duration: 0.5 }}
+            >
+              <motion.span
+                className="whitespace-nowrap z-100 w-[150px] py-[11px] absolute"
+                initial={{ x: 0, opacity: 0, right: '20px' }}
+                whileHover={{ x: 0, opacity: 1, right: '0px' }}
+                transition={{ ease: 'easeOut', duration: 0.1, delay: 0 }}
+              >
+                Web3.0 Solutions
+              </motion.span>
+              <FontAwesomeIcon
+                icon={faChevronRight}
+                className="w-5 h-5 mr-[15px] pointer-events-none"
+              />
+            </motion.button>
+          </div>
+
+          <div
+            style={{
+              position: 'absolute',
+              top: '325px',
+              marginTop: '-30px',
+              left: '0px',
+              width: '60px',
+            }}
+            className="tp-leftarrow tparrows default preview2 hashoveralready hidearrows"
           >
-            Next
-          </button>
+            <div className="tp-arr-allwrapper">
+              <div className="tp-arr-iwrapper">
+                <div
+                  className="tp-arr-imgholder"
+                  style={{
+                    visibility: 'inherit',
+                    opacity: 1,
+                    backgroundImage: 'url("/images/hero-slides/slide-2-macbook.webp")',
+                  }}
+                ></div>
+                <div className="tp-arr-imgholder2"></div>
+                <div className="tp-arr-titleholder">Mobile Applications</div>
+                <div className="tp-arr-subtitleholder"></div>
+              </div>
+            </div>
+          </div>
         </>
       )}
     </div>
