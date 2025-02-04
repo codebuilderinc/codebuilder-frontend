@@ -15,6 +15,8 @@ const SubscribeButton: React.FC = () => {
         type: 'web', // Add type explicitly
       }
 
+      console.log('Subscribing to notifications:', subData)
+
       await fetch('/api/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
