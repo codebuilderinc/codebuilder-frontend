@@ -84,3 +84,27 @@ model Location {
 
   @@map("locations")
 }
+
+model RedditMessage {
+  id                 Int      @id @default(autoincrement())
+  redditId           String   @unique
+  type               String // "comment", "post", "dm"
+  author             String
+  content            String
+  bodyHtml           String?
+  subreddit          String?
+  contextUrl         String?
+  isRead             Boolean  @default(false)
+  createdAt          DateTime
+  receivedAt         DateTime @default(now())
+  parentId           String? // For thread tracking
+  rawData            Json? // Store original API response
+  messageType        String? // "inbox", "sent", "modmail"
+  isSubredditModMail Boolean  @default(false)
+  isInternal         Boolean  @default(false) // For mod discussions
+
+  @@index([author])
+  @@index([createdAt])
+  @@index([isRead])
+  @@map("reddit_messages")
+}
