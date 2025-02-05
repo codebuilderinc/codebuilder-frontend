@@ -25,6 +25,10 @@ const nextConfig: NextConfig = {
     VAPID_PRIVATE_KEY: process.env.VAPID_PRIVATE_KEY,
     DATABASE_URL: process.env.DATABASE_URL,
     FCM_SERVER_KEY: process.env.FCM_SERVER_KEY,
+    REDDIT_CLIENT_ID: process.env.REDDIT_CLIENT_ID,
+    REDDIT_CLIENT_SECRET: process.env.REDDIT_CLIENT_SECRET,
+    REDDIT_USERNAME: process.env.REDDIT_USERNAME,
+    REDDIT_PASSWORD: process.env.REDDIT_PASSWORD,
 
     // Public variables (exposed to client-side)
     NEXT_PUBLIC_VAPID_PUBLIC_KEY: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
