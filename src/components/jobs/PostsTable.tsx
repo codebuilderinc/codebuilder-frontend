@@ -20,7 +20,7 @@ const PostsTable: React.FC<Props> = ({ posts, totalPosts, postsPerPage, currentP
       navigator.serviceWorker
         .register('/sw.js')
         .then((registration) => console.log('Service Worker registered:', registration))
-        .catch((error) => console.log('Service Worker registration failed:', error)) //error()
+        .catch((error) => console.error('Service Worker registration failed:', error))
     }
   }, [])
 
@@ -42,11 +42,11 @@ const PostsTable: React.FC<Props> = ({ posts, totalPosts, postsPerPage, currentP
         const registration = await navigator.serviceWorker.ready
 
         // Fetch the public VAPID key from the server
-        const response = await fetch('/api/get-public-key')
+        const response = await fetch('/api/notifications/get-public-key')
         if (!response.ok) throw new Error('Failed to fetch public key')
         const { publicKey } = await response.json()
 
-        // Convert VAPID key to the format r
+        // Convert VAPID key to the format required by PushManager
         const convertedVapidKey = urlBase64ToUint8Array(publicKey)
 
         // Subscribe the user to push notifications
@@ -56,7 +56,7 @@ const PostsTable: React.FC<Props> = ({ posts, totalPosts, postsPerPage, currentP
         })
 
         // Send the subscription to the server
-        const subscribeResponse = await fetch('/api/subscribe', {
+        const subscribeResponse = await fetch('/api/notifications/subscribe', {
           method: 'POST',
           body: JSON.stringify(subscription),
           headers: {
@@ -68,7 +68,7 @@ const PostsTable: React.FC<Props> = ({ posts, totalPosts, postsPerPage, currentP
         alert('Successfully subscribed to notifications!')
         setIsSubscribed(true)
       } catch (error) {
-        console.log('Error during subscription:', error) //error()
+        console.error('Error during subscription:', error)
       }
     } else {
       alert('Push messaging is not supported in your browser.')

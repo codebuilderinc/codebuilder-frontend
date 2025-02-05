@@ -17,7 +17,7 @@ const SubscribeButton: React.FC = () => {
 
       console.log('Subscribing to notifications:', subData)
 
-      await fetch('/api/subscribe', {
+      await fetch('/api/notifications/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(subData),
