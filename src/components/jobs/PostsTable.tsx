@@ -1,9 +1,10 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import Link from 'next/link'
 import { Post } from '@prisma/client'
 import 'animate.css'
+import SubscribeButton from './SubscribeButton'
 
 type Props = {
   posts: Post[]
@@ -13,96 +14,9 @@ type Props = {
 }
 
 const PostsTable: React.FC<Props> = ({ posts, totalPosts, postsPerPage, currentPage }) => {
-  const [isSubscribed, setIsSubscribed] = useState(false)
-
-  useEffect(() => {
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker
-        .register('/sw.js')
-        .then((registration) => console.log('Service Worker registered:', registration))
-        .catch((error) => console.error('Service Worker registration failed:', error))
-    }
-  }, [])
-
-  useEffect(() => {
-    // Check subscription status on component mount
-    const checkSubscriptionStatus = async () => {
-      if ('serviceWorker' in navigator && 'PushManager' in window) {
-        const registration = await navigator.serviceWorker.ready
-        const subscription = await registration.pushManager.getSubscription()
-        setIsSubscribed(!!subscription) // Set subscription status
-      }
-    }
-    checkSubscriptionStatus()
-  }, [])
-
-  const handleSubscribe = async () => {
-    if ('serviceWorker' in navigator && 'PushManager' in window) {
-      try {
-        const registration = await navigator.serviceWorker.ready
-
-        // Fetch the public VAPID key from the server
-        const response = await fetch('/api/notifications/get-public-key')
-        if (!response.ok) throw new Error('Failed to fetch public key')
-        const { publicKey } = await response.json()
-
-        // Convert VAPID key to the format required by PushManager
-        const convertedVapidKey = urlBase64ToUint8Array(publicKey)
-
-        // Subscribe the user to push notifications
-        const subscription = await registration.pushManager.subscribe({
-          userVisibleOnly: true,
-          applicationServerKey: convertedVapidKey,
-        })
-
-        // Send the subscription to the server
-        const subscribeResponse = await fetch('/api/notifications/subscribe', {
-          method: 'POST',
-          body: JSON.stringify(subscription),
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        })
-        if (!subscribeResponse.ok) throw new Error('Failed to save subscription on server')
-
-        alert('Successfully subscribed to notifications!')
-        setIsSubscribed(true)
-      } catch (error) {
-        console.error('Error during subscription:', error)
-      }
-    } else {
-      alert('Push messaging is not supported in your browser.')
-    }
-  }
-
-  // Helper function to convert the VAPID key
-  function urlBase64ToUint8Array(base64String: string) {
-    if (!base64String) {
-      throw new Error('base64String is undefined or null')
-    }
-    const padding = '='.repeat((4 - (base64String.length % 4)) % 4)
-    const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/')
-    const rawData = atob(base64)
-    const outputArray = new Uint8Array(rawData.length)
-    for (let i = 0; i < rawData.length; ++i) {
-      outputArray[i] = rawData.charCodeAt(i)
-    }
-    return outputArray
-  }
-
   return (
     <div className="animate__animated animate__fadeIn">
-      <button
-        onClick={handleSubscribe}
-        disabled={isSubscribed}
-        className={`mb-4 px-4 py-2 rounded-lg transition duration-300 ease-in-out animate__animated animate__pulse ${
-          isSubscribed
-            ? 'bg-gray-400 cursor-not-allowed'
-            : 'bg-blue-600 hover:bg-blue-700 text-white'
-        }`}
-      >
-        {isSubscribed ? 'Already Subscribed' : 'Subscribe to Notifications'}
-      </button>
+      <SubscribeButton />
       <div className="overflow-x-auto py-4">
         <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
           <thead className="bg-blue-600 text-white">
