@@ -1,7 +1,12 @@
-import React from 'react'
+import React, { useState } from 'react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faBell, faSpinner } from '@fortawesome/free-solid-svg-icons'
 
 const SubscribeButton: React.FC = () => {
+  const [loading, setLoading] = useState(false)
+
   const subscribe = async () => {
+    setLoading(true)
     try {
       const registration = await navigator.serviceWorker.ready
       const subscription = await registration.pushManager.subscribe({
@@ -25,12 +30,28 @@ const SubscribeButton: React.FC = () => {
       alert('Subscribed to notifications')
     } catch (error) {
       console.error('Subscription error', error)
+    } finally {
+      setLoading(false)
     }
   }
 
   return (
-    <button onClick={subscribe} className="p-2 bg-blue-500 text-white rounded">
-      Subscribe
+    <button
+      onClick={subscribe}
+      disabled={loading}
+      className="p-2 bg-blue-500 text-white rounded flex items-center gap-2"
+    >
+      {loading ? (
+        <>
+          <FontAwesomeIcon icon={faSpinner} spin />
+          Loading...
+        </>
+      ) : (
+        <>
+          <FontAwesomeIcon icon={faBell} />
+          Subscribe
+        </>
+      )}
     </button>
   )
 }
