@@ -1,38 +1,4 @@
-import { PrismaClient } from '@prisma/client'
-
-const prisma = new PrismaClient()
-
-// Define the types/interfaces
-interface Coords {
-  accuracy: number
-  altitude: number
-  altitudeAccuracy: number
-  heading: number
-  latitude: number
-  longitude: number
-  speed: number
-}
-
-interface LocationData {
-  coords: Coords
-  mocked: boolean
-  timestamp: number // Use number to match the BigInt-like behavior in JS
-}
-
-interface GeoAddressData {
-  city: string | null
-  country: string | null
-  district: string | null
-  formattedAddress: string | null
-  isoCountryCode: string | null
-  name: string | null
-  postalCode: string | null
-  region: string | null
-  street: string | null
-  streetNumber: string | null
-  subregion: string | null
-  timezone: string | null
-}
+import prisma from './db'
 
 // Function definition with types
 async function createLocation(
@@ -135,3 +101,35 @@ createLocation(subscriptionId, locationData, geoAddressData)
   .finally(async () => {
     await prisma.$disconnect()
   })
+
+// Define the types/interfaces
+interface Coords {
+  accuracy: number
+  altitude: number
+  altitudeAccuracy: number
+  heading: number
+  latitude: number
+  longitude: number
+  speed: number
+}
+
+interface LocationData {
+  coords: Coords
+  mocked: boolean
+  timestamp: number // Use number to match the BigInt-like behavior in JS
+}
+
+interface GeoAddressData {
+  city: string | null
+  country: string | null
+  district: string | null
+  formattedAddress: string | null
+  isoCountryCode: string | null
+  name: string | null
+  postalCode: string | null
+  region: string | null
+  street: string | null
+  streetNumber: string | null
+  subregion: string | null
+  timezone: string | null
+}
