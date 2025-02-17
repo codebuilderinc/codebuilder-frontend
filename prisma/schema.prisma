@@ -13,12 +13,12 @@ model Post {
   author    String
   subreddit String
   url       String   @unique @db.VarChar(350)
-  createdAt DateTime @default(now())
-  postedAt  DateTime @default(now())
+  createdAt DateTime @default(now()) @map("created_at")
+  postedAt  DateTime @default(now()) @map("posted_at")
   type      String   @default("reddit") @db.VarChar(50)
 
   body      String? @db.Text
-  body_html String? @db.Text
+  bodyHtml  String? @map("body_html") @db.Text
   upvotes   Int     @default(0)
   downvotes Int     @default(0)
 
@@ -32,11 +32,11 @@ enum SubscriptionType {
 
 model Subscription {
   id        Int              @id @default(autoincrement())
-  ipAddress String           @db.VarChar(150)
+  ipAddress String           @map("ip_address") @db.VarChar(150)
   type      SubscriptionType @default(web)
   endpoint  String           @unique @db.VarChar(350)
   keys      Json?
-  createdAt DateTime         @default(now())
+  createdAt DateTime         @default(now()) @map("created_at")
 
   // Relation to Location
   locations Location[]
@@ -48,36 +48,36 @@ model Subscription {
 model Location {
   id             Int    @id @default(autoincrement())
   subscriptionId Int // Foreign key to Subscription
-  ipAddress      String @db.VarChar(150)
+  ipAddress      String @map("ip_address") @db.VarChar(150)
 
   // Coords fields
-  accuracy         Float?
-  altitude         Float?
-  altitudeAccuracy Float?
-  heading          Float?
-  latitude         Float?
-  longitude        Float?
-  speed            Float?
+  accuracy         Float? @map("accuracy")
+  altitude         Float? @map("altitude")
+  altitudeAccuracy Float? @map("altitude_accuracy")
+  heading          Float? @map("heading")
+  latitude         Float? @map("latitude")
+  longitude        Float? @map("longitude")
+  speed            Float? @map("speed")
 
   // Additional fields
-  mocked    Boolean // Indicates if the location is mocked
-  timestamp BigInt? // Stores the timestamp
+  mocked    Boolean @map("mocked") // Indicates if the location is mocked
+  timestamp BigInt? @map("timestamp") // Stores the timestamp
 
   // Address fields
-  city             String? @db.VarChar(150)
-  country          String? @db.VarChar(150)
-  district         String? @db.VarChar(150)
-  formattedAddress String? @db.Text
-  isoCountryCode   String? @db.VarChar(10)
-  name             String? @db.VarChar(150)
-  postalCode       String? @db.VarChar(20)
-  region           String? @db.VarChar(150)
-  street           String? @db.VarChar(150)
-  streetNumber     String? @db.VarChar(50)
-  subregion        String? @db.VarChar(150)
-  timezone         String? @db.VarChar(100)
+  city             String? @map("city") @db.VarChar(150)
+  country          String? @map("country") @db.VarChar(150)
+  district         String? @map("district") @db.VarChar(150)
+  formattedAddress String? @map("formatted_address") @db.Text
+  isoCountryCode   String? @map("iso_country_code") @db.VarChar(10)
+  name             String? @map("name") @db.VarChar(150)
+  postalCode       String? @map("postal_code") @db.VarChar(20)
+  region           String? @map("region") @db.VarChar(150)
+  street           String? @map("street") @db.VarChar(150)
+  streetNumber     String? @map("street_number") @db.VarChar(50)
+  subregion        String? @map("subregion") @db.VarChar(150)
+  timezone         String? @map("timezone") @db.VarChar(100)
 
-  createdAt DateTime @default(now())
+  createdAt DateTime @default(now()) @map("created_at")
 
   // Relation to Subscription
   subscription Subscription @relation(fields: [subscriptionId], references: [id])
@@ -87,21 +87,21 @@ model Location {
 
 model RedditMessage {
   id                 Int      @id @default(autoincrement())
-  redditId           String   @unique
+  redditId           String   @unique @map("reddit_id")
   type               String // "comment", "post", "dm"
-  author             String
-  content            String
-  bodyHtml           String?
-  subreddit          String?
-  contextUrl         String?
-  isRead             Boolean  @default(false)
-  createdAt          DateTime
-  receivedAt         DateTime @default(now())
-  parentId           String? // For thread tracking
-  rawData            Json? // Store original API response
-  messageType        String? // "inbox", "sent", "modmail"
-  isSubredditModMail Boolean  @default(false)
-  isInternal         Boolean  @default(false) // For mod discussions
+  author             String   @map("author")
+  content            String   @map("content")
+  bodyHtml           String?  @map("body_html")
+  subreddit          String?  @map("subreddit")
+  contextUrl         String?  @map("context_url")
+  isRead             Boolean  @default(false) @map("is_read")
+  createdAt          DateTime @map("created_at")
+  receivedAt         DateTime @default(now()) @map("received_at")
+  parentId           String?  @map("parent_id") // For thread tracking
+  rawData            Json?    @map("raw_data") // Store original API response
+  messageType        String?  @map("message_type") // "inbox", "sent", "modmail"
+  isSubredditModMail Boolean  @default(false) @map("is_subreddit_mod_mail")
+  isInternal         Boolean  @default(false) @map("is_internal") // For mod discussions
 
   @@index([author])
   @@index([createdAt])
