@@ -1,5 +1,5 @@
 import admin, { ServiceAccount } from 'firebase-admin'
-import serviceAccount from '@/../google-services.json' // Update with the path to your key
+import serviceAccount from './../../google-services.json' // Update with the path to your key
 
 if (!admin.apps.length) {
   admin.initializeApp({
