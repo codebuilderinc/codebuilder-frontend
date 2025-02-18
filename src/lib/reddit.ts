@@ -4,12 +4,12 @@ import axios from 'axios'
 import Snoowrap from 'snoowrap'
 import { PrismaClient } from '@prisma/client'
 import { CommentStream } from 'snoostorm'
-
-const prisma = new PrismaClient()
+import { sendNotification } from './notifications'
+import prisma from '@/lib/db'
 
 // Initialize Reddit API client with environment variables
 export const redditClient = new Snoowrap({
-  userAgent: 'your-app-name by /u/your-username',
+  userAgent: 'CodeBuilder by /u/taofullstack',
   clientId: process.env.REDDIT_CLIENT_ID,
   clientSecret: process.env.REDDIT_CLIENT_SECRET,
   username: process.env.REDDIT_USERNAME,
@@ -24,6 +24,9 @@ export const redditClient = new Snoowrap({
 export async function storeMessages(items: Array<Snoowrap.PrivateMessage | Snoowrap.Comment>) {
   const newMessages = []
   console.debug(`Processing ${items.length} message(s)`)
+
+  // Retrieve all subscriptions for sending notifications
+  const subscriptions = await prisma.subscription.findMany()
 
   for (const item of items) {
     try {
@@ -64,12 +67,29 @@ export async function storeMessages(items: Array<Snoowrap.PrivateMessage | Snoow
             contextUrl: item.permalink,
           }
 
-      const created = await prisma.redditMessage.create({
+      const createdMsg = await prisma.redditMessage.create({
         data: { ...baseData, ...additionalData },
       })
 
-      console.debug(`Stored new ${type} [${created.redditId}] from /u/${created.author}`)
-      newMessages.push(created)
+      // Build your unified payload object
+      const notificationPayload = {
+        title: `${createdMsg.author} (${createdMsg.subreddit})`,
+        body: `${createdMsg.content}`,
+        url: createdMsg.contextUrl,
+        icon: 'https://new.codebuilder.org/images/logo2.png',
+        badge: 'https://new.codebuilder.org/images/logo2.png',
+      }
+
+      // Loop and send notifications concurrently
+      const notificationPromises = subscriptions.map((sub) =>
+        sendNotification(sub, notificationPayload)
+      )
+
+      // Wait for all notifications to complete
+      await Promise.all(notificationPromises)
+
+      console.debug(`Stored new ${type} [${createdMsg.redditId}] from /u/${createdMsg.author}`)
+      newMessages.push(createdMsg)
     } catch (error) {
       console.error(`Error processing message ${item.name}:`, error.message)
     }
@@ -160,4 +180,55 @@ export const fetchRedditPosts = async (subreddits: string[]) => {
   }
 
   return posts
+}
+
+/**
+ * Stores Reddit posts in database with deduplication and sends notifications
+ * @param posts Array of Reddit post objects
+ * @returns Array of newly created database records
+ */
+export async function storePosts(posts: Array<any>) {
+  const newPosts = []
+  console.debug(`Processing ${posts.length} post(s)`)
+
+  // Retrieve all subscriptions for sending notifications
+  const subscriptions = await prisma.subscription.findMany()
+
+  for (const post of posts) {
+    try {
+      // Check for existing record
+      const existing = await prisma.post.findUnique({
+        where: { url: post.url },
+      })
+
+      if (existing) {
+        console.debug(`Skipping duplicate post [${post.url}]`)
+        continue
+      }
+
+      const createdPost = await prisma.post.create({ data: post })
+
+      // Build notification payload
+      const notificationPayload = {
+        title: `${createdPost.title} (${createdPost.subreddit} - ${createdPost.author})`,
+        body: `${createdPost.title}`,
+        url: createdPost.url,
+        icon: 'https://new.codebuilder.org/images/logo2.png',
+        badge: 'https://new.codebuilder.org/images/logo2.png',
+      }
+
+      // Send notifications concurrently
+      const notificationPromises = subscriptions.map((sub) =>
+        sendNotification(sub, notificationPayload)
+      )
+      await Promise.all(notificationPromises)
+
+      console.debug(`Stored new post [${createdPost.url}] from /u/${createdPost.author}`)
+      newPosts.push(createdPost)
+    } catch (error) {
+      console.error(`Error processing post ${post.url}:`, error.message)
+    }
+  }
+
+  return newPosts
 }
