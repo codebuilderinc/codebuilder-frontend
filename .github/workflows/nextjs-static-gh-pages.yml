@@ -26,35 +26,35 @@ jobs:
         id: detect-pm
         run: |
           if [ -f "pnpm-lock.yaml" ]; then
-            echo "manager=pnpm" >> $GITHUB_OUTPUT
-            echo "command=install" >> $GITHUB_OUTPUT
-            echo "runner=pnpm exec" >> $GITHUB_OUTPUT
+            echo "manager=pnpm" >> $GITHUB_ENV
+            echo "command=install" >> $GITHUB_ENV
+            echo "runner=pnpm exec" >> $GITHUB_ENV
           elif [ -f "yarn.lock" ]; then
-            echo "manager=yarn" >> $GITHUB_OUTPUT
-            echo "command=install" >> $GITHUB_OUTPUT
-            echo "runner=yarn" >> $GITHUB_OUTPUT
+            echo "manager=yarn" >> $GITHUB_ENV
+            echo "command=install" >> $GITHUB_ENV
+            echo "runner=yarn" >> $GITHUB_ENV
           else
-            echo "manager=npm" >> $GITHUB_OUTPUT
-            echo "command=ci" >> $GITHUB_OUTPUT
-            echo "runner=npx --no-install" >> $GITHUB_OUTPUT
+            echo "manager=npm" >> $GITHUB_ENV
+            echo "command=ci" >> $GITHUB_ENV
+            echo "runner=npx --no-install" >> $GITHUB_ENV
           fi
+
+      # ✅ Explicitly Install pnpm before setting up Node.js
+      - name: 📦 Install pnpm if needed
+        if: env.manager == 'pnpm'
+        run: npm install -g pnpm
 
       - name: ⚙️ Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: ${{ steps.detect-pm.outputs.manager }}
-
-      # Install pnpm if needed before verifying environment
-      - name: 📦 Install Package Manager
-        if: steps.detect-pm.outputs.manager == 'pnpm'
-        run: npm install -g pnpm
+          cache: ${{ env.manager }}
 
       - name: 📝 Verify Environment
         run: |
           echo "Node.js $(node -v)"
           echo "npm $(npm -v)"
-          ${{ steps.detect-pm.outputs.manager }} --version
+          ${{ env.manager }} --version
 
       - name: 🌐 Setup Pages
         uses: actions/configure-pages@v5
@@ -64,17 +64,16 @@ jobs:
       - name: 📦 Restore cache
         uses: actions/cache@v4
         with:
-          path: |
-            .next/cache
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock', '**/pnpm-lock.yaml') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
+          path: .next/cache
+          key: nextjs-${{ runner.os }}-${{ hashFiles('**/package-lock.json', '**/yarn.lock', '**/pnpm-lock.yaml') }}
           restore-keys: |
-            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock', '**/pnpm-lock.yaml') }}-
+            nextjs-${{ runner.os }}-
 
       - name: 📥 Install dependencies
-        run: ${{ steps.detect-pm.outputs.manager }} ${{ steps.detect-pm.outputs.command }}
+        run: ${{ env.manager }} ${{ env.command }}
 
       - name: 👷 Build with Next.js
-        run: ${{ steps.detect-pm.outputs.runner }} next build
+        run: ${{ env.runner }} next build
 
       - name: 📤 Upload artifact
         uses: actions/upload-pages-artifact@v3
