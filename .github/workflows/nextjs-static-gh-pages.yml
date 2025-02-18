@@ -1,4 +1,4 @@
-name: 🚀 Deploy Next.js to GitHub Pages
+name: 🚀 Deploy Static Next.js to GitHub Pages
 
 on:
   push:
@@ -16,7 +16,7 @@ concurrency:
 
 jobs:
   build:
-    name: 🛠️ Build Next.js
+    name: 🏗 Build Static Next.js
     runs-on: ubuntu-latest
     steps:
       - name: 🔍 Checkout repository
@@ -39,7 +39,6 @@ jobs:
             echo "runner=npx --no-install" >> $GITHUB_ENV
           fi
 
-      # ✅ Explicitly Install pnpm before setting up Node.js
       - name: 📦 Install pnpm if needed
         if: env.manager == 'pnpm'
         run: npm install -g pnpm
@@ -56,10 +55,26 @@ jobs:
           echo "npm $(npm -v)"
           ${{ env.manager }} --version
 
-      - name: 🌐 Setup Pages
+      - name: 🌐 Setup GitHub Pages
         uses: actions/configure-pages@v5
-        with:
-          static_site_generator: next
+
+      # ========================
+      # 🔐 Secrets & Config Setup
+      # ========================
+      - name: 🔒 Verify Secrets Exist
+        run: |
+          if [ -z "${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}" ]; then
+            echo "❌ Critical error: GOOGLE_SERVICES_JSON_BASE64 secret missing!"
+            exit 1
+          fi
+          echo "✅ All secrets present"
+
+      - name: 📁 Create google-services.json in Root
+        run: |
+          echo "$GOOGLE_SERVICES_JSON_BASE64" | base64 --decode > google-services.json
+          jq empty google-services.json  # Validate JSON
+        env:
+          GOOGLE_SERVICES_JSON_BASE64: ${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}
 
       - name: 📦 Restore cache
         uses: actions/cache@v4
@@ -72,13 +87,17 @@ jobs:
       - name: 📥 Install dependencies
         run: ${{ env.manager }} ${{ env.command }}
 
-      - name: 👷 Build with Next.js
-        run: ${{ env.runner }} next build
+      - name: 🏗 Generate Static Build
+        run: |
+          echo "⚠️ Exporting static files. Pages with SSR/API routes will be ignored."
+          ${{ env.runner }} next build
+          ${{ env.runner }} next export
+          touch out/.nojekyll  # Prevent GitHub from ignoring _next folder
 
-      - name: 📤 Upload artifact
+      - name: 📤 Upload static site
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./out
+          path: ./out # This is where static files go after next export
 
   deploy:
     name: 🚀 Deploy to GitHub Pages
