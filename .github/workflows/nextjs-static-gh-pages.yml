@@ -45,7 +45,7 @@ jobs:
           node-version: '20'
           cache: ${{ steps.detect-pm.outputs.manager }}
 
-      # New step to install pnpm if needed
+      # Install pnpm if needed before verifying environment
       - name: 📦 Install Package Manager
         if: steps.detect-pm.outputs.manager == 'pnpm'
         run: npm install -g pnpm
