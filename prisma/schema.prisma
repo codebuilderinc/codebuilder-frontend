@@ -90,8 +90,8 @@ model RedditMessage {
   redditId           String   @unique @map("reddit_id")
   type               String // "comment", "post", "dm"
   author             String   @map("author")
-  content            String   @map("content")
-  bodyHtml           String?  @map("body_html")
+  content            String   @map("content") @db.Text
+  bodyHtml           String?  @map("body_html") @db.Text
   subreddit          String?  @map("subreddit")
   contextUrl         String?  @map("context_url")
   isRead             Boolean  @default(false) @map("is_read")
