@@ -66,6 +66,18 @@ export async function sendNotification(
           url: notificationPayload.url,
         },
         token: subscription.keys.token,
+        android: {
+          notification: {
+            sound: 'notification', // Must match the file name (typically without the extension) in res/raw/
+          },
+        },
+        apns: {
+          payload: {
+            aps: {
+              sound: 'notification', // For iOS, if needed
+            },
+          },
+        },
       }
 
       // Send the FCM message using Firebase.
