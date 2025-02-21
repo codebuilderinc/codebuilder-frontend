@@ -1,3 +1,4 @@
+import React from 'react'
 import { PrismaClient } from '@prisma/client'
 import PostsTable from '@/components/jobs/PostsTable'
 import VideoPlayer from '../../components/video-player'
