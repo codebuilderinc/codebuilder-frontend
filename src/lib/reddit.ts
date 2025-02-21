@@ -21,6 +21,13 @@ export const redditClient = new Snoowrap({
  * @param items Array of Reddit messages or comments
  * @returns Array of newly created database records
  */
+// Helper type guard to determine if an item is a PrivateMessage
+function isPrivateMessage(
+  item: Snoowrap.PrivateMessage | Snoowrap.Comment
+): item is Snoowrap.PrivateMessage {
+  return 'new' in item
+}
+
 export async function storeMessages(items: Array<Snoowrap.PrivateMessage | Snoowrap.Comment>) {
   const newMessages = []
   console.debug(`Processing ${items.length} message(s)`)
@@ -30,7 +37,8 @@ export async function storeMessages(items: Array<Snoowrap.PrivateMessage | Snoow
 
   for (const item of items) {
     try {
-      const isMessage = item instanceof Snoowrap.PrivateMessage
+      // Use the type guard instead of instanceof
+      const isMessage = isPrivateMessage(item)
       const type = isMessage ? 'private_message' : 'comment'
 
       // Check for existing record
@@ -80,17 +88,15 @@ export async function storeMessages(items: Array<Snoowrap.PrivateMessage | Snoow
         badge: 'https://new.codebuilder.org/images/logo2.png',
       }
 
-      // Loop and send notifications concurrently
+      // Send notifications concurrently
       const notificationPromises = subscriptions.map((sub) =>
         sendNotification(sub, notificationPayload)
       )
-
-      // Wait for all notifications to complete
       await Promise.all(notificationPromises)
 
       console.debug(`Stored new ${type} [${createdMsg.redditId}] from /u/${createdMsg.author}`)
       newMessages.push(createdMsg)
-    } catch (error) {
+    } catch (error: any) {
       console.error(`Error processing message ${item.name}:`, error.message)
     }
   }
