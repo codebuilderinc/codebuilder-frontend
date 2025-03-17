@@ -1,13 +1,14 @@
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider          = "mysql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
 generator client {
   provider = "prisma-client-js"
 }
 
-model Post {
+model RedditPost {
   id        Int      @id @default(autoincrement())
   title     String   @db.VarChar(350)
   author    String
@@ -22,7 +23,7 @@ model Post {
   upvotes   Int     @default(0)
   downvotes Int     @default(0)
 
-  @@map("posts")
+  @@map("reddit_posts")
 }
 
 enum SubscriptionType {
