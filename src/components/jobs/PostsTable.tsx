@@ -2,12 +2,12 @@
 
 import React from 'react'
 import Link from 'next/link'
-import { Post } from '@prisma/client'
+import { RedditPost } from '@prisma/client'
 import 'animate.css'
 import SubscribeButton from './SubscribeButton'
 
 type Props = {
-  posts: Post[]
+  posts: RedditPost[]
   totalPosts: number
   postsPerPage: number
   currentPage: number
@@ -29,7 +29,7 @@ const PostsTable: React.FC<Props> = ({ posts, totalPosts, postsPerPage, currentP
             </tr>
           </thead>
           <tbody>
-            {posts.map((post: Post) => {
+            {posts.map((post: RedditPost) => {
               if (!post) return null // Skip undefined or null posts
               return (
                 <tr
