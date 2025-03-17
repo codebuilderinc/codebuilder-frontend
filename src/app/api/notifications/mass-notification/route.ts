@@ -1,10 +1,9 @@
 import { NextResponse } from 'next/server'
-import { PrismaClient } from '@prisma/client'
 import webpush, { WebPushError } from 'web-push'
 import { messaging } from 'firebase-admin'
 import { sendNotification, SubscriptionRecord } from '../../../../lib/notifications'
 
-const prisma = new PrismaClient()
+import prisma from '@/lib/db'
 
 export async function POST(request: Request) {
   try {

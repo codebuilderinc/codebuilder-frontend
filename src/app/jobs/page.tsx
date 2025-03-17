@@ -1,9 +1,7 @@
 import React from 'react'
-import { PrismaClient } from '@prisma/client'
 import PostsTable from '@/components/jobs/PostsTable'
 import VideoPlayer from '../../components/video-player'
-
-const prisma = new PrismaClient()
+import prisma from '@/lib/db'
 
 export default async function Home(props: { searchParams: Promise<{ page?: string }> }) {
   const searchParams = await props.searchParams
