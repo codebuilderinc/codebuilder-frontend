@@ -2,7 +2,6 @@
 
 import axios from 'axios'
 import Snoowrap from 'snoowrap'
-import { PrismaClient } from '@prisma/client'
 import { CommentStream } from 'snoostorm'
 import { sendNotification } from './notifications'
 import prisma from '@/lib/db'
@@ -203,7 +202,7 @@ export async function storePosts(posts: Array<any>) {
   for (const post of posts) {
     try {
       // Check for existing record
-      const existing = await prisma.post.findUnique({
+      const existing = await prisma.redditPost.findUnique({
         where: { url: post.url },
       })
 
@@ -212,7 +211,7 @@ export async function storePosts(posts: Array<any>) {
         continue
       }
 
-      const createdPost = await prisma.post.create({ data: post })
+      const createdPost = await prisma.redditPost.create({ data: post })
 
       // Build notification payload
       const notificationPayload = {
