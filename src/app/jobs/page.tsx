@@ -10,8 +10,8 @@ export default async function Home(props: { searchParams: Promise<{ page?: strin
   const postsPerPage = 10
   const currentPage = parseInt(searchParams.page || '1', 10)
 
-  const totalPosts = await prisma.post.count()
-  const posts = await prisma.post.findMany({
+  const totalPosts = await prisma.redditPost.count()
+  const posts = await prisma.redditPost.findMany({
     skip: (currentPage - 1) * postsPerPage,
     take: postsPerPage,
     orderBy: { createdAt: 'desc' },

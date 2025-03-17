@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
     const skip = (page - 1) * pageSize
 
     // Fetch paginated posts from Prisma
-    const posts = await prisma.post.findMany({
+    const posts = await prisma.redditPost.findMany({
       orderBy: { createdAt: 'desc' },
       skip,
       take: pageSize,
@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
     })
 
     // Optionally, get the total number of posts to return along with pagination info
-    const totalCount = await prisma.post.count()
+    const totalCount = await prisma.redditPost.count()
 
     return NextResponse.json({
       data: posts,
