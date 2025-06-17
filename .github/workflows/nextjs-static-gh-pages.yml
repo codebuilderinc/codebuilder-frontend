@@ -2,7 +2,7 @@ name: 🚀 Deploy Static Next.js to GitHub Pages
 
 on:
   push:
-    branches: ['main']
+    branches: ['gh-static']
   workflow_dispatch:
 
 permissions:
