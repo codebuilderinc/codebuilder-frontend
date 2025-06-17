@@ -7,6 +7,9 @@ import 'animate.css/animate.min.css'
 import { LayoutTransition } from '@/components/layout/layout-transition'
 import Script from 'next/script'
 import Footer from '../components/layout/footer'
+// Import the components we created
+import ErrorBoundary from '@/components/ErrorBoundary'
+import GlobalErrorHandler from '@/components/GlobalErrorHandler'
 
 export const metadata: Metadata = {
   title: 'CodeBuilder, Inc. - Software Engineering Solutions.',
@@ -57,6 +60,11 @@ export default function RootLayout({
         {/* Other Meta Tags, Links, Etc... */}
       </head>
       <body className={`${Raleway.className} antialiased bg-white`}>
+        {/*
+          The GlobalErrorHandler is an invisible component that sets up
+          window-level event listeners for catching uncaught errors.
+        */}
+        <GlobalErrorHandler />
         <div className="flex flex-col min-h-screen">
           <Header />
           <LayoutTransition
@@ -68,7 +76,13 @@ export default function RootLayout({
             {/* Main content area */}
             <main className="flex text-black bg-white">
               {' '}
-              <div className="w-screen">{children}</div>
+              {/*
+                The ErrorBoundary wraps your entire application. It will catch
+                any rendering errors and display a fallback UI instead of crashing.
+              */}
+              <ErrorBoundary>
+                <div className="w-screen">{children}</div>
+              </ErrorBoundary>
             </main>
             {/* Footer */}
             <Footer />
