@@ -1,3 +1,9 @@
+// =============================================================================
+// Prisma Schema
+//
+// Defines the database connection, client generator, and data models.
+// =============================================================================
+
 datasource db {
   provider          = "mysql"
   url               = env("DATABASE_URL")
@@ -8,104 +14,155 @@ generator client {
   provider = "prisma-client-js"
 }
 
+// =============================================================================
+// Models
+// =============================================================================
+
+/// Stores posts scraped from Reddit.
 model RedditPost {
-  id        Int      @id @default(autoincrement())
-  title     String   @db.VarChar(350)
+  // Fields
+  id        Int     @id @default(autoincrement())
+  title     String  @db.VarChar(350)
   author    String
   subreddit String
-  url       String   @unique @db.VarChar(350)
-  createdAt DateTime @default(now()) @map("created_at")
-  postedAt  DateTime @default(now()) @map("posted_at")
-  type      String   @default("reddit") @db.VarChar(50)
-
+  url       String  @unique @db.VarChar(350)
+  type      String  @default("reddit") @db.VarChar(50)
   body      String? @db.Text
   bodyHtml  String? @map("body_html") @db.Text
   upvotes   Int     @default(0)
   downvotes Int     @default(0)
 
+  // Timestamps
+  createdAt DateTime @default(now()) @map("created_at")
+  postedAt  DateTime @map("posted_at") /// The original creation time on Reddit.
+
+  @@index([subreddit]) // For filtering by subreddit
+  @@index([author]) // For finding posts by author
+  @@index([postedAt]) // For sorting by original post date
+  // Indexes & Mapping
   @@map("reddit_posts")
 }
 
+/// Defines the types of push notification subscriptions.
 enum SubscriptionType {
-  web
-  fcm
+  web // Web Push Protocol (browsers)
+  fcm // Firebase Cloud Messaging (native apps)
 }
 
+/// Stores user subscriptions for push notifications.
 model Subscription {
+  // Fields
   id        Int              @id @default(autoincrement())
   ipAddress String           @map("ip_address") @db.VarChar(150)
   type      SubscriptionType @default(web)
   endpoint  String           @unique @db.VarChar(350)
-  keys      Json?
-  createdAt DateTime         @default(now()) @map("created_at")
+  keys      Json? /// Auth keys required for sending push notifications.
 
-  // Relation to Location
+  // Timestamps
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relations
   locations Location[]
+  // Note: Querying the `keys` JSON field can be slow at scale on MySQL.
 
-  @@unique([endpoint, type, keys], name: "endpoint_type_keys")
+  @@unique([endpoint, type, keys], name: "endpoint_type_keys") // Prevents duplicate subscriptions.
+  // Indexes & Mapping
   @@map("subscriptions")
 }
 
+/// Stores location data points for subscriptions.
 model Location {
-  id             Int    @id @default(autoincrement())
-  subscriptionId Int // Foreign key to Subscription
-  ipAddress      String @map("ip_address") @db.VarChar(150)
+  // Fields
+  id               Int     @id @default(autoincrement())
+  ipAddress        String  @map("ip_address") @db.VarChar(150)
+  accuracy         Float?
+  altitude         Float?
+  altitudeAccuracy Float?  @map("altitude_accuracy")
+  heading          Float?
+  latitude         Float?
+  longitude        Float?
+  speed            Float?
+  mocked           Boolean @map("mocked") /// True if location was from a mock provider.
+  timestamp        BigInt? @map("timestamp") /// Original Unix timestamp from the client.
 
-  // Coords fields
-  accuracy         Float? @map("accuracy")
-  altitude         Float? @map("altitude")
-  altitudeAccuracy Float? @map("altitude_accuracy")
-  heading          Float? @map("heading")
-  latitude         Float? @map("latitude")
-  longitude        Float? @map("longitude")
-  speed            Float? @map("speed")
-
-  // Additional fields
-  mocked    Boolean @map("mocked") // Indicates if the location is mocked
-  timestamp BigInt? @map("timestamp") // Stores the timestamp
-
-  // Address fields
-  city             String? @map("city") @db.VarChar(150)
-  country          String? @map("country") @db.VarChar(150)
-  district         String? @map("district") @db.VarChar(150)
+  // Geocoded Address Fields
+  city             String? @db.VarChar(150)
+  country          String? @db.VarChar(150)
+  district         String? @db.VarChar(150)
   formattedAddress String? @map("formatted_address") @db.Text
   isoCountryCode   String? @map("iso_country_code") @db.VarChar(10)
-  name             String? @map("name") @db.VarChar(150)
+  name             String? @db.VarChar(150)
   postalCode       String? @map("postal_code") @db.VarChar(20)
-  region           String? @map("region") @db.VarChar(150)
-  street           String? @map("street") @db.VarChar(150)
+  region           String? @db.VarChar(150)
+  street           String? @db.VarChar(150)
   streetNumber     String? @map("street_number") @db.VarChar(50)
-  subregion        String? @map("subregion") @db.VarChar(150)
-  timezone         String? @map("timezone") @db.VarChar(100)
+  subregion        String? @db.VarChar(150)
+  timezone         String? @db.VarChar(100)
 
+  // Timestamps
   createdAt DateTime @default(now()) @map("created_at")
 
-  // Relation to Subscription
-  subscription Subscription @relation(fields: [subscriptionId], references: [id])
+  // Relations
+  subscriptionId Int
+  subscription   Subscription @relation(fields: [subscriptionId], references: [id])
 
+  @@index([subscriptionId]) // To quickly find all locations for a subscription.
+  @@index([timestamp]) // To filter or sort by time.
+  @@index([latitude, longitude]) // For basic geographic queries.
+  // Indexes & Mapping
   @@map("locations")
 }
 
+/// Stores messages received from Reddit (comments, DMs, etc.).
 model RedditMessage {
-  id                 Int      @id @default(autoincrement())
-  redditId           String   @unique @map("reddit_id")
-  type               String // "comment", "post", "dm"
-  author             String   @map("author")
-  content            String   @map("content") @db.Text
-  bodyHtml           String?  @map("body_html") @db.Text
-  subreddit          String?  @map("subreddit")
-  contextUrl         String?  @map("context_url")
-  isRead             Boolean  @default(false) @map("is_read")
-  createdAt          DateTime @map("created_at")
-  receivedAt         DateTime @default(now()) @map("received_at")
-  parentId           String?  @map("parent_id") // For thread tracking
-  rawData            Json?    @map("raw_data") // Store original API response
-  messageType        String?  @map("message_type") // "inbox", "sent", "modmail"
-  isSubredditModMail Boolean  @default(false) @map("is_subreddit_mod_mail")
-  isInternal         Boolean  @default(false) @map("is_internal") // For mod discussions
+  // Fields
+  id                 Int     @id @default(autoincrement())
+  redditId           String  @unique @map("reddit_id") /// The unique ID from the Reddit API.
+  type               String /// e.g., "comment", "post", "dm".
+  author             String
+  content            String  @db.Text
+  bodyHtml           String? @map("body_html") @db.Text
+  subreddit          String?
+  contextUrl         String? @map("context_url")
+  parentId           String? @map("parent_id") /// For message threading.
+  messageType        String? @map("message_type") /// e.g., "inbox", "sent", "modmail".
+  isRead             Boolean @default(false) @map("is_read")
+  isSubredditModMail Boolean @default(false) @map("is_subreddit_mod_mail")
+  isInternal         Boolean @default(false) @map("is_internal") /// For mod-to-mod discussions.
+  rawData            Json?   @map("raw_data") /// Stores the original API response.
+
+  // Timestamps
+  createdAt  DateTime @map("created_at") /// The original creation time on Reddit.
+  receivedAt DateTime @default(now()) @map("received_at")
 
   @@index([author])
   @@index([createdAt])
   @@index([isRead])
+  @@index([subreddit])
+  @@index([parentId]) // Essential for building threaded views efficiently.
+  // Indexes & Mapping
   @@map("reddit_messages")
+}
+
+/// Stores error reports sent from client applications.
+model ErrorReport {
+  // Fields
+  id        String   @id @default(cuid())
+  message   String   @db.Text
+  stack     String?  @db.Text
+  platform  String? /// 'android', 'ios', 'web', etc.
+  isFatal   Boolean? /// True if the error crashed the client app.
+  errorInfo Json? /// React Error Boundary info, like componentStack.
+  payload   Json /// The complete, raw JSON payload from the client.
+
+  // Timestamps
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([platform])
+  @@index([isFatal])
+  @@index([message(length: 191)]) // Index the start of messages for fast lookups.
+  @@index([stack(length: 191)])
+  // Indexes & Mapping
+  @@map("error_reports")
 }
