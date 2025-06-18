@@ -42,14 +42,11 @@ services:
       - "5434:5432"
 
 # Define the custom network that our services will share.
-# This allows them to communicate with each other using their service names
-# (e.g., the webapp can connect to 'db' on port 5432).
 networks:
-  # This network will be named exactly 'codebuilder-net'
-  # with no project prefix.
   codebuilder-net:
-    name: codebuilder-net
-    driver: bridge
+    # This explicitly tells Compose that the network is created
+    # and managed outside of its control, which our deploy.yml now does.
+    external: true
 
 # Define the named volumes for persistent data storage.
 # Docker manages the lifecycle of these volumes.

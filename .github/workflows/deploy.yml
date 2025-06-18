@@ -10,7 +10,7 @@ jobs:
     name: '🐳 Build & Deploy'
     steps:
       - name: '🔍 Checkout Code'
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4 # Use the latest version
 
       # ========================
       # 🔐 Secrets & Config Setup
@@ -27,7 +27,10 @@ jobs:
         run: |
           echo "$GOOGLE_SERVICES_JSON_BASE64" | base64 --decode > google-services.json
           echo "🔄 Validating JSON..."
-          jq empty google-services.json  # Requires jq installed
+          if ! jq empty google-services.json; then
+            echo "❌ JSON validation failed!"
+            exit 1
+          fi
         env:
           GOOGLE_SERVICES_JSON_BASE64: ${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}
 
@@ -41,13 +44,31 @@ jobs:
       # =======================================================
       - name: '🚀 Launch or Update Services'
         run: |
-          docker compose up --build -d
-          # 'up' brings all services up.
-          # '--build' rebuilds the webapp image if code has changed.
-          # '-d' runs the containers in the background (detached mode).
-          # Docker Compose automatically stops and replaces only the containers that need updating.
+          # Step 1: Ensure the Docker network exists.
+          # This command will create the network if it's missing,
+          # and do nothing if it already exists. The '|| true' part
+          # prevents the workflow from failing if it already exists.
+          echo "Ensuring network 'codebuilder-net' exists..."
+          docker network create codebuilder-net || true
+
+          # Step 2: Bring up the database if it's not running.
+          # This command ensures the 'db' service is up and running.
+          # On the first run, it will create and start the db container.
+          # On subsequent runs, it will see the db is already running and do nothing.
+          echo "Ensuring database service is running..."
+          docker compose up -d db
+
+          # Step 3: Rebuild and restart ONLY the webapp service.
+          # This is the core of the update process.
+          # --no-deps: Prevents Compose from touching the 'db' service.
+          # --build: Forces a rebuild of the 'webapp' image using the latest code.
+          # Docker Compose will automatically stop the old webapp container
+          # and start a new one based on the new image.
+          echo "Rebuilding and deploying the webapp..."
+          docker compose up -d --no-deps --build webapp
 
       - name: '🗑 Prune Old Docker Images'
+        if: always() # Run this step even if the deployment fails
         run: |
           docker image prune -af
           # This is an optional but recommended step to clean up old, unused image layers.
