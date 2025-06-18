@@ -81,7 +81,7 @@ const AutoScrollingPortfolio: React.FC = () => {
             {clients.map((client, idx) => (
               <div
                 key={`client-${idx}`}
-                className={`shadow-1 ${Roboto.className} bg-[#fafafa] p-[15px] border-t border-b border-[#f3f3f3] rounded-[3px] flex-shrink-0 w-1/4 shadow-lg border border-gray-200 rounded-lg text-center m-2 flex flex-col`}
+                className={`shadow-1 ${Roboto.className} bg-[#fafafa] p-[15px] border-t border-b flex-shrink-0 w-1/4 shadow-lg border border-gray-200 rounded-lg text-center m-2 flex flex-col`}
               >
                 <img src={client.image} alt={client.name} className="h-20 mx-auto" />
                 <h3 className={`${Raleway.className} text-[20px] font-light mt-4`}>

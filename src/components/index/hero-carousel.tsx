@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef, useState, useEffect } from 'react'
-import { motion, AnimatePresence, Variants } from 'framer-motion'
+import { motion, AnimatePresence, Variants } from 'motion/react'
 import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
