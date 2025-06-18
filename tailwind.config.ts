@@ -3,8 +3,9 @@ import colors from 'tailwindcss/colors'
 
 const config: Config = {
   content: [
-    './src/app/**/*.{js,ts,jsx,tsx}', // Include files in src/app
-    './src/components/**/*.{js,ts,jsx,tsx}', // Optionally include other directories
+    './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/components/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
     extend: {
@@ -17,8 +18,10 @@ const config: Config = {
           5: '#26b7e1',
           6: '#09afdf',
         },
-        background: 'var(--background)',
-        foreground: 'var(--foreground)',
+        // background: 'var(--background)',
+        //foreground: 'var(--foreground)',
+        background: 'hsl(var(--background))',
+        foreground: 'hsl(var(--foreground))',
         transparent: 'transparent',
         current: 'currentColor',
         black: colors.black,

@@ -9,6 +9,14 @@ const nextConfig: NextConfig = {
     resolveExtensions: ['.mdx', '.tsx', '.ts', '.jsx', '.js', '.mjs', '.json'],
   },
 
+  output: 'export',
+
+  // Note: If you are using next/image, you may need to add an
+  // unoptimized: true flag here if you are not using a custom loader.
+  images: {
+    unoptimized: true,
+  },
+
   eslint: {
     ignoreDuringBuilds: true,
   },
