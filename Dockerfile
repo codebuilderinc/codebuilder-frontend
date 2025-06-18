@@ -1,46 +1,52 @@
-# ====================
-# 1) Build Stage
-# ====================
+# Stage 1: Build the application
+# We name this stage 'builder'
 FROM node:22-alpine AS builder
+
+# Set the working directory
 WORKDIR /app
+
+# Install pnpm globally
 RUN npm install -g pnpm
 
+# Copy package manifests and lockfile
 COPY package.json pnpm-lock.yaml ./
+
+# Install dependencies
 RUN pnpm install --strict-peer-dependencies=false
 
+# Copy the rest of your application code
 COPY . .
+
+# Run Prisma Generate (this is safe and often needed for types)
 RUN npx prisma generate
+
+# Build the application. This will now succeed because the database
+# service will be running and available on the network.
 RUN pnpm run build
 
-# ====================
-# 2) Production Stage
-# ====================
+# Stage 2: Production Image
+# Create a smaller, cleaner image for production
 FROM node:22-alpine
-WORKDIR /app
-RUN npm install -g pnpm
 
-# We use 'nc' to check if the database port is open.
+WORKDIR /app
+
+# Install netcat for the entrypoint healthcheck
 RUN apk add --no-cache netcat-openbsd
 
-# Copy only the necessary files from the builder stage.
-COPY --from=builder /app/node_modules ./
-COPY --from=builder /app/package.json ./
-COPY --from=builder /app/pnpm-lock.yaml ./
+# Copy only the necessary production artifacts from the 'builder' stage
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/pnpm-lock.yaml ./pnpm-lock.yaml
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/public ./public
-
-# Copy and prepare the entrypoint script.
 COPY docker-entrypoint.sh .
+
+# Ensure the entrypoint is executable
 RUN chmod +x docker-entrypoint.sh
 
-
-# Install production-only dependencies.
-RUN pnpm install --prod --strict-peer-dependencies=false
-
-EXPOSE 3000
-
-# The ENTRYPOINT is our script.
-# The CMD is the command that gets passed to our script after migrations run.
+# This is the command that will run when the container starts
 ENTRYPOINT ["./docker-entrypoint.sh"]
+
+# The default command for the entrypoint script
 CMD ["pnpm", "start"]
