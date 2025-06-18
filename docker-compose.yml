@@ -31,24 +31,20 @@ services:
       - ./.env
     volumes:
       # Mount a named volume to persist the database data.
-      # This is crucial to prevent data loss when the container is recreated.
       - postgres-data:/var/lib/postgresql/data
     networks:
       # Connect this service to our custom network.
       - codebuilder-net
-    # Exposing the port is optional if only the webapp needs to connect,
-    # but it's useful for debugging from your host machine.
+    # Exposing the port is crucial for our new workflow health check.
     ports:
       - "5434:5432"
 
 # Define the custom network that our services will share.
 networks:
   codebuilder-net:
-    # This explicitly tells Compose that the network is created
-    # and managed outside of its control, which our deploy.yml now does.
+    # This correctly tells Compose that the network is managed outside its control.
     external: true
 
 # Define the named volumes for persistent data storage.
-# Docker manages the lifecycle of these volumes.
 volumes:
   postgres-data:

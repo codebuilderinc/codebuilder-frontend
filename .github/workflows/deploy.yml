@@ -12,7 +12,6 @@ jobs:
       - name: '🔍 Checkout Code'
         uses: actions/checkout@v4
 
-      # (Secrets and .env setup steps remain the same)
       - name: '🔒 Verify Secrets Exist'
         run: |
           if [ -z "${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}" ]; then
@@ -38,11 +37,11 @@ jobs:
           echo "" >> .env
 
       # =======================================================
-      # 🐳 Docker Operations (This section is updated)
+      # 🐳 Docker Operations
       # =======================================================
       - name: '🚀 Build, Launch, and Update Services'
         run: |
-          # Step 1: Ensure the Docker network exists.
+          # Step 1: Explicitly check for the network and create it only if it's missing.
           if ! docker network ls | grep -q "codebuilder-net"; then
             echo "Network 'codebuilder-net' not found. Creating it..."
             docker network create codebuilder-net
@@ -51,7 +50,6 @@ jobs:
           fi
 
           # Step 2: Explicitly check and manage the database container.
-          # This avoids the 'docker compose up' conflict entirely.
           DB_CONTAINER_NAME="codebuilder-postgres-db"
           if [ $(docker ps -a -q -f name=^/${DB_CONTAINER_NAME}$) ]; then
             # The container exists, check if it is running.
@@ -75,10 +73,18 @@ jobs:
           done
           echo "✅ Database is healthy and listening."
 
-          # Step 4: Build and deploy the webapp.
-          # This part remains the same as it correctly targets only the webapp.
-          echo "Building and deploying the webapp..."
-          docker compose up -d --build --force-recreate --no-deps webapp
+          # Step 4: Build the new webapp image.
+          echo "Building the latest webapp image..."
+          docker compose build webapp
+
+          # Step 5: Explicitly stop and remove the old webapp container to prevent conflicts.
+          echo "Stopping and removing old webapp container if it exists..."
+          docker compose stop webapp || true
+          docker compose rm -f webapp || true
+
+          # Step 6: Deploy the new webapp container.
+          echo "Deploying the new webapp container..."
+          docker compose up -d --no-deps webapp
 
       - name: '🗑 Prune Old Docker Images'
         if: always()
