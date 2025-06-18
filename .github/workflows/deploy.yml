@@ -1,0 +1,53 @@
+name: '🚀 Deploy Next.js Docker App'
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-and-deploy:
+    runs-on: self-hosted
+    name: '🐳 Build & Deploy'
+    steps:
+      - name: '🔍 Checkout Code'
+        uses: actions/checkout@v3
+
+      # ========================
+      # 🔐 Secrets & Config Setup
+      # ========================
+      - name: '🔒 Verify Secrets Exist'
+        run: |
+          if [ -z "${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}" ]; then
+            echo "❌ Critical error: GOOGLE_SERVICES_JSON_BASE64 secret missing!"
+            exit 1
+          fi
+          echo "✅ All secrets present"
+
+      - name: '📁 Create google-services.json'
+        run: |
+          echo "$GOOGLE_SERVICES_JSON_BASE64" | base64 --decode > google-services.json
+          echo "🔄 Validating JSON..."
+          jq empty google-services.json  # Requires jq installed
+        env:
+          GOOGLE_SERVICES_JSON_BASE64: ${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}
+
+      - name: '⚙️ Create .env File'
+        run: |
+          echo "${{ secrets.ENV_FILE_CONTENT }}" > .env
+          echo "" >> .env  # Ensure trailing newline
+
+      # =======================================================
+      # 🐳 Docker Compose Operations (This section is updated)
+      # =======================================================
+      - name: '🚀 Launch or Update Services'
+        run: |
+          docker compose up --build -d
+          # 'up' brings all services up.
+          # '--build' rebuilds the webapp image if code has changed.
+          # '-d' runs the containers in the background (detached mode).
+          # Docker Compose automatically stops and replaces only the containers that need updating.
+
+      - name: '🗑 Prune Old Docker Images'
+        run: |
+          docker image prune -af
+          # This is an optional but recommended step to clean up old, unused image layers.
