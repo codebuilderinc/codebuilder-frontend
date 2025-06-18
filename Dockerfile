@@ -20,8 +20,7 @@ COPY . .
 # Run Prisma Generate (this is safe and often needed for types)
 RUN npx prisma generate
 
-# Build the application. This will now succeed because the database
-# service will be running and available on the network.
+# Build the application. This succeeds because the database is available.
 RUN pnpm run build
 
 # Stage 2: Production Image
@@ -29,6 +28,11 @@ RUN pnpm run build
 FROM node:22-alpine
 
 WORKDIR /app
+
+# ===================================================================
+# THE FIX: Install pnpm in the final production image as well.
+# ===================================================================
+RUN npm install -g pnpm
 
 # Install netcat for the entrypoint healthcheck
 RUN apk add --no-cache netcat-openbsd
