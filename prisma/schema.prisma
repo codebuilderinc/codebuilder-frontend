@@ -161,8 +161,9 @@ model ErrorReport {
   @@index([createdAt])
   @@index([platform])
   @@index([isFatal])
-  @@index([message(length: 191)]) // Index the start of messages for fast lookups.
-  @@index([stack(length: 191)])
+  // THE FIX: Removed the MySQL-specific '(length: 191)' from these two lines.
+  @@index([message])
+  @@index([stack])
   // Indexes & Mapping
   @@map("error_reports")
 }
