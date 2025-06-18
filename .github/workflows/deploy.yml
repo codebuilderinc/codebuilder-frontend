@@ -50,31 +50,35 @@ jobs:
             echo "Network 'codebuilder-net' already exists. Skipping creation."
           fi
 
-          # Step 2: Start the database service independently.
-          # The 'up -d' command is idempotent; it will start the 'db' if it's not running,
-          # and do nothing if it already is.
-          echo "Starting database service..."
-          docker compose up -d db
+          # Step 2: Explicitly check and manage the database container.
+          # This avoids the 'docker compose up' conflict entirely.
+          DB_CONTAINER_NAME="codebuilder-postgres-db"
+          if [ $(docker ps -a -q -f name=^/${DB_CONTAINER_NAME}$) ]; then
+            # The container exists, check if it is running.
+            if [ $(docker ps -q -f name=^/${DB_CONTAINER_NAME}$) ]; then
+              echo "Database container '${DB_CONTAINER_NAME}' is already running."
+            else
+              # The container exists but is stopped, so start it.
+              echo "Database container '${DB_CONTAINER_NAME}' exists but is stopped. Starting it..."
+              docker start ${DB_CONTAINER_NAME}
+            fi
+          else
+            # The container does not exist, so create it for the first time.
+            echo "Database container '${DB_CONTAINER_NAME}' not found. Creating it..."
+            docker compose up -d db
+          fi
 
           # Step 3: Wait for the database to be fully ready.
-          # We use netcat (nc) to poll the database port exposed to the host machine.
-          # This is critical to ensure the build doesn't start prematurely.
-          # NOTE: We use port 5434 because that is what you mapped in your docker-compose.yml
           echo "Waiting for database to become available on localhost:5434..."
           while ! nc -z localhost 5434; do
-            sleep 1 # wait for 1 second before trying again
+            sleep 1
           done
           echo "✅ Database is healthy and listening."
 
-          # Step 4: NOW that the DB is running, build the webapp image.
-          # The Docker builder will be able to connect to the 'db' service over the network.
-          echo "Building the webapp image..."
-          docker compose build webapp
-
-          # Step 5: Deploy the newly built webapp container.
-          # This command surgically replaces the webapp without touching the database.
-          echo "Deploying the new webapp container..."
-          docker compose up -d --no-deps --force-recreate webapp
+          # Step 4: Build and deploy the webapp.
+          # This part remains the same as it correctly targets only the webapp.
+          echo "Building and deploying the webapp..."
+          docker compose up -d --build --force-recreate --no-deps webapp
 
       - name: '🗑 Prune Old Docker Images'
         if: always()
