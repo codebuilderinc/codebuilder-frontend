@@ -1,0 +1,57 @@
+# Define the services (containers) that make up your application.
+services:
+  # 1. The Next.js Web Application Service
+  webapp:
+    # Build the image from the Dockerfile in the current directory.
+    build: .
+    container_name: codebuilder-webapp
+    # Ensure the webapp starts after the database is ready.
+    depends_on:
+      - db
+    # Restart the container automatically unless it is explicitly stopped.
+    restart: unless-stopped
+    # Pass the .env file to the container for environment variables.
+    env_file:
+      - ./.env
+    ports:
+      # Map port 3000 on the host to port 3000 in the container.
+      - "3000:3000"
+    networks:
+      # Connect this service to our custom network.
+      - codebuilder-net
+
+  # 2. The PostgreSQL Database Service
+  db:
+    # Use the official PostgreSQL 15 image from Docker Hub.
+    image: postgres:15-alpine
+    container_name: codebuilder-postgres-db
+    restart: unless-stopped
+    # Pass the .env file, which must contain the DB credentials.
+    env_file:
+      - ./.env
+    volumes:
+      # Mount a named volume to persist the database data.
+      # This is crucial to prevent data loss when the container is recreated.
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      # Connect this service to our custom network.
+      - codebuilder-net
+    # Exposing the port is optional if only the webapp needs to connect,
+    # but it's useful for debugging from your host machine.
+    ports:
+      - "5434:5432"
+
+# Define the custom network that our services will share.
+# This allows them to communicate with each other using their service names
+# (e.g., the webapp can connect to 'db' on port 5432).
+networks:
+  # This network will be named exactly 'codebuilder-net'
+  # with no project prefix.
+  codebuilder-net:
+    name: codebuilder-net
+    driver: bridge
+
+# Define the named volumes for persistent data storage.
+# Docker manages the lifecycle of these volumes.
+volumes:
+  postgres-data:
