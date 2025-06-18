@@ -1,0 +1,28 @@
+# This file is ONLY for running the database on your local machine
+# for development tasks like running migrations.
+
+services:
+  db:
+    image: postgres:15-alpine
+    # We use the same container name as production for consistency.
+    container_name: codebuilder-postgres-db
+    restart: unless-stopped
+    env_file:
+      - ./.env
+    ports:
+      # This maps your local machine's port 5434 to the container's port 5432.
+      # You can connect to this from your local machine if needed.
+      - "5434:5432"
+    volumes:
+      # Persists data in a local volume named 'postgres-data-local'
+      - postgres-data-local:/var/lib/postgresql/data
+    networks:
+      # Connects to the same network so your app can find it at 'db:5432'
+      - codebuilder-net
+
+volumes:
+  postgres-data-local:
+
+networks:
+  codebuilder-net:
+    name: codebuilder-net
