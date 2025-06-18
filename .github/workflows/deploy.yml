@@ -10,7 +10,7 @@ jobs:
     name: '🐳 Build & Deploy'
     steps:
       - name: '🔍 Checkout Code'
-        uses: actions/checkout@v4 # Use the latest version
+        uses: actions/checkout@v4
 
       # ========================
       # 🔐 Secrets & Config Setup
@@ -37,38 +37,40 @@ jobs:
       - name: '⚙️ Create .env File'
         run: |
           echo "${{ secrets.ENV_FILE_CONTENT }}" > .env
-          echo "" >> .env  # Ensure trailing newline
+          echo "" >> .env
 
       # =======================================================
       # 🐳 Docker Compose Operations (This section is updated)
       # =======================================================
       - name: '🚀 Launch or Update Services'
         run: |
-          # Step 1: Ensure the Docker network exists.
-          # This command will create the network if it's missing,
-          # and do nothing if it already exists. The '|| true' part
-          # prevents the workflow from failing if it already exists.
-          echo "Ensuring network 'codebuilder-net' exists..."
-          docker network create codebuilder-net || true
+          # Step 1: Explicitly check for the network and create it only if it's missing.
+          # This is more robust than the previous '|| true' syntax.
+          if ! docker network ls | grep -q "codebuilder-net"; then
+            echo "Network 'codebuilder-net' not found. Creating it..."
+            docker network create codebuilder-net
+          else
+            echo "Network 'codebuilder-net' already exists. Skipping creation."
+          fi
 
-          # Step 2: Bring up the database if it's not running.
-          # This command ensures the 'db' service is up and running.
-          # On the first run, it will create and start the db container.
-          # On subsequent runs, it will see the db is already running and do nothing.
-          echo "Ensuring database service is running..."
-          docker compose up -d db
+          # Step 2: Bring up all services defined in the compose file.
+          # This command is idempotent. On the first run, it creates and starts everything.
+          # On subsequent runs, it will connect to existing containers and ensure they
+          # are started if they were stopped, but it will NOT try to re-create them.
+          # This safely ensures the database is running before we proceed.
+          echo "Ensuring all services are up..."
+          docker compose up -d
 
-          # Step 3: Rebuild and restart ONLY the webapp service.
-          # This is the core of the update process.
-          # --no-deps: Prevents Compose from touching the 'db' service.
-          # --build: Forces a rebuild of the 'webapp' image using the latest code.
-          # Docker Compose will automatically stop the old webapp container
-          # and start a new one based on the new image.
-          echo "Rebuilding and deploying the webapp..."
-          docker compose up -d --no-deps --build webapp
+          # Step 3: Force a rebuild and replacement of the webapp service ONLY.
+          # This is the key command for zero-downtime-style updates of your app.
+          # --no-deps: Guarantees that the 'db' container will not be touched.
+          # --build: Rebuilds the webapp image from your latest source code.
+          # --force-recreate: Explicitly stops the old webapp container and starts a new one
+          #                   from the new image, even if the configuration is the same.
+          echo "Rebuilding and force-recreating the webapp service..."
+          docker compose up -d --no-deps --build --force-recreate webapp
 
       - name: '🗑 Prune Old Docker Images'
-        if: always() # Run this step even if the deployment fails
+        if: always() # This step will run even if the deployment fails.
         run: |
           docker image prune -af
-          # This is an optional but recommended step to clean up old, unused image layers.
