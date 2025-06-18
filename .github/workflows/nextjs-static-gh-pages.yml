@@ -2,8 +2,8 @@ name: 🚀 Deploy Static Next.js to GitHub Pages
 
 on:
   push:
-    branches: ['gh-static']
-  workflow_dispatch:
+    branches: ['gh-static'] # Triggers on push to this branch
+  workflow_dispatch: # Allows manual triggering
 
 permissions:
   contents: read
@@ -16,8 +16,28 @@ concurrency:
 
 jobs:
   build:
-    name: 🏗 Build Static Next.js
+    name: 🏗 Build Static Site
     runs-on: ubuntu-latest
+
+    # ===================================================================
+    # THE FIX, PART 1: Create a temporary PostgreSQL database service
+    # This database will only exist for the duration of this build job.
+    # ===================================================================
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_USER: user
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: temp_db
+        ports:
+          - 5432:5432 # Map port 5432 on the runner to the container's port 5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - name: 🔍 Checkout repository
         uses: actions/checkout@v4
@@ -29,17 +49,13 @@ jobs:
             echo "manager=pnpm" >> $GITHUB_ENV
             echo "command=install" >> $GITHUB_ENV
             echo "runner=pnpm exec" >> $GITHUB_ENV
-          elif [ -f "yarn.lock" ]; then
-            echo "manager=yarn" >> $GITHUB_ENV
-            echo "command=install" >> $GITHUB_ENV
-            echo "runner=yarn" >> $GITHUB_ENV
           else
             echo "manager=npm" >> $GITHUB_ENV
             echo "command=ci" >> $GITHUB_ENV
             echo "runner=npx --no-install" >> $GITHUB_ENV
           fi
 
-      - name: 📦 Install pnpm if needed
+      - name: 📦 Install pnpm
         if: env.manager == 'pnpm'
         run: npm install -g pnpm
 
@@ -49,55 +65,33 @@ jobs:
           node-version: '20'
           cache: ${{ env.manager }}
 
-      - name: 📝 Verify Environment
-        run: |
-          echo "Node.js $(node -v)"
-          echo "npm $(npm -v)"
-          ${{ env.manager }} --version
-
       - name: 🌐 Setup GitHub Pages
         uses: actions/configure-pages@v5
 
-      # ========================
-      # 🔐 Secrets & Config Setup
-      # ========================
-      - name: 🔒 Verify Secrets Exist
-        run: |
-          if [ -z "${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}" ]; then
-            echo "❌ Critical error: GOOGLE_SERVICES_JSON_BASE64 secret missing!"
-            exit 1
-          fi
-          echo "✅ All secrets present"
-
-      - name: 📁 Create google-services.json in Root
-        run: |
-          echo "$GOOGLE_SERVICES_JSON_BASE64" | base64 --decode > google-services.json
-          jq empty google-services.json  # Validate JSON
-        env:
-          GOOGLE_SERVICES_JSON_BASE64: ${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}
-
-      - name: 📦 Restore cache
-        uses: actions/cache@v4
-        with:
-          path: .next/cache
-          key: nextjs-${{ runner.os }}-${{ hashFiles('**/package-lock.json', '**/yarn.lock', '**/pnpm-lock.yaml') }}
-          restore-keys: |
-            nextjs-${{ runner.os }}-
+      # NOTE: We do NOT need to create .env or secrets here, as we provide them directly to the build step below.
 
       - name: 📥 Install dependencies
         run: ${{ env.manager }} ${{ env.command }}
 
       - name: 🏗 Generate Static Build
+        # =====================================================================
+        # THE FIX, PART 2: Provide the database URL to the build command
+        # This points your app to the temporary database service we created above.
+        # Note the removal of the deprecated 'next export' command.
+        # =====================================================================
+        env:
+          DATABASE_URL: 'postgresql://user:password@localhost:5432/temp_db'
+          SHADOW_DATABASE_URL: 'postgresql://user:password@localhost:5432/temp_db_shadow'
+          # Add any other required build-time environment variables here
         run: |
-          echo "⚠️ Exporting static files. Pages with SSR/API routes will be ignored."
+          echo "Building static files..."
           ${{ env.runner }} next build
-          ${{ env.runner }} next export
-          touch out/.nojekyll  # Prevent GitHub from ignoring _next folder
+          touch out/.nojekyll
 
       - name: 📤 Upload static site
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./out # This is where static files go after next export
+          path: ./out # With 'output: export', Next.js automatically puts files here.
 
   deploy:
     name: 🚀 Deploy to GitHub Pages
