@@ -6,7 +6,12 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down",
+    "docker:logs": "docker compose logs -f",
+    "docker:build": "docker compose up -d --build --no-deps webapp",
+    "docker:rebuild": "docker compose down --volumes && docker compose up --build -d"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.7.2",
@@ -22,8 +27,8 @@
     "classnames": "^2.5.1",
     "clsx": "^2.1.1",
     "firebase-admin": "^13.4.0",
-    "framer-motion": "12.5.0",
     "gsap": "^3.13.0",
+    "motion": "^12.18.1",
     "next": "^15.3.3",
     "next-nprogress-bar": "^2.4.7",
     "next-transition-router": "^0.2.11",
@@ -39,7 +44,7 @@
     "web-push": "^3.6.7"
   },
   "devDependencies": {
-    "@types/node": "^20.19.1",
+    "@types/node": "^22.14.0",
     "@types/react": "npm:types-react@19.0.0-rc.1",
     "@types/react-dom": "npm:types-react-dom@19.0.0-rc.1",
     "@types/web-push": "^3.6.4",
