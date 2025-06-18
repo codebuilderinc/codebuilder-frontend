@@ -67,13 +67,19 @@ jobs:
           while ! nc -z localhost 5434; do sleep 1; done
           echo "✅ Database is healthy."
 
+          # =====================================================================
+          # THE FIX: Force the build to run in default server mode.
+          # This overrides any conflicting environment variables.
+          # =====================================================================
+          echo "Ensuring build runs in default server mode..."
+          export NEXT_OUTPUT_MODE='standalone'
+
           # Step 4: Build the new webapp image.
           echo "Building the latest webapp image..."
           docker compose build webapp
 
-          # Step 5: THE DEFINITIVE FIX. Forcefully remove the old webapp container by its exact name.
-          # This is the most direct command and bypasses any ambiguity from Docker Compose's state.
-          echo "Forcefully removing old webapp container to prevent conflicts..."
+          # Step 5: Forcefully remove the old webapp container to prevent conflicts.
+          echo "Forcefully removing old webapp container if it exists..."
           docker rm -f codebuilder-webapp || true
 
           # Step 6: Deploy the new webapp container.

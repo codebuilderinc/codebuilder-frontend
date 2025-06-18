@@ -1,5 +1,8 @@
 import type { NextConfig } from 'next'
 
+// A helper variable to easily check if we are in static export mode.
+const isStaticExport = process.env.NEXT_OUTPUT_MODE === 'export'
+
 const nextConfig: NextConfig = {
   /**
    * FIX: The 'turbo' settings have been moved to the top-level 'turbopack' property
@@ -9,12 +12,14 @@ const nextConfig: NextConfig = {
     resolveExtensions: ['.mdx', '.tsx', '.ts', '.jsx', '.js', '.mjs', '.json'],
   },
 
-  output: 'export',
+  // Conditionally set the output mode for the build.
+  output: isStaticExport ? 'export' : undefined,
 
   // Note: If you are using next/image, you may need to add an
   // unoptimized: true flag here if you are not using a custom loader.
+  // Conditionally disable image optimization only for the static export.
   images: {
-    unoptimized: true,
+    unoptimized: isStaticExport,
   },
 
   eslint: {
