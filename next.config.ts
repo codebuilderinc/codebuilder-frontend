@@ -1,15 +1,23 @@
 import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
-  experimental: {
-    turbo: {
-      resolveExtensions: ['.mdx', '.tsx', '.ts', '.jsx', '.js', '.mjs', '.json'],
-    },
+  /**
+   * FIX: The 'turbo' settings have been moved to the top-level 'turbopack' property
+   * as Turbopack is now considered stable in Next.js.
+   */
+  turbopack: {
+    resolveExtensions: ['.mdx', '.tsx', '.ts', '.jsx', '.js', '.mjs', '.json'],
   },
+
   eslint: {
     ignoreDuringBuilds: true,
   },
-  // trailingSlash: true, // Ensures compatibility with GitHub Pages
+
+  /**
+   * Note: The 'webpack' configuration below is applied when you run 'next build'
+   * or the standard 'next dev'. It is ignored when you run 'next dev --turbopack',
+   * as Turbopack uses its own Rust-based compiler.
+   */
   webpack: (config, { isServer }) => {
     // Modify Webpack's watchOptions
     config.watchOptions = {
@@ -19,21 +27,6 @@ const nextConfig: NextConfig = {
     }
 
     return config
-  },
-  env: {
-    // Server-side only variables
-    VAPID_PRIVATE_KEY: process.env.VAPID_PRIVATE_KEY,
-    DATABASE_URL: process.env.DATABASE_URL,
-    FCM_SERVER_KEY: process.env.FCM_SERVER_KEY,
-    REDDIT_CLIENT_ID: process.env.REDDIT_CLIENT_ID,
-    REDDIT_CLIENT_SECRET: process.env.REDDIT_CLIENT_SECRET,
-    REDDIT_USERNAME: process.env.REDDIT_USERNAME,
-    REDDIT_PASSWORD: process.env.REDDIT_PASSWORD,
-
-    // Public variables (exposed to client-side)
-    NEXT_PUBLIC_VAPID_PUBLIC_KEY: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
-    NEXT_PUBLIC_MATOMO_URL: process.env.NEXT_PUBLIC_MATOMO_URL,
-    NEXT_PUBLIC_MATOMO_SITE_ID: process.env.NEXT_PUBLIC_MATOMO_SITE_ID,
   },
 }
 
