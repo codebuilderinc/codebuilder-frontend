@@ -26,6 +26,19 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: true,
   },
 
+  // Enable logging configuration
+  logging: {
+    fetches: {
+      fullUrl: true,
+    },
+  },
+
+  // Ensure proper console output in Docker containers
+  experimental: {
+    // This helps with console output in Docker
+    forceSwcTransforms: true,
+  },
+
   /**
    * Note: The 'webpack' configuration below is applied when you run 'next build'
    * or the standard 'next dev'. It is ignored when you run 'next dev --turbopack',
