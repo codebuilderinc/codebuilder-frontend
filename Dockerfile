@@ -37,6 +37,11 @@ RUN npm install -g pnpm
 # Install netcat for the entrypoint healthcheck
 RUN apk add --no-cache netcat-openbsd
 
+# Set environment variables for better console output
+ENV FORCE_COLOR=1
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+
 # Copy only the necessary production artifacts from the 'builder' stage
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
