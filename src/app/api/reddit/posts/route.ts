@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/db'
+import { withLogging } from '@/lib/logger'
 
-export async function GET(request: NextRequest) {
+export const GET = withLogging(async (request: NextRequest) => {
   try {
     // Parse query parameters for pagination
     const { searchParams } = new URL(request.url)
@@ -32,4 +33,4 @@ export async function GET(request: NextRequest) {
     // Handle any errors
     return NextResponse.json({ error: (error as Error).message }, { status: 500 })
   }
-}
+})

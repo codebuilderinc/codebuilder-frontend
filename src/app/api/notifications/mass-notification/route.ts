@@ -1,11 +1,11 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import webpush, { WebPushError } from 'web-push'
 import { messaging } from 'firebase-admin'
 import { sendNotification, SubscriptionRecord } from '../../../../lib/notifications'
-
 import prisma from '@/lib/db'
+import { withLogging } from '@/lib/logger'
 
-export async function POST(request: Request) {
+export const POST = withLogging(async (request: NextRequest) => {
   try {
     const { title, body, url } = await request.json()
 
@@ -38,4 +38,4 @@ export async function POST(request: Request) {
     console.error('Error sending notifications:', error)
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
   }
-}
+})

@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/db'
+import { withLogging } from '@/lib/logger'
 
-export async function POST(req: NextRequest) {
+export const POST = withLogging(async (request: NextRequest) => {
   try {
-    const locationData = await req.json()
+    const locationData = await request.json()
     console.log('locationData', locationData)
     // Validate required fields
     if (!locationData) {
@@ -12,7 +13,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Extract the IP address from the headers
-    const forwardedFor = req.headers.get('x-forwarded-for') || ''
+    const forwardedFor = request.headers.get('x-forwarded-for') || ''
     const ipAddress = forwardedFor.split(',')[0].trim() || 'Unknown'
 
     // Find the subscription ID using the token from the subscriptions table
@@ -78,4 +79,4 @@ export async function POST(req: NextRequest) {
   } finally {
     await prisma.$disconnect()
   }
-}
+})

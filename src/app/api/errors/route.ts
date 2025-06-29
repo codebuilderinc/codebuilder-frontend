@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/db'
+import { withLogging } from '@/lib/logger'
 
-export async function POST(req: NextRequest) {
+export const POST = withLogging(async (request: NextRequest) => {
   try {
-    const errorPayload = await req.json()
+    const errorPayload = await request.json()
 
     // Basic validation
     if (!errorPayload || typeof errorPayload.message !== 'string') {
@@ -46,4 +47,4 @@ export async function POST(req: NextRequest) {
       { status: 500 }
     )
   }
-}
+})
