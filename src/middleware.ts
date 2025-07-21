@@ -47,7 +47,7 @@ function getColoredMethod(method: string): string {
   }
 
   const color = methodColors[method] || colors.white
-  return `${color}${method.padEnd(7)}${colors.reset}`
+  return `${color}${method}${colors.reset}`
 }
 
 /**
@@ -59,7 +59,9 @@ function getColoredDuration(ms: number): string {
   else if (ms > 500) color = colors.yellow
   else if (ms > 100) color = colors.cyan
 
-  return `${color}${ms.toFixed(0)}ms${colors.reset}`
+  // Show sub-millisecond precision if < 10ms
+  const formatted = ms < 10 ? ms.toFixed(2) : ms < 100 ? ms.toFixed(1) : ms.toFixed(0)
+  return `${color}${formatted}ms${colors.reset}`
 }
 
 /**
@@ -105,7 +107,8 @@ function shouldLog(pathname: string): boolean {
  * Enhanced middleware function with comprehensive HTTP access logging
  */
 export function middleware(request: NextRequest): NextResponse {
-  const startTime = Date.now()
+  // Use high-resolution time for accurate duration
+  const startTime = process.hrtime()
   const { pathname, search } = request.nextUrl
   const method = request.method
   const userAgent = request.headers.get('user-agent') || 'unknown'
@@ -117,14 +120,17 @@ export function middleware(request: NextRequest): NextResponse {
 
   // Only log if this request should be logged
   if (shouldLog(pathname)) {
-    // Add a custom header to track response time
-    response.headers.set('x-request-start', startTime.toString())
+    // Add a custom header to track response time (in nanoseconds)
+    const startTimeNs = (startTime[0] * 1e9 + startTime[1]).toString()
+    response.headers.set('x-request-start', startTimeNs)
 
     // Log the request immediately (before processing)
     const timestamp = new Date().toISOString()
     const fullUrl = pathname + search
     const status = response.status
-    const duration = Date.now() - startTime
+    // Calculate high-resolution duration in ms (may include decimals)
+    const diff = process.hrtime(startTime)
+    const duration = diff[0] * 1000 + diff[1] / 1e6
 
     logger.info(
       `${colors.gray}[${timestamp}]${colors.reset} ` +
