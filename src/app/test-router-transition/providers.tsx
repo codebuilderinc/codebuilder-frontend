@@ -3,6 +3,7 @@
 import { useRef } from 'react'
 import { gsap } from 'gsap'
 import { TransitionRouter } from 'next-transition-router'
+import { logger } from '@/lib/logger'
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const firstLayer = useRef<HTMLDivElement | null>(null)
@@ -12,7 +13,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <TransitionRouter
       auto={true}
       leave={(next, from, to) => {
-        console.log({ from, to })
+        logger.info('Router transition:', { from, to })
 
         const tl = gsap
           .timeline({
