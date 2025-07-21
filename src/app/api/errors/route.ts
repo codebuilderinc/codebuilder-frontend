@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/db'
-import { withLogging } from '@/lib/logger'
+import { withLogging, logger } from '@/lib/logger'
+import { log } from 'console'
 
 export const POST = withLogging(async (request: NextRequest) => {
   try {
@@ -18,6 +19,15 @@ export const POST = withLogging(async (request: NextRequest) => {
     const { message, stack, platform, options } = errorPayload
     const { isFatal, errorInfo } = options || {}
 
+    logger.info('Received error report:', {
+      message,
+      platform,
+      isFatal,
+      errorInfo,
+      stack: stack || 'No stack trace provided',
+      originalPayload: errorPayload, // Log the full original payload for auditing
+    })
+
     const newErrorReport = await prisma.errorReport.create({
       data: {
         message,
@@ -29,18 +39,17 @@ export const POST = withLogging(async (request: NextRequest) => {
       },
     })
 
-    console.log('Error report logged:', newErrorReport.id)
     return NextResponse.json(
       { message: 'Error logged successfully.', reportId: newErrorReport.id },
       { status: 201 }
     )
   } catch (error) {
     // This catches errors in the API endpoint itself
-    console.error('Failed to save error report:', error)
+    logger.error('Failed to save error report:', error)
 
     // Avoid using 'error()' as a variable name to prevent shadowing
     const e = error as Error
-    console.error(e.stack)
+    logger.error(e.stack)
 
     return NextResponse.json(
       { error: 'Internal server error while saving error report.' },
