@@ -1,4 +1,5 @@
 import { ErrorInfo } from 'react'
+import { logger } from '@/lib/logger'
 
 // This is the relative path to the API endpoint we created.
 const ERROR_REPORTING_ENDPOINT = '/api/errors'
@@ -19,6 +20,8 @@ export const reportError = async (error: Error, options?: ReportOptions): Promis
   const report = {
     message: error.message,
     stack: error.stack,
+    errorInfo: options?.errorInfo || null,
+    isFatal: options?.isFatal || false,
     platform: 'web', // Identify that the error came from the web client
     options,
   }
@@ -32,6 +35,6 @@ export const reportError = async (error: Error, options?: ReportOptions): Promis
       body: JSON.stringify(report),
     })
   } catch (e) {
-    console.error('Failed to send error report:', e)
+    logger.error('Failed to send error report:', e)
   }
 }
