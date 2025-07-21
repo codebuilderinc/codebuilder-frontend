@@ -6,6 +6,14 @@ import { messaging } from './firebase' // Adjust as needed
 import { Subscription } from '@prisma/client'
 import { JsonValue } from '@prisma/client/runtime/library'
 import prisma from '@/lib/db'
+import { logger } from '@/lib/logger'
+
+// Initialize VAPID keys for web push notifications
+webpush.setVapidDetails(
+  'mailto:your-email@example.com',
+  process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
+  process.env.VAPID_PRIVATE_KEY!
+)
 
 /**
  * Sends a push notification to a subscription using either web push (VAPID) or FCM.
@@ -22,7 +30,7 @@ export async function sendNotification(
   notificationPayload: NotificationPayload
 ): Promise<void> {
   try {
-    console.log('Sending notification to subscription:', subscription)
+    logger.info('Sending notification to subscription:', subscription)
 
     // Handle browser-based web push notifications.
     if (subscription.type === 'web') {
@@ -82,7 +90,7 @@ export async function sendNotification(
 
       // Send the FCM message using Firebase.
       const response = await messaging.send(fcmMessage)
-      console.log('FCM response:', response)
+      logger.info('FCM response:', response)
     }
   } catch (error) {
     /**
@@ -93,9 +101,9 @@ export async function sendNotification(
       // Status code 410 indicates that the subscription is no longer valid.
       if (error.statusCode === 410) {
         await prisma.subscription.delete({ where: { id: subscription.id } })
-        console.log(`Subscription with id ${subscription.id} removed due to expiration.`)
+        logger.info(`Subscription with id ${subscription.id} removed due to expiration.`)
       } else {
-        console.log(
+        logger.info(
           `Failed to send notification to subscription id ${subscription.id}:`,
           error.statusCode,
           error.body
@@ -108,12 +116,12 @@ export async function sendNotification(
         error.code === 'messaging/registration-token-not-registered'
       ) {
         await prisma.subscription.delete({ where: { id: subscription.id } })
-        console.log(`Removed invalid FCM token for subscription id ${subscription.id}.`)
+        logger.info(`Removed invalid FCM token for subscription id ${subscription.id}.`)
       } else {
-        console.log(`Failed to send FCM notification to subscription id ${subscription.id}:`, error)
+        logger.info(`Failed to send FCM notification to subscription id ${subscription.id}:`, error)
       }
     } else {
-      console.log(
+      logger.info(
         `An error occurred while sending notification to subscription id ${subscription.id}:`,
         error
       )

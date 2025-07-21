@@ -1,4 +1,5 @@
 import prisma from './db'
+import { logger } from './logger'
 
 // Function definition with types
 async function createLocation(
@@ -61,7 +62,7 @@ async function createLocation(
     },
   })
 
-  console.log('Location created:', location)
+  logger.info('Location created:', location)
 }
 
 // Example usage
@@ -97,7 +98,7 @@ const geoAddressData: GeoAddressData = {
 }
 
 createLocation(subscriptionId, locationData, geoAddressData)
-  .catch((e) => console.error(e))
+  .catch((e) => logger.error(e))
   .finally(async () => {
     await prisma.$disconnect()
   })
