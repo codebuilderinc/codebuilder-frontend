@@ -66,7 +66,7 @@ function getColoredDuration(ms: number): string {
  * Get client IP address from various headers
  */
 function getClientIP(request: NextRequest): string {
-  // Check various headers that might contain the real IP
+  // In Docker with nginx as reverse proxy, ensure nginx sets X-Forwarded-For and X-Real-IP headers
   const xForwardedFor = request.headers.get('x-forwarded-for')
   const xRealIP = request.headers.get('x-real-ip')
   const cfConnectingIP = request.headers.get('cf-connecting-ip')
@@ -123,10 +123,14 @@ export function middleware(request: NextRequest): NextResponse {
     // Log the request immediately (before processing)
     const timestamp = new Date().toISOString()
     const fullUrl = pathname + search
+    const status = response.status
+    const duration = Date.now() - startTime
 
     logger.info(
       `${colors.gray}[${timestamp}]${colors.reset} ` +
         `${getColoredMethod(method)} ` +
+        `${getColoredStatus(status)} ` +
+        `${getColoredDuration(duration)} ` +
         `${colors.cyan}${fullUrl}${colors.reset} ` +
         `${colors.gray}from ${clientIP}${colors.reset}`
     )
