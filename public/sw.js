@@ -10,7 +10,7 @@ self.addEventListener('push', (event) => {
       data: { url: data.url },
     }
 
-    event.waitUntil(self.registration.showNotificationew(data.title, options))
+    event.waitUntil(self.registration.showNotification(data.title, options))
   }
 })
 
