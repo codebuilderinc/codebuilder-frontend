@@ -1,8 +1,11 @@
+/* ──────────────────────────────────────────────────────────────────────────────
+   CarouselSlider.tsx  –  Next 15 • Tailwind • Framer-Motion
+────────────────────────────────────────────────────────────────────────────── */
 'use client'
 
-import { useRef, useState, useEffect } from 'react'
-import { motion, AnimatePresence, Variants } from 'motion/react'
-import styled from 'styled-components'
+import { useState, useEffect, useRef } from 'react'
+import { motion, AnimatePresence, Variants } from 'framer-motion'
+import Image from 'next/image'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faCheck,
@@ -12,46 +15,24 @@ import {
   faCubes,
   faLaptop,
   faChevronRight,
+  faChevronLeft,
 } from '@fortawesome/free-solid-svg-icons'
 import { faBitcoin } from '@fortawesome/free-brands-svg-icons'
 import CustomButton from '../button'
 
-const slideTransitionVariants: Variants = {
-  initial: (direction: 'next' | 'prev') => ({
-    x: direction === 'next' ? '100%' : '-100%',
-    opacity: 0,
-  }),
-  animate: {
-    x: 0,
-    opacity: 1,
-    transition: { duration: 0.8, ease: [0.42, 0, 0.58, 1] },
-  },
-  exit: (direction: 'next' | 'prev') => ({
-    x: direction === 'next' ? '-100%' : '100%',
-    opacity: 0,
-    transition: { duration: 0.8, ease: [0.42, 0, 0.58, 1] },
-  }),
-}
+/* ── config ─────────────────────────────────────────────────────────────── */
+const ARROW_COL = 60 // fixed arrow-column width
+const BTN_COLLAPSED = ARROW_COL
+const BTN_EXPANDED = 200 // fits your shortest title
+const BG_COLLAPSED = 'rgba(0,0,0,0.25)'
+const BG_EXPANDED = 'rgba(0,0,0,0.6)'
+const OVERLAY_OPACITY = 0.35 // 35 % black over photo
+const CTA_LINK = '/test'
 
-const staggerContainerVariants: Variants = {
-  initial: { opacity: 0 },
-  animate: {
-    opacity: 1,
-    transition: {
-      delay: 0.8,
-      staggerChildren: 0.3,
-    },
-  },
-}
-
-const childVariants: Variants = {
-  initial: { y: -20, opacity: 0 },
-  animate: { y: 0, opacity: 1, transition: { duration: 1, ease: 'easeOut' } },
-}
-
+/* slides ------------------------------------------------------------------ */
 const slides = [
   {
-    image: '/images/hero-slides/slide-2-macbook.webp',
+    image: '/images/hero-slides/slide-2-macbook.avif',
     title: 'Web Engineering',
     items: [
       { text: 'Responsive Design', icon: faLock },
@@ -61,238 +42,271 @@ const slides = [
     ],
   },
   {
-    image: '/images/hero-slides/slide-1-iphone.jpg',
-    title: 'Powerful MacBook for your needs',
+    image: '/images/hero-slides/slide-1-iphone.avif',
+    title: 'Mobile Applications',
     items: [
       { text: 'High Performance', icon: faBatteryFull },
       { text: 'Long Battery Life', icon: faBatteryFull },
-      { text: 'Optimized Workflow', icon: faCheck },
+      { text: 'Optimised Workflow', icon: faCheck },
       { text: 'Reliable Hardware', icon: faCheck },
     ],
   },
   {
-    image: '/images/hero-slides/slide-2-bitcoin.jpg',
-    title: 'Embrace the world of Bitcoin',
+    image: '/images/hero-slides/slide-2-bitcoin.avif',
+    title: 'Blockchain Technology',
     items: [
-      { text: 'Decentralized Currency', icon: faBitcoin },
+      { text: 'Decentralised Currency', icon: faBitcoin },
       { text: 'Global Reach', icon: faCheck },
       { text: 'Secure Transactions', icon: faCheck },
       { text: 'Innovation', icon: faBitcoin },
     ],
   },
-]
+] as const
 
-const MotionDiv = motion(styled.div``)
+/* slide enter/exit -------------------------------------------------------- */
+const slideFx: Variants = {
+  initial: (d: 'next' | 'prev') => ({ x: d === 'next' ? '100%' : '-100%', opacity: 0 }),
+  animate: { x: 0, opacity: 1, transition: { duration: 0.8, ease: [0.42, 0, 0.58, 1] } },
+  exit: (d: 'next' | 'prev') => ({
+    x: d === 'next' ? '-100%' : '100%',
+    opacity: 0,
+    transition: { duration: 0.8, ease: [0.42, 0, 0.58, 1] },
+  }),
+}
 
-const CarouselSlider: React.FC = () => {
-  const [currentIndex, setCurrentIndex] = useState(0)
-  const [direction, setDirection] = useState<'next' | 'prev'>('next')
-  const [isAnimating, setIsAnimating] = useState(false)
-  const [isContentVisible, setIsContentVisible] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
-  const isFirstRender = useRef(true)
-  const timerRef = useRef<NodeJS.Timeout | null>(null)
+/* content stagger --------------------------------------------------------- */
+const parentStagger: Variants = {
+  animate: { transition: { staggerChildren: 0.25, delayChildren: 0.6 } },
+}
+const childUp: Variants = {
+  initial: { y: 20, opacity: 0 },
+  animate: { y: 0, opacity: 1, transition: { duration: 0.8, ease: 'easeOut' } },
+}
 
-  useEffect(() => {
-    if (isFirstRender.current) {
-      setTimeout(() => setIsContentVisible(true), 1000)
-      setIsLoading(false)
+/* reusable edge button ---------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/*  Edge button – final layout (grid, zero gap)                               */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/*  Edge button – arrow outermost, label snug                                 */
+/* -------------------------------------------------------------------------- */
+function EdgeButton({
+  side,
+  label,
+  icon,
+  click,
+  disabled,
+}: {
+  side: 'left' | 'right'
+  label: string
+  icon: any
+  click: () => void
+  disabled: boolean
+}) {
+  const [hover, setHover] = useState(false)
+  const isLeft = side === 'left'
 
-      isFirstRender.current = false
-    }
-  }, [])
-
-  useEffect(() => {
-    if (isFirstRender.current) {
-      const img = new Image()
-      img.src = slides[currentIndex].image
-      img.onload = () => {
-        setIsLoading(false)
-        setIsContentVisible(true)
-      }
-      isFirstRender.current = false
-    }
-  }, [])
-
-  useEffect(() => {
-    startTimer()
-
-    return () => {
-      stopTimer()
-    }
-  }, [currentIndex])
-
-  const startTimer = () => {
-    stopTimer() // Clear any existing timer before starting a new one
-    timerRef.current = setTimeout(() => {
-      handleSlideChange('next')
-    }, 5000)
-  }
-
-  const stopTimer = () => {
-    if (timerRef.current) {
-      clearTimeout(timerRef.current)
-    }
-  }
-
-  const handleSlideChange = (newDirection: 'next' | 'prev') => {
-    if (isAnimating) return
-    setDirection(newDirection)
-    setIsAnimating(true)
-    setIsContentVisible(false)
-
-    setTimeout(() => {
-      setCurrentIndex((prevIndex) =>
-        newDirection === 'next'
-          ? (prevIndex + 1) % slides.length
-          : prevIndex === 0
-            ? slides.length - 1
-            : prevIndex - 1
-      )
-      setIsAnimating(false)
-    }, 500)
-  }
-
-  const handleManualSlideChange = (newDirection: 'next' | 'prev') => {
-    stopTimer() // Stop the timer on manual change
-    handleSlideChange(newDirection)
-  }
+  /* rounded but not too round */
+  const radius = isLeft ? 'rounded-r-2xl' : 'rounded-l-2xl'
 
   return (
-    <div id="slider" className="relative z-10 bg-black">
-      {isLoading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-75 z-50">
-          <span className="text-white text-2xl">Loading...</span>
-        </div>
-      )}
+    <motion.button
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      onClick={click}
+      disabled={disabled}
+      initial={false}
+      animate={{
+        width: hover ? BTN_EXPANDED : BTN_COLLAPSED,
+        backgroundColor: hover ? BG_EXPANDED : BG_COLLAPSED,
+      }}
+      transition={{ type: 'tween', duration: 0.25 }}
+      className={`absolute top-1/2 -translate-y-1/2 h-16 flex items-center
+                  ${isLeft ? 'left-0 flex-row' : 'right-0 flex-row-reverse'}
+                  ${radius} shadow-lg text-white cursor-pointer select-none`}
+      style={{ backdropFilter: 'blur(2px)' }}
+    >
+      {/* Arrow – fixed 60 px cell, always centred */}
+      <span className="flex items-center justify-center" style={{ width: ARROW_COL }}>
+        <FontAwesomeIcon icon={icon} className="w-10 h-10" />
+      </span>
 
-      {!isLoading && (
-        <>
-          <div className="relative w-screen h-[650px] flex items-center bg-black justify-center animate__animated animate__slideInRight">
-            <AnimatePresence
-              initial={false}
-              custom={direction}
-              mode="popLayout"
-              onExitComplete={() => setIsAnimating(false)}
-            >
-              <motion.div
-                key={`slide-${currentIndex}`}
-                custom={direction}
-                variants={slideTransitionVariants}
-                initial="initial"
-                animate="animate"
-                exit="exit"
-                className="w-screen h-full relative flex"
-                onAnimationStart={() => setIsAnimating(true)}
-                onAnimationComplete={() => setIsContentVisible(true)}
-              >
-                <div
-                  style={{
-                    backgroundImage: `url(${slides[currentIndex].image})`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'top',
-                    opacity: 0.65,
-                  }}
-                  className="absolute top-0 left-0 w-full h-full z-0"
-                ></div>
-
-                {isContentVisible && (
-                  <motion.div
-                    variants={staggerContainerVariants}
-                    initial="initial"
-                    animate="animate"
-                    className="relative z-10 flex flex-col container mx-auto items-start justify-center px-8 md:px-20 lg:px-32"
-                  >
-                    <motion.h2
-                      variants={childVariants}
-                      className="text-white text-5xl mb-6 font-light"
-                    >
-                      {slides[currentIndex].title}
-                    </motion.h2>
-                    <ul className="text-white list-none p-0 m-0">
-                      {slides[currentIndex].items.map((item, index) => (
-                        <motion.li
-                          key={index}
-                          variants={childVariants}
-                          className="mb-6 flex items-center gap-2 text-2xl font-light"
-                        >
-                          <span className="bg-[#09afdf] rounded-full h-[45px] w-[45px] flex items-center justify-center">
-                            <FontAwesomeIcon icon={item.icon} className="text-white text-[18px]" />
-                          </span>
-                          <span>{item.text}</span>
-                        </motion.li>
-                      ))}
-                      <motion.li variants={childVariants} className="mt-6">
-                        <CustomButton
-                          text="Read More"
-                          link={'/test'}
-                          icon={faChevronRight}
-                          size="xl"
-                          textColor="#FFFFFF"
-                          type="animatedIconHover"
-                        />
-                      </motion.li>
-                    </ul>
-                  </motion.div>
-                )}
-              </motion.div>
-            </AnimatePresence>
-          </div>
-
-          <div className="carousel-button z-50 justify-end  absolute right-0 top-1/2 transform -translate-y-1/2 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-auto">
-            <motion.button
-              onClick={() => handleManualSlideChange('next')}
-              disabled={isAnimating}
-              className="flex items-center justify-end overflow-hidden h-12 text-white rounded-r-full shadow-lg"
-              initial={{ width: 50 }}
-              whileHover={{ width: 220 }}
-              transition={{ ease: 'easeOut', duration: 0.5 }}
-            >
-              <motion.span
-                className="whitespace-nowrap z-100 w-[150px] py-[11px] absolute"
-                initial={{ x: 0, opacity: 0, right: '20px' }}
-                whileHover={{ x: 0, opacity: 1, right: '0px' }}
-                transition={{ ease: 'easeOut', duration: 0.1, delay: 0 }}
-              >
-                Web3.0 Solutions
-              </motion.span>
-              <FontAwesomeIcon
-                icon={faChevronRight}
-                className="w-5 h-5 mr-[15px] pointer-events-none"
-              />
-            </motion.button>
-          </div>
-
-          <div
-            style={{
-              position: 'absolute',
-              top: '325px',
-              marginTop: '-30px',
-              left: '0px',
-              width: '60px',
-            }}
-            className="tp-leftarrow tparrows default preview2 hashoveralready hidearrows"
-          >
-            <div className="tp-arr-allwrapper">
-              <div className="tp-arr-iwrapper">
-                <div
-                  className="tp-arr-imgholder"
-                  style={{
-                    visibility: 'inherit',
-                    opacity: 1,
-                    backgroundImage: 'url("/images/hero-slides/slide-2-macbook.webp")',
-                  }}
-                ></div>
-                <div className="tp-arr-imgholder2"></div>
-                <div className="tp-arr-titleholder">Mobile Applications</div>
-                <div className="tp-arr-subtitleholder"></div>
-              </div>
-            </div>
-          </div>
-        </>
-      )}
-    </div>
+      {/* Label – width animates; slides toward arrow */}
+      <motion.span
+        style={{ overflow: 'hidden' }}
+        initial={false}
+        animate={{
+          width: hover ? BTN_EXPANDED - ARROW_COL : 0, // 140 px or 0
+          opacity: hover ? 1 : 0,
+          x: hover ? 0 : isLeft ? 12 : -12, // 12 px = tighter gap
+        }}
+        transition={{ type: 'tween', duration: 0.25 }}
+        className={`${isLeft ? 'pl-[2px] text-left' : 'pr-[2px] text-right'}
+                    whitespace-nowrap font-light text-sm md:text-base`}
+      >
+        {label}
+      </motion.span>
+    </motion.button>
   )
 }
 
-export default CarouselSlider
+/* main component ---------------------------------------------------------- */
+export default function CarouselSlider() {
+  const [idx, setIdx] = useState(0)
+  const [dir, setDir] = useState<'next' | 'prev'>('next')
+  const [busy, setBusy] = useState(false)
+  const [ready, setReady] = useState(false)
+  const [showBtns, setShowBtns] = useState(false)
+  const timer = useRef<NodeJS.Timeout | null>(null)
+
+  /* preload first image (SSR-safe) */
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const img = new window.Image()
+      img.src = slides[0].image
+      img.onload = () => setReady(true)
+    }
+  }, [])
+
+  /* autoplay every 6 s */
+  useEffect(() => {
+    const start = () => (timer.current = setTimeout(() => move('next'), 6000))
+    const stop = () => timer.current && clearTimeout(timer.current)
+    stop()
+    start()
+    return stop
+  }, [idx])
+
+  const move = (d: 'next' | 'prev') => {
+    if (busy) return
+    setDir(d)
+    setBusy(true)
+    setReady(false)
+    setTimeout(() => {
+      setIdx((p) =>
+        d === 'next' ? (p + 1) % slides.length : (p + slides.length - 1) % slides.length
+      )
+      setBusy(false)
+    }, 500)
+  }
+
+  /* shorthand titles */
+  const nextTitle = slides[(idx + 1) % slides.length].title
+  const prevTitle = slides[(idx + slides.length - 1) % slides.length].title
+
+  return (
+    <section
+      className="relative bg-black overflow-hidden"
+      onMouseEnter={() => setShowBtns(true)}
+      onMouseLeave={() => setShowBtns(false)}
+    >
+      {/* slides --------------------------------------------- */}
+      <div className="relative w-full h-[650px] flex items-center justify-center">
+        <AnimatePresence initial={false} custom={dir} onExitComplete={() => setBusy(false)}>
+          <motion.div
+            key={idx}
+            custom={dir}
+            variants={slideFx}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            className="absolute inset-0"
+            onAnimationComplete={() => setReady(true)}
+          >
+            {/* background img */}
+            <Image
+              src={slides[idx].image}
+              alt={slides[idx].title}
+              quality={100}
+              fill
+              priority
+              className="object-cover object-top"
+            />
+            {/* overlay */}
+            <div className="absolute inset-0 bg-black" style={{ opacity: OVERLAY_OPACITY }} />
+
+            {/* text block */}
+            {ready && (
+              <motion.div
+                variants={parentStagger}
+                initial="initial"
+                animate="animate"
+                className="relative z-10 flex flex-col container mx-auto items-start justify-center
+                           h-full px-8 md:px-20 lg:px-32 pt-12" /* pushes it down a touch */
+              >
+                <motion.h2
+                  variants={childUp}
+                  className="text-white text-4xl md:text-5xl font-light mb-6"
+                >
+                  {slides[idx].title}
+                </motion.h2>
+
+                <ul
+                  /* outer UL adopts the zero-spacing / positioning */
+                  className="text-white m-0 p-0 list-none"
+                  /* everything else is already animated by Framer Motion */
+                  style={{
+                    userSelect: 'text',
+                    minHeight: 0,
+                    minWidth: 0,
+                  }}
+                >
+                  {slides[idx].items.map(({ text, icon }, i) => (
+                    <motion.li
+                      key={i}
+                      variants={childUp}
+                      /* 24 px font, 35 px line-height, zero borders/margins/padding */
+                      className="flex items-center font-light gap-6 text-[24px] m-0 p-0 border-0"
+                      style={{
+                        letterSpacing: 0,
+                        transition: 'all', // matches “transition: all”
+                        opacity: 0, // your starting value
+                        transform: 'translate3d(0,0,0)',
+                      }}
+                    >
+                      <span className="h-[45px] w-[45px] flex items-center justify-center rounded-full bg-[#09afdf]">
+                        <FontAwesomeIcon icon={icon} className="text-white text-lg" />
+                      </span>
+                      {text}
+                    </motion.li>
+                  ))}
+
+                  <motion.li variants={childUp}>
+                    <CustomButton
+                      text="Read More"
+                      link={CTA_LINK}
+                      icon={faChevronRight}
+                      size="xl"
+                      textColor="#FFFFFF"
+                      type="animatedIconHover"
+                    />
+                  </motion.li>
+                </ul>
+              </motion.div>
+            )}
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      {/* edge buttons --------------------------------------- */}
+      {showBtns && (
+        <>
+          <EdgeButton
+            side="left"
+            label={prevTitle}
+            icon={faChevronLeft}
+            click={() => move('prev')}
+            disabled={busy}
+          />
+          <EdgeButton
+            side="right"
+            label={nextTitle}
+            icon={faChevronRight}
+            click={() => move('next')}
+            disabled={busy}
+          />
+        </>
+      )}
+    </section>
+  )
+}
