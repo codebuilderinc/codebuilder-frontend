@@ -39,6 +39,7 @@
     "classnames": "^2.5.1",
     "clsx": "^2.1.1",
     "firebase-admin": "^13.4.0",
+    "framer-motion": "^12.23.5",
     "gsap": "^3.13.0",
     "motion": "^12.18.1",
     "next": "^15.3.3",
@@ -52,6 +53,7 @@
     "snoostorm": "^1.5.2",
     "snoowrap": "^1.23.0",
     "styled-components": "^6.1.19",
+    "swiper": "^11.2.10",
     "tailwind-merge": "^3.3.1",
     "tailwindcss-animate": "^1.0.7",
     "web-push": "^3.6.7"
