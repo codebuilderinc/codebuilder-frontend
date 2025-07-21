@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/db'
-import { withLogging } from '@/lib/logger'
+import { withLogging, logger } from '@/lib/logger'
 
 export const POST = withLogging(async (request: NextRequest) => {
   try {
     const subscription = await request.json()
 
-    console.log('Subscription data:', subscription)
+    logger.info('Subscription data:', subscription)
 
     // Validate required fields
     if (!subscription.endpoint || !subscription.type) {
@@ -71,8 +71,8 @@ export const POST = withLogging(async (request: NextRequest) => {
       { status: 201 }
     )
   } catch (error) {
-    console.log(error.stack)
-    console.log('Error saving subscription:', error)
+    logger.info(error.stack)
+    logger.info('Error saving subscription:', error)
     return NextResponse.json({ error: 'Failed to save subscription.' }, { status: 500 })
   } finally {
     await prisma.$disconnect()

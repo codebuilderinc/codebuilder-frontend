@@ -3,7 +3,7 @@ import webpush, { WebPushError } from 'web-push'
 import { messaging } from 'firebase-admin'
 import { sendNotification, SubscriptionRecord } from '../../../../lib/notifications'
 import prisma from '@/lib/db'
-import { withLogging } from '@/lib/logger'
+import { withLogging, logger } from '@/lib/logger'
 
 export const POST = withLogging(async (request: NextRequest) => {
   try {
@@ -35,7 +35,7 @@ export const POST = withLogging(async (request: NextRequest) => {
 
     return NextResponse.json({ success: true, message: 'Notifications sent successfully' })
   } catch (error) {
-    console.error('Error sending notifications:', error)
+    logger.error('Error sending notifications:', error)
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
   }
 })

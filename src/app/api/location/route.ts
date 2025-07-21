@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/db'
-import { withLogging } from '@/lib/logger'
+import { withLogging, logger } from '@/lib/logger'
 
 export const POST = withLogging(async (request: NextRequest) => {
   try {
     const locationData = await request.json()
-    console.log('locationData', locationData)
+    logger.info('locationData', locationData)
     // Validate required fields
     if (!locationData) {
-      console.log('Invalid location data:', locationData)
+      logger.info('Invalid location data:', locationData)
       return NextResponse.json({ error: 'Invalid location data.' }, { status: 400 })
     }
 
@@ -28,7 +28,7 @@ export const POST = withLogging(async (request: NextRequest) => {
     })
 
     if (!subscription) {
-      console.log('Subscription not found for subscriptionId:', locationData.subscriptionId)
+      logger.info('Subscription not found for subscriptionId:', locationData.subscriptionId)
       return NextResponse.json({ error: 'Subscription not found.' }, { status: 404 })
     }
 
@@ -67,14 +67,14 @@ export const POST = withLogging(async (request: NextRequest) => {
       },
     })
 
-    console.log('Location added:', newLocation)
+    logger.info('Location added:', newLocation)
     return NextResponse.json(
       { message: 'Location added successfully.', location: newLocation },
       { status: 201 }
     )
   } catch (error) {
-    console.log('Error saving location:', error) //error()
-    console.log(error.stack)
+    logger.info('Error saving location:', error) //error()
+    logger.info(error.stack)
     return NextResponse.json({ error: 'Failed to save location.' }, { status: 500 })
   } finally {
     await prisma.$disconnect()
