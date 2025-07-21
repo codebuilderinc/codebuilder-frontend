@@ -107,8 +107,8 @@ function shouldLog(pathname: string): boolean {
  * Enhanced middleware function with comprehensive HTTP access logging
  */
 export function middleware(request: NextRequest): NextResponse {
-  // Use high-resolution time for accurate duration
-  const startTime = process.hrtime()
+  // Use Date.now() for Edge Runtime compatibility
+  const startTime = Date.now()
   const { pathname, search } = request.nextUrl
   const method = request.method
   const userAgent = request.headers.get('user-agent') || 'unknown'
@@ -120,17 +120,15 @@ export function middleware(request: NextRequest): NextResponse {
 
   // Only log if this request should be logged
   if (shouldLog(pathname)) {
-    // Add a custom header to track response time (in nanoseconds)
-    const startTimeNs = (startTime[0] * 1e9 + startTime[1]).toString()
-    response.headers.set('x-request-start', startTimeNs)
+    // Add a custom header to track response time (in ms)
+    response.headers.set('x-request-start', startTime.toString())
 
     // Log the request immediately (before processing)
     const timestamp = new Date().toISOString()
     const fullUrl = pathname + search
     const status = response.status
-    // Calculate high-resolution duration in ms (may include decimals)
-    const diff = process.hrtime(startTime)
-    const duration = diff[0] * 1000 + diff[1] / 1e6
+    // Calculate duration in ms
+    const duration = Date.now() - startTime
 
     logger.info(
       `${colors.gray}[${timestamp}]${colors.reset} ` +
