@@ -3,8 +3,10 @@
 import axios from 'axios'
 import Snoowrap from 'snoowrap'
 import { CommentStream } from 'snoostorm'
-import { sendNotification } from './notifications'
+import { sendNotification } from '../notifications'
 import prisma from '@/lib/db'
+import { logger } from '@/lib/logger'
+import { upsertJob } from './jobs'
 
 // Initialize Reddit API client with environment variables
 export const redditClient = new Snoowrap({
@@ -35,7 +37,7 @@ function isPrivateMessage(
  */
 export async function storeMessages(items: Array<Snoowrap.PrivateMessage | Snoowrap.Comment>) {
   const newMessages = []
-  console.debug(`Processing ${items.length} message(s)`)
+  logger.debug(`Processing ${items.length} message(s)`)
 
   const subscriptions = await prisma.subscription.findMany()
 
@@ -49,7 +51,7 @@ export async function storeMessages(items: Array<Snoowrap.PrivateMessage | Snoow
       })
 
       if (existing) {
-        console.debug(`Skipping duplicate ${type} [${item.name}]`)
+        //logger.debug(`Skipping duplicate ${type} [${item.name}]`)
         continue
       }
 
@@ -83,10 +85,10 @@ export async function storeMessages(items: Array<Snoowrap.PrivateMessage | Snoow
       )
       await Promise.all(notificationPromises)
 
-      console.debug(`Stored new ${type} [${createdMsg.redditId}] from /u/${createdMsg.author}`)
+      logger.debug(`Stored new ${type} [${createdMsg.redditId}] from /u/${createdMsg.author}`)
       newMessages.push(createdMsg)
     } catch (error: any) {
-      console.error(`Error processing message ${item.name}:`, error.message)
+      logger.error(`Error processing message ${item.name}:`, error.message)
     }
   }
 
@@ -99,17 +101,17 @@ export async function storeMessages(items: Array<Snoowrap.PrivateMessage | Snoow
  */
 export async function checkRedditMessages() {
   try {
-    console.debug('Fetching Reddit inbox...')
+    logger.debug('Fetching Reddit inbox...')
 
     const [commentReplies, messages] = await Promise.all([
       redditClient.getInbox({ filter: 'comments' }),
       redditClient.getInbox({ filter: 'messages' }),
     ])
 
-    console.debug(`Found ${commentReplies.length} comment(s), ${messages.length} message(s)`)
+    logger.debug(`Found ${commentReplies.length} comment(s), ${messages.length} message(s)`)
     return await storeMessages([...commentReplies, ...messages])
   } catch (error: any) {
-    console.error('Reddit API Error:', error.message, error.stack)
+    logger.error('Reddit API Error:', error.message, error.stack)
     throw new Error(`Failed to fetch messages: ${error.message}`)
   }
 }
@@ -119,9 +121,9 @@ export async function checkRedditMessages() {
  * @returns A promise that resolves to an array of unread messages.
  */
 export const getUnreadMessages = async () => {
-  console.debug('Fetching unread messages...')
+  logger.debug('Fetching unread messages...')
   const messages = await redditClient.getUnreadMessages({ limit: 25 })
-  console.debug(`Found ${messages.length} unread message(s)`)
+  //logger.debug(`Found ${messages.length} unread message(s)`)
   return messages
 }
 
@@ -131,10 +133,10 @@ export const getUnreadMessages = async () => {
  */
 export const markMessageRead = (messageId: string) => {
   try {
-    console.debug(`Marking message ${messageId} as read...`)
+    logger.debug(`Marking message ${messageId} as read...`)
     return redditClient.getMessage(messageId).markAsRead()
   } catch (error: any) {
-    console.error(`Error marking message ${messageId} as read:`, error.message)
+    logger.error(`Error marking message ${messageId} as read:`, error.message)
   }
 }
 
@@ -145,11 +147,11 @@ export const markMessageRead = (messageId: string) => {
  */
 export const fetchRedditPosts = async (subreddits: string[]) => {
   const allPosts = []
-  console.debug(`Fetching posts from ${subreddits.length} subreddit(s)`)
+  logger.debug(`Fetching posts from ${subreddits.length} subreddit(s)`)
 
   for (const subreddit of subreddits) {
     try {
-      console.debug(`Fetching /r/${subreddit}...`)
+      logger.debug(`Fetching /r/${subreddit}...`)
       const response = await axios.get(`https://www.reddit.com/r/${subreddit}/new.json?limit=10`, {
         timeout: 5000,
       })
@@ -168,10 +170,10 @@ export const fetchRedditPosts = async (subreddits: string[]) => {
         downvotes: child.data.downs,
       }))
 
-      console.debug(`Found ${subredditPosts.length} post(s) in /r/${subreddit}`)
+      logger.debug(`Found ${subredditPosts.length} post(s) in /r/${subreddit}`)
       allPosts.push(...subredditPosts)
     } catch (error: any) {
-      console.error(`Error fetching /r/${subreddit}:`, error.message)
+      logger.error(`Error fetching /r/${subreddit}:`, error.message)
     }
   }
 
@@ -179,35 +181,50 @@ export const fetchRedditPosts = async (subreddits: string[]) => {
 }
 
 /**
- * Stores an array of Reddit posts in the database, preventing duplicates
- * and sending notifications for new items.
+ * Stores an array of Reddit posts in the unified jobs table using the upsertJob function.
+ * This replaces the old storePosts function to use the new unified jobs architecture.
  * @param posts Array of post objects from `fetchRedditPosts`.
- * @returns A promise that resolves to an array of newly created database records.
+ * @returns A promise that resolves to an array of newly created/updated job records.
  */
-export async function storePosts(posts: Array<any>) {
-  const newPosts = []
-  console.debug(`Processing ${posts.length} post(s)`)
+export async function storeRedditJobPosts(posts: Array<any>) {
+  const newJobs = []
+  logger.debug(`Processing ${posts.length} Reddit post(s) for jobs table`)
 
   const subscriptions = await prisma.subscription.findMany()
 
   for (const post of posts) {
     try {
-      const existing = await prisma.redditPost.findUnique({
-        where: { url: post.url },
-      })
-
-      if (existing) {
-        console.debug(`Skipping duplicate post [${post.url}]`)
-        continue
+      const jobInput = {
+        title: post.title,
+        company: '', // Reddit posts don't have company info
+        author: post.author,
+        location: '', // Reddit posts don't have structured location
+        url: post.url,
+        postedAt: post.postedAt,
+        description: post.body || '',
+        isRemote: null, // Can't determine from Reddit posts
+        tags: [post.subreddit], // Use subreddit as a tag
+        metadata: {
+          subreddit: post.subreddit,
+          bodyHtml: post.bodyHtml || '',
+          upvotes: post.upvotes ? String(post.upvotes) : '0',
+          downvotes: post.downvotes ? String(post.downvotes) : '0',
+        },
+        source: {
+          name: 'reddit',
+          externalId: post.url, // Use URL as external ID since Reddit doesn't provide a better ID
+          rawUrl: post.url,
+          data: post,
+        },
       }
 
-      // This will now work correctly because the `post` object has the `postedAt` field.
-      const createdPost = await prisma.redditPost.create({ data: post })
-
+      const upsertedJob = await upsertJob(jobInput)
+      
+      // Send notifications for new jobs
       const notificationPayload = {
-        title: `${createdPost.title} (${createdPost.subreddit})`,
-        body: `Posted by /u/${createdPost.author}`,
-        url: createdPost.url,
+        title: `${post.title} (${post.subreddit})`,
+        body: `Posted by /u/${post.author}`,
+        url: post.url,
         icon: 'https://new.codebuilder.org/images/logo2.png',
         badge: 'https://new.codebuilder.org/images/logo2.png',
       }
@@ -217,12 +234,12 @@ export async function storePosts(posts: Array<any>) {
       )
       await Promise.all(notificationPromises)
 
-      console.debug(`Stored new post [${createdPost.url}] from /u/${createdPost.author}`)
-      newPosts.push(createdPost)
+      logger.debug(`Stored new job [${post.url}] from /u/${post.author}`)
+      newJobs.push(upsertedJob)
     } catch (error: any) {
-      console.error(`Error processing post ${post.url}:`, error)
+      logger.error(`Error processing Reddit post ${post.url}:`, error)
     }
   }
 
-  return newPosts
+  return newJobs
 }
