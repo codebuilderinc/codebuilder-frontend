@@ -6,7 +6,7 @@ on:
 
 jobs:
   build-and-deploy:
-    runs-on: self-hosted
+    runs-on: codebuilderinc
     name: '🐳 Build & Deploy'
     steps:
       - name: '🔍 Checkout Code'
