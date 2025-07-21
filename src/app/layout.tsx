@@ -58,6 +58,21 @@ export default function RootLayout({
         </Script>
 
         {/* Other Meta Tags, Links, Etc... */}
+        
+        {/* Service Worker Registration */}
+        <Script id="sw-register" strategy="afterInteractive">
+          {`
+            if ('serviceWorker' in navigator) {
+              navigator.serviceWorker.register('/sw.js')
+                .then(registration => {
+                  console.log('Service Worker registered:', registration);
+                })
+                .catch(error => {
+                  console.error('Service Worker registration failed:', error);
+                });
+            }
+          `}
+        </Script>
       </head>
       <body className={`${Raleway.className} antialiased bg-white`}>
         {/*
@@ -86,11 +101,6 @@ export default function RootLayout({
             </main>
             {/* Footer */}
             <Footer />
-            <footer className="bg-gray-800 text-white py-4">
-              <div className="container mx-auto px-4">
-                <p>Footer Content</p>
-              </div>
-            </footer>
           </LayoutTransition>
         </div>
       </body>
