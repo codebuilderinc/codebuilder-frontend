@@ -15,6 +15,8 @@ const nextConfig: NextConfig = {
   // Conditionally set the output mode for the build.
   output: isStaticExport ? 'export' : undefined,
 
+  allowedDevOrigins: ['https://new.codebuilder.org', 'https://new.codebuilder.org:443'], // resolves the CORS warning
+
   // Note: If you are using next/image, you may need to add an
   // unoptimized: true flag here if you are not using a custom loader.
   // Conditionally disable image optimization only for the static export.
@@ -36,7 +38,7 @@ const nextConfig: NextConfig = {
   // Ensure proper console output in Docker containers
   experimental: {
     // This helps with console output in Docker
-    forceSwcTransforms: true,
+    // forceSwcTransforms: true,
   },
 
   /**
