@@ -1,5 +1,6 @@
 // src/middleware.ts
 import { NextResponse, NextRequest } from 'next/server'
+import { logger } from '@/lib/logger'
 
 /**
  * ANSI color codes for console output in Docker
@@ -123,7 +124,7 @@ export function middleware(request: NextRequest): NextResponse {
     const timestamp = new Date().toISOString()
     const fullUrl = pathname + search
 
-    console.log(
+    logger.info(
       `${colors.gray}[${timestamp}]${colors.reset} ` +
         `${getColoredMethod(method)} ` +
         `${colors.cyan}${fullUrl}${colors.reset} ` +
@@ -132,9 +133,9 @@ export function middleware(request: NextRequest): NextResponse {
 
     // Log additional details in development
     if (process.env.NODE_ENV === 'development') {
-      console.log(`${colors.dim}  └─ UA: ${userAgent}${colors.reset}`)
+      logger.info(`${colors.dim}  └─ UA: ${userAgent}${colors.reset}`)
       if (referer !== '-') {
-        console.log(`${colors.dim}  └─ Referer: ${referer}${colors.reset}`)
+        logger.info(`${colors.dim}  └─ Referer: ${referer}${colors.reset}`)
       }
     }
   }
