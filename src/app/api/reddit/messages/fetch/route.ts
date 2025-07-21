@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { checkRedditMessages } from '@/lib/reddit'
+import { checkRedditMessages } from '@/lib/jobs/reddit'
 
 export async function GET() {
   try {
