@@ -115,7 +115,7 @@ export function middleware(request: NextRequest): NextResponse {
   const referer = request.headers.get('referer') || '-'
   const clientIP = getClientIP(request)
 
-  // Create response
+  // Create response (middleware runs before routing, so final status is unknown here)
   const response = NextResponse.next()
 
   // Only log if this request should be logged
@@ -126,17 +126,17 @@ export function middleware(request: NextRequest): NextResponse {
     // Log the request immediately (before processing)
     const timestamp = new Date().toISOString()
     const fullUrl = pathname + search
-    const status = response.status
+    // We can't know the final route status in middleware; avoid logging a misleading 200
     // Calculate duration in ms
     const duration = Date.now() - startTime
 
     logger.info(
       `${colors.gray}[${timestamp}]${colors.reset} ` +
         `${getColoredMethod(method)} ` +
-        `${getColoredStatus(status)} ` +
         `${getColoredDuration(duration)} ` +
         `${colors.cyan}${fullUrl}${colors.reset} ` +
-        `${colors.gray}from ${clientIP}${colors.reset}`
+        `${colors.gray}from ${clientIP}${colors.reset} ` +
+        `${colors.dim}(pre-route)${colors.reset}`
     )
 
     // Log additional details in development
