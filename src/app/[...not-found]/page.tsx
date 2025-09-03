@@ -7,12 +7,14 @@ export default async function NotFound() {
   const data = await getSiteData(domain)
   return (
     <div className="z-10 flex items-center sm:items-start ">
-      <div className="flex w-screen">
-        <h2>Not Found: {data.name}</h2>
-        <p>Could not find requested resource</p>
-        <p>
-          View <Link href="/blog">all posts</Link>
-        </p>
+      <div className="flex w-screen min-h-64 pt-24 items-center">
+        <div className="flex flex-col items-center w-full">
+          <h2>Not Found: {data.name}</h2>
+          <p>Could not find requested resource</p>
+          <p>
+            View <Link href="/">all posts</Link>
+          </p>
+        </div>
       </div>
     </div>
   )
