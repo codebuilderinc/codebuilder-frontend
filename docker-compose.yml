@@ -48,3 +48,5 @@ networks:
 # Define the named volumes for persistent data storage.
 volumes:
   postgres-data:
+    external: true
+    name: codebuilder-postgres-data
