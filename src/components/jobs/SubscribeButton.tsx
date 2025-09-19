@@ -65,7 +65,7 @@ const SubscribeButton: React.FC = () => {
       }
       logger.info('Sending subscription data:', subscriptionData)
 
-      const subscribeResponse = await fetch('/api/notifications/subscribe', {
+      const subscribeResponse = await fetch('https://api.codebuilder.org/notifications/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(subscriptionData),
