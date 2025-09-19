@@ -21,7 +21,7 @@ export const metadata: Metadata = {
       'Custom software engineering solutions that are elegantly designed with scalability in mind..',
     type: 'website',
   },
-}
+}  
 
 export default function RootLayout({
   children,
