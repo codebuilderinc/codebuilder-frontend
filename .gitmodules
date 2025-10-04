@@ -1,0 +1,4 @@
+[submodule "prisma"]
+	path = prisma
+	url = https://github.com/codebuilderinc/codebuilder-prisma.git
+	branch = main
