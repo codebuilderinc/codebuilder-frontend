@@ -8,11 +8,13 @@ jobs:
   build-and-deploy:
     runs-on: self-hosted
     name: '🐳 Build & Deploy'
+
     steps:
       - name: '🔍 Checkout Code'
         uses: actions/checkout@v4
+        with:
+          submodules: 'recursive'
 
-      # (Secrets and .env setup steps remain the same)
       - name: '🔒 Verify Secrets Exist'
         run: |
           if [ -z "${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}" ]; then
@@ -40,7 +42,26 @@ jobs:
       # =======================================================
       # 🐳 Docker Operations
       # =======================================================
-      - name: '🚀 Build, Launch, and Update Services'
+      - name: '� Debug: List workspace files and show package.json'
+        run: |
+          echo '--- DEBUG: Listing workspace files ---'
+          ls -alh
+          echo '--- DEBUG: Showing package.json ---'
+          cat package.json
+          echo '--- DEBUG: Listing node_modules/.bin if exists ---'
+          if [ -d node_modules/.bin ]; then ls -l node_modules/.bin; else echo "node_modules/.bin does not exist"; fi
+
+      # Ensure the Postgres data volume exists before starting services
+      - name: '🔧 Ensure Postgres data volume exists'
+        run: |
+          if [ -z "$(docker volume ls -q -f name=codebuilder-postgres-data)" ]; then
+            echo "Volume 'codebuilder-postgres-data' not found. Creating it..."
+            docker volume create codebuilder-postgres-data
+          else
+            echo "Volume 'codebuilder-postgres-data' already exists. Skipping creation."
+          fi
+
+      - name: '�🚀 Build, Launch, and Update Services'
         run: |
           # Step 1: Ensure the Docker network exists.
           if ! docker network ls | grep -q "codebuilder-net"; then
@@ -59,8 +80,8 @@ jobs:
             fi
           else
             echo "Database container not found. Creating it..."
-            # Added -p flag to associate with the correct stack
-            docker compose -p codebuilder-frontend up -d db
+            # Use 'codebuilder' as the stack prefix
+            docker compose -p codebuilder up -d db
           fi
 
           # Step 3: Wait for the database to be healthy.
@@ -75,10 +96,15 @@ jobs:
           echo "Ensuring build runs in default server mode..."
           export NEXT_OUTPUT_MODE='standalone'
 
-          # Step 4: Build the new webapp image.
+          # Step 4: Build the latest webapp image.
           echo "Building the latest webapp image..."
-          # Added -p flag to ensure build context is correct
-          docker compose -p codebuilder-frontend build webapp
+          # Get the current commit hash of the prisma submodule
+          # This ensures Docker rebuilds the prisma layer when the submodule is updated
+          PRISMA_COMMIT=$(git submodule status prisma | awk '{print $1}' | sed 's/^+//')
+          echo "Using Prisma submodule commit: $PRISMA_COMMIT"
+
+          # Force a complete rebuild with no cache to ensure fresh prisma schema
+          docker compose -p codebuilder build --no-cache webapp
 
           # Step 5: Forcefully remove the old webapp container to prevent conflicts.
           echo "Forcefully removing old webapp container if it exists..."
@@ -86,8 +112,8 @@ jobs:
 
           # Step 6: Deploy the new webapp container.
           echo "Deploying the new webapp container..."
-          # Added -p flag to associate with the correct stack
-          docker compose -p codebuilder-frontend up -d --no-deps webapp
+          # Use 'codebuilder' as the stack prefix
+          docker compose -p codebuilder up -d --no-deps webapp
 
       - name: '🗑 Prune Old Docker Images'
         if: always()
