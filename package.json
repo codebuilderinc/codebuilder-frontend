@@ -45,6 +45,7 @@
     "next": "^15.3.3",
     "next-nprogress-bar": "^2.4.7",
     "next-transition-router": "^0.2.11",
+    "prisma-dbml-generator": "^0.12.0",
     "prop-types": "^15.8.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
@@ -81,7 +82,7 @@
     "@types/react": "npm:types-react@19.0.0-rc.1",
     "@types/react-dom": "npm:types-react-dom@19.0.0-rc.1"
   },
-  "packageManager": "pnpm@10.6.5",
+  "packageManager": "pnpm@10.18.0",
   "nx": {},
   "pnpm": {
     "onlyBuiltDependencies": [
