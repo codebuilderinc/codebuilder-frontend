@@ -46,6 +46,7 @@
     "next-nprogress-bar": "^2.4.7",
     "next-transition-router": "^0.2.11",
     "prisma-dbml-generator": "^0.12.0",
+    "@vegardit/prisma-generator-nestjs-dto": "^1.5.1",
     "prop-types": "^15.8.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
