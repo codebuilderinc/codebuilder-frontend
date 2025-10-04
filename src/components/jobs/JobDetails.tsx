@@ -10,7 +10,6 @@ type JobWithRelations = Prisma.JobGetPayload<{
     company: true
     tags: { include: { tag: true } }
     metadata: true
-    sources: true
   }
 }>
 
@@ -25,8 +24,7 @@ const JobDetails: React.FC<JobDetailsProps> = ({ job }) => {
   }
 
   const getSourceName = () => {
-    const source = job.sources[0]
-    return source ? source.source : 'unknown'
+    return job.source || 'unknown'
   }
 
   const formatDate = (date: Date) => {
@@ -162,6 +160,49 @@ const JobDetails: React.FC<JobDetailsProps> = ({ job }) => {
           </div>
         )}
 
+        {/* Source Details */}
+        <div className="mb-6">
+          <h3 className="text-lg font-semibold text-gray-800 mb-3">Source Details</h3>
+          <div className="space-y-4">
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <div className="flex justify-between items-start mb-2">
+                <div>
+                  <h4 className="font-medium text-gray-800">Source: {job.source || 'unknown'}</h4>
+                  {job.externalId && (
+                    <p className="text-sm text-gray-600">External ID: {job.externalId}</p>
+                  )}
+                </div>
+                <span className="text-xs text-gray-500">{formatDate(job.createdAt)}</span>
+              </div>
+
+              {job.url && (
+                <div className="mb-2">
+                  <span className="text-sm font-medium text-gray-600">URL: </span>
+                  <Link
+                    href={job.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 hover:text-blue-800 text-sm break-all"
+                  >
+                    {job.url}
+                  </Link>
+                </div>
+              )}
+
+              {job.data && (
+                <details className="mt-2">
+                  <summary className="cursor-pointer text-sm font-medium text-gray-600 hover:text-gray-800">
+                    Raw Data
+                  </summary>
+                  <pre className="mt-2 text-xs bg-gray-100 p-3 rounded overflow-x-auto">
+                    {formatJsonData(job.data)}
+                  </pre>
+                </details>
+              )}
+            </div>
+          </div>
+        </div>
+
         {/* Metadata */}
         {job.metadata.length > 0 && (
           <div className="mb-6">
@@ -183,53 +224,6 @@ const JobDetails: React.FC<JobDetailsProps> = ({ job }) => {
             </div>
           </div>
         )}
-
-        {/* Sources */}
-        <div className="mb-6">
-          <h3 className="text-lg font-semibold text-gray-800 mb-3">Sources</h3>
-          <div className="space-y-4">
-            {job.sources.map((source, index) => (
-              <div key={source.id} className="bg-gray-50 p-4 rounded-lg">
-                <div className="flex justify-between items-start mb-2">
-                  <div>
-                    <h4 className="font-medium text-gray-800">
-                      Source {index + 1}: {source.source}
-                    </h4>
-                    {source.externalId && (
-                      <p className="text-sm text-gray-600">External ID: {source.externalId}</p>
-                    )}
-                  </div>
-                  <span className="text-xs text-gray-500">{formatDate(source.createdAt)}</span>
-                </div>
-
-                {source.rawUrl && (
-                  <div className="mb-2">
-                    <span className="text-sm font-medium text-gray-600">Raw URL: </span>
-                    <Link
-                      href={source.rawUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-600 hover:text-blue-800 text-sm break-all"
-                    >
-                      {source.rawUrl}
-                    </Link>
-                  </div>
-                )}
-
-                {source.data && (
-                  <details className="mt-2">
-                    <summary className="cursor-pointer text-sm font-medium text-gray-600 hover:text-gray-800">
-                      Raw Data
-                    </summary>
-                    <pre className="mt-2 text-xs bg-gray-100 p-3 rounded overflow-x-auto">
-                      {formatJsonData(source.data)}
-                    </pre>
-                  </details>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
 
         {/* Actions */}
         <div className="flex flex-wrap gap-4 pt-6 border-t border-gray-200">

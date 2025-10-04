@@ -23,7 +23,6 @@ export const GET = withLogging(async (request: NextRequest) => {
         company: true,
         tags: { include: { tag: true } },
         metadata: true,
-        sources: true,
       },
     })
 

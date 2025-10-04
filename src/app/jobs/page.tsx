@@ -10,7 +10,6 @@ type JobWithRelations = Prisma.JobGetPayload<{
     company: true
     tags: { include: { tag: true } }
     metadata: true
-    sources: true
   }
 }>
 
@@ -28,7 +27,6 @@ export default async function Home(props: { searchParams: Promise<{ page?: strin
       company: true,
       tags: { include: { tag: true } },
       metadata: true,
-      sources: true,
     },
   })) as JobWithRelations[]
 

@@ -12,13 +12,12 @@ export type JobInput = {
   url: string
   postedAt?: Date | string
   description?: string
-  isRemote?: boolean
+  isRemote?: boolean | null
   tags?: string[]
   metadata?: Record<string, string>
   source: {
     name: string
     externalId?: string
-    rawUrl?: string
     data?: any
   }
 }
@@ -46,7 +45,11 @@ export async function upsertJob(input: JobInput) {
       location: input.location,
       postedAt: input.postedAt ? new Date(input.postedAt) : undefined,
       description: input.description,
-      isRemote: input.isRemote,
+      isRemote: input.isRemote ?? undefined,
+      // Write source-related fields directly on Job
+      source: input.source?.name,
+      externalId: input.source?.externalId,
+      data: input.source?.data as any,
       company: companyRecord ? { connect: { id: companyRecord.id } } : undefined,
       updatedAt: new Date(),
     },
@@ -56,8 +59,12 @@ export async function upsertJob(input: JobInput) {
       location: input.location,
       postedAt: input.postedAt ? new Date(input.postedAt) : undefined,
       description: input.description,
-      isRemote: input.isRemote,
+      isRemote: input.isRemote ?? undefined,
       url: input.url,
+      // Write source-related fields directly on Job
+      source: input.source?.name,
+      externalId: input.source?.externalId,
+      data: input.source?.data as any,
       company: companyRecord ? { connect: { id: companyRecord.id } } : undefined,
     },
   })
@@ -89,28 +96,6 @@ export async function upsertJob(input: JobInput) {
       })
     }
   }
-
-  // Upsert job source (also requires a compound unique constraint for source + externalId)
-  await prisma.jobSource.upsert({
-    where: {
-      source_externalId: {
-        source: input.source.name,
-        externalId: input.source.externalId || '',
-      },
-    },
-    update: {
-      rawUrl: input.source.rawUrl,
-      data: input.source.data,
-      jobId: job.id,
-    },
-    create: {
-      source: input.source.name,
-      externalId: input.source.externalId,
-      rawUrl: input.source.rawUrl,
-      data: input.source.data,
-      jobId: job.id,
-    },
-  })
 
   return job
 }

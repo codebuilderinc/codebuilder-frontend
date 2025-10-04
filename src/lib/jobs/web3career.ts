@@ -47,7 +47,6 @@ export async function storeWeb3CareerJobs(jobs: any[]) {
         source: {
           name: 'web3career',
           externalId: job.id ? String(job.id) : undefined,
-          rawUrl: job.apply_url,
           data: job,
         },
       }

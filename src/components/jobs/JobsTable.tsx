@@ -13,7 +13,6 @@ type JobWithRelations = Prisma.JobGetPayload<{
     company: true
     tags: { include: { tag: true } }
     metadata: true
-    sources: true
   }
 }>
 
@@ -33,8 +32,7 @@ const JobsTable: React.FC<Props> = ({ jobs, totalJobs, jobsPerPage, currentPage 
   }
 
   const getSourceName = (job: JobWithRelations) => {
-    const source = job.sources[0] // Get the first source
-    return source ? source.source : 'unknown'
+    return job.source || 'unknown'
   }
 
   const formatDate = (date: Date) => {

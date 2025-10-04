@@ -213,7 +213,6 @@ export async function storeRedditJobPosts(posts: Array<any>) {
         source: {
           name: 'reddit',
           externalId: post.url, // Use URL as external ID since Reddit doesn't provide a better ID
-          rawUrl: post.url,
           data: post,
         },
       }
