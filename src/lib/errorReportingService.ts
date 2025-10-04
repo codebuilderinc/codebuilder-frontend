@@ -2,7 +2,7 @@ import { ErrorInfo } from 'react'
 import { logger } from '@/lib/logger'
 
 // This is the relative path to the API endpoint we created.
-const ERROR_REPORTING_ENDPOINT = '/api/errors'
+const ERROR_REPORTING_ENDPOINT = 'https://api.codebuilder.org/errors'
 
 interface ReportOptions {
   isFatal?: boolean

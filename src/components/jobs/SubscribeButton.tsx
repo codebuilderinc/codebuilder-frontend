@@ -42,7 +42,7 @@ const SubscribeButton: React.FC = () => {
       const registration = await navigator.serviceWorker.ready
       logger.info('Service worker ready:', registration)
 
-      const response = await fetch('/api/notifications/get-public-key')
+      const response = await fetch('https://api.codebuilder.org/notifications/public-key')
       if (!response.ok) throw new Error('Failed to fetch public key')
       const { publicKey } = await response.json()
       logger.info('Public key received:', publicKey)
