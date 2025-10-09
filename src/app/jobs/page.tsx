@@ -1,36 +1,21 @@
 import React from 'react'
 import JobsTable from '@/components/jobs/JobsTable'
 import VideoPlayer from '../../components/video-player'
-import prisma from '@/lib/db'
-import { Prisma } from '@prisma/client'
 
-// Type for jobs with relations
-type JobWithRelations = Prisma.JobGetPayload<{
-  include: {
-    company: true
-    tags: { include: { tag: true } }
-    metadata: true
-  }
-}>
 
 export default async function Home(props: { searchParams: Promise<{ page?: string }> }) {
   const searchParams = await props.searchParams
   const postsPerPage = 10
   const currentPage = parseInt(searchParams.page || '1', 10)
 
-  const totalJobs = await prisma.job.count()
-  const jobs = (await prisma.job.findMany({
-    skip: (currentPage - 1) * postsPerPage,
-    take: postsPerPage,
-    orderBy: { postedAt: 'desc' },
-    include: {
-      company: true,
-      tags: { include: { tag: true } },
-      metadata: true,
-    },
-  })) as JobWithRelations[]
-
-  await prisma.$disconnect()
+  // Fetch jobs from external API
+  const res = await fetch(`https://api.codebuilder.org/jobs?page=${currentPage}&limit=${postsPerPage}`)
+  if (!res.ok) {
+    throw new Error('Failed to fetch jobs from external API')
+  }
+  const data = await res.json()
+  const jobs = data.jobs || []
+  const totalJobs = data.total || 0
 
   return (
     <div className="flex flex-col inset-0 z-50 bg-primary transition-transform">

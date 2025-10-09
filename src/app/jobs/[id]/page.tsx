@@ -1,18 +1,8 @@
+
 import React from 'react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import prisma from '@/lib/db'
-import { Prisma } from '@prisma/client'
 import JobDetails from '@/components/jobs/JobDetails'
-
-// Type for job with relations
-type JobWithRelations = Prisma.JobGetPayload<{
-  include: {
-    company: true
-    tags: { include: { tag: true } }
-    metadata: true
-  }
-}>
 
 interface JobPageProps {
   params: Promise<{ id: string }>
@@ -26,20 +16,15 @@ export default async function JobPage({ params }: JobPageProps) {
     notFound()
   }
 
-  const job = (await prisma.job.findUnique({
-    where: { id: jobId },
-    include: {
-      company: true,
-      tags: { include: { tag: true } },
-      metadata: true,
-    },
-  })) as JobWithRelations | null
-
+  // Fetch job from external API
+  const res = await fetch(`https://api.codebuilder.org/jobs/${jobId}`)
+  if (!res.ok) {
+    notFound()
+  }
+  const job = await res.json()
   if (!job) {
     notFound()
   }
-
-  await prisma.$disconnect()
 
   return (
     <div className="flex flex-col inset-0 z-50 bg-primary transition-transform">
@@ -62,7 +47,6 @@ export default async function JobPage({ params }: JobPageProps) {
     </div>
   )
 }
-
 // Generate metadata for SEO
 export async function generateMetadata({ params }: JobPageProps) {
   const { id } = await params
@@ -74,15 +58,14 @@ export async function generateMetadata({ params }: JobPageProps) {
     }
   }
 
-  const job = await prisma.job.findUnique({
-    where: { id: jobId },
-    select: {
-      title: true,
-      company: { select: { name: true } },
-      description: true,
-    },
-  })
-
+  // Fetch job from external API
+  const res = await fetch(`https://api.codebuilder.org/jobs/${jobId}`)
+  if (!res.ok) {
+    return {
+      title: 'Job Not Found',
+    }
+  }
+  const job = await res.json()
   if (!job) {
     return {
       title: 'Job Not Found',
