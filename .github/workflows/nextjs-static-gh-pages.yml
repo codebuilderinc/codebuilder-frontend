@@ -2,7 +2,7 @@ name: 🚀 Deploy Static Next.js to GitHub Pages
 
 on:
   push:
-    branches: ['gh-static'] # Triggers on push to this branch
+    branches: ['main'] # Triggers on push to main branch
   workflow_dispatch: # Allows manual triggering
 
 permissions:
@@ -19,24 +19,7 @@ jobs:
     name: 🏗 Build Static Site
     runs-on: ubuntu-latest
 
-    # ===================================================================
-    # THE FIX, PART 1: Create a temporary PostgreSQL database service
-    # This database will only exist for the duration of this build job.
-    # ===================================================================
-    services:
-      postgres:
-        image: postgres:15-alpine
-        env:
-          POSTGRES_USER: user
-          POSTGRES_PASSWORD: password
-          POSTGRES_DB: temp_db
-        ports:
-          - 5432:5432 # Map port 5432 on the runner to the container's port 5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+
 
     steps:
       - name: 🔍 Checkout repository
@@ -74,18 +57,9 @@ jobs:
         run: ${{ env.manager }} ${{ env.command }}
 
       - name: 🏗 Generate Static Build
-        # =====================================================================
-        # THE FIX, PART 2: Provide the database URL to the build command
-        # This points your app to the temporary database service we created above.
-        # Note the removal of the deprecated 'next export' command.
-        # =====================================================================
-        env:
-          DATABASE_URL: 'postgresql://user:password@localhost:5432/temp_db'
-          SHADOW_DATABASE_URL: 'postgresql://user:password@localhost:5432/temp_db_shadow'
-          # Add any other required build-time environment variables here
         run: |
           echo "Building static files..."
-          ${{ env.runner }} next build
+          pnpm build:static
           touch out/.nojekyll
 
       - name: 📤 Upload static site
