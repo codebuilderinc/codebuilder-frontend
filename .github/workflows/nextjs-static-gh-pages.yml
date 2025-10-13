@@ -57,6 +57,8 @@ jobs:
         run: ${{ env.manager }} ${{ env.command }}
 
       - name: 🏗 Generate Static Build
+        env:
+          NEXT_OUTPUT_MODE: export
         run: |
           echo "Building static files..."
           pnpm build:static
