@@ -67,7 +67,7 @@ jobs:
           NEXT_OUTPUT_MODE: export
         run: |
           echo "Building static files..."
-          pnpm build:static
+          pnpm build
           touch out/.nojekyll
 
       - name: 📤 Upload static site
