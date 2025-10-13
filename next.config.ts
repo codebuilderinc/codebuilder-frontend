@@ -60,12 +60,12 @@ const nextConfig: NextConfig = {
   },
 }
 
-// Only include page.* files for static export, include route.* for all other builds
-if (isStaticExport) {
-  (nextConfig as any).pageExtensions = ['page.tsx', 'page.ts', 'page.jsx', 'page.js']
-} else {
-  (nextConfig as any).pageExtensions = [
-    'route.ts', 'route.js', 'page.tsx', 'page.ts', 'page.jsx', 'page.js'
-  ]
-}
+// // Only include page.* files for static export, include route.* for all other builds
+// if (isStaticExport) {
+//   (nextConfig as any).pageExtensions = ['page.tsx', 'page.ts', 'page.jsx', 'page.js']
+// } else {
+//   (nextConfig as any).pageExtensions = [
+//     'route.ts', 'route.js', 'page.tsx', 'page.ts', 'page.jsx', 'page.js'
+//   ]
+// }
 export default nextConfig
