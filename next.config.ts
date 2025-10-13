@@ -3,6 +3,8 @@ import type { NextConfig } from 'next'
 // A helper variable to easily check if we are in static export mode.
 const isStaticExport = process.env.NEXT_OUTPUT_MODE === 'export'
 
+console.log(`Next.js static export mode: ${isStaticExport}`)
+
 const nextConfig: NextConfig = {
   /**
    * FIX: The 'turbo' settings have been moved to the top-level 'turbopack' property
@@ -58,4 +60,12 @@ const nextConfig: NextConfig = {
   },
 }
 
+// Only include page.* files for static export, include route.* for all other builds
+if (isStaticExport) {
+  (nextConfig as any).pageExtensions = ['page.tsx', 'page.ts', 'page.jsx', 'page.js']
+} else {
+  (nextConfig as any).pageExtensions = [
+    'route.ts', 'route.js', 'page.tsx', 'page.ts', 'page.jsx', 'page.js'
+  ]
+}
 export default nextConfig
