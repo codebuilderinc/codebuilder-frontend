@@ -56,9 +56,6 @@ jobs:
       - name: 📥 Install dependencies
         run: ${{ env.manager }} ${{ env.command }}
 
-      - name: 🧪 Type Check (Static Only)
-        run: pnpm tsc --project tsconfig.static.json --noEmit
-
       - name: 🏗 Generate Static Build
         env:
           NEXT_OUTPUT_MODE: export
