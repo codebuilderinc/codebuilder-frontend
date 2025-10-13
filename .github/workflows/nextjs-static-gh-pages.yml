@@ -57,7 +57,7 @@ jobs:
       - name: 🚫 Ephemerally delete server/api files
         run: |
           echo "Deleting src/app/api, src/server, src/middleware.ts, and src/app/jobs/[id] for static build..."
-          rm -rf src/app/api src/server src/middleware.ts src/app/jobs/[id]
+          rm -rf src/app/api src/server src/middleware.ts src/app/jobs/[id] src/app/[...not-found]
 
       - name: 📥 Install dependencies
         run: ${{ env.manager }} ${{ env.command }}
