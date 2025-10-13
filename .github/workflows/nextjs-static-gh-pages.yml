@@ -53,6 +53,12 @@ jobs:
 
       # NOTE: We do NOT need to create .env or secrets here, as we provide them directly to the build step below.
 
+
+      - name: 🚫 Ephemerally delete server/api files
+        run: |
+          echo "Deleting src/app/api and src/server for static build..."
+          rm -rf src/app/api src/server
+
       - name: 📥 Install dependencies
         run: ${{ env.manager }} ${{ env.command }}
 
