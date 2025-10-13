@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server'
-import { fetchRedditPosts, storeRedditJobPosts } from '@/lib/jobs/reddit'
-import { fetchWeb3CareerJobs, storeWeb3CareerJobs } from '@/lib/jobs/web3career'
-import prisma from '@/lib/db'
-import { logger } from '@/lib/logger'
+import { fetchRedditPosts, storeRedditJobPosts } from '@/server/jobs/reddit'
+import { fetchWeb3CareerJobs, storeWeb3CareerJobs } from '@/server/jobs/web3career'
+import prisma from '@/server/db'
+import { logger } from '@/server/logger'
 
 // Subreddits to scan for jobs
 const SUBREDDITS = [

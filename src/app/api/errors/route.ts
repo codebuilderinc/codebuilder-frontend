@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import prisma from '@/lib/db'
-import { withLogging, logger } from '@/lib/logger'
+import prisma from '@/server/db'
+import { withLogging, logger } from '@/server/logger'
 import { log } from 'console'
 
 export const POST = withLogging(async (request: NextRequest) => {

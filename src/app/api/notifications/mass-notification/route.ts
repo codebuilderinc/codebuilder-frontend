@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import webpush, { WebPushError } from 'web-push'
 import { messaging } from 'firebase-admin'
-import { sendNotification, SubscriptionRecord } from '../../../../lib/notifications'
-import prisma from '@/lib/db'
-import { withLogging, logger } from '@/lib/logger'
+import { sendNotification } from '@/server/notifications'
+import prisma from '@/server/db'
+import { withLogging, logger } from '@/server/logger'
 
 export const POST = withLogging(async (request: NextRequest) => {
   try {

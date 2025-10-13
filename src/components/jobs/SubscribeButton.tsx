@@ -3,7 +3,8 @@
 import React, { useState, useEffect } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBell, faSpinner } from '@fortawesome/free-solid-svg-icons'
-import { logger } from '@/lib/logger'
+// No-op logger for client build
+import { frontendLogger as logger } from '@/lib/frontend-logger'
 
 const SubscribeButton: React.FC = () => {
   const [loading, setLoading] = useState(false)
@@ -40,19 +41,19 @@ const SubscribeButton: React.FC = () => {
       }
 
       const registration = await navigator.serviceWorker.ready
-      logger.info('Service worker ready:', registration)
+  logger.info('Service worker ready')
 
       const response = await fetch('https://api.codebuilder.org/notifications/public-key')
       if (!response.ok) throw new Error('Failed to fetch public key')
       const { publicKey } = await response.json()
-      logger.info('Public key received:', publicKey)
+ logger.info('Public key received')
 
       const convertedVapidKey = urlBase64ToUint8Array(publicKey)
       const subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: convertedVapidKey,
       })
-      logger.info('Push subscription created:', subscription)
+   logger.info('Push subscription created')
 
       // Format the subscription for the API
       const subscriptionData = {
@@ -63,7 +64,7 @@ const SubscribeButton: React.FC = () => {
           auth: btoa(String.fromCharCode(...new Uint8Array(subscription.getKey('auth')!))),
         },
       }
-      logger.info('Sending subscription data:', subscriptionData)
+  // logger.info('Sending subscription data')
 
       const subscribeResponse = await fetch('https://api.codebuilder.org/notifications/subscribe', {
         method: 'POST',
@@ -77,12 +78,12 @@ const SubscribeButton: React.FC = () => {
       }
 
       const result = await subscribeResponse.json()
-      logger.info('Subscription saved:', result)
+  // logger.info('Subscription saved')
 
       alert('Successfully subscribed to notifications!')
       setIsSubscribed(true)
     } catch (error) {
-      logger.error('Subscription error', error)
+   logger.error('Subscription error')
       alert(`Subscription failed: ${error.message}`)
     } finally {
       setLoading(false)

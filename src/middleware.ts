@@ -1,6 +1,6 @@
 // src/middleware.ts
 import { NextResponse, NextRequest } from 'next/server'
-import { logger } from '@/lib/logger'
+import { logger } from '@/server/logger'
 
 /**
  * ANSI color codes for console output in Docker

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import prisma from '@/lib/db'
-import { withLogging } from '@/lib/logger'
+import prisma from '@/server/db'
+import { withLogging } from '@/server/logger'
 
 /**
  * Returns a paginated list of all jobs from all sources,
