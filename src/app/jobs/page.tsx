@@ -1,21 +1,31 @@
-import React from 'react'
+"use client"
+
+import React, { useEffect, useState } from 'react'
 import JobsTable from '@/components/jobs/JobsTable'
-import VideoPlayer from '../../components/video-player'
 
-
-export default async function Home(props: { searchParams: Promise<{ page?: string }> }) {
-  const searchParams = await props.searchParams
+export default function Home() {
+  const [jobs, setJobs] = useState([])
+  const [totalJobs, setTotalJobs] = useState(0)
+  const [currentPage, setCurrentPage] = useState(1)
   const postsPerPage = 10
-  const currentPage = parseInt(searchParams.page || '1', 10)
 
-  // Fetch jobs from external API
-  const res = await fetch(`https://api.codebuilder.org/jobs?page=${currentPage}&limit=${postsPerPage}`)
-  if (!res.ok) {
-    throw new Error('Failed to fetch jobs from external API')
-  }
-  const data = await res.json()
-  const jobs = data.jobs || []
-  const totalJobs = data.total || 0
+  useEffect(() => {
+    // Get page from URL search params
+    const params = new URLSearchParams(window.location.search)
+    const page = parseInt(params.get('page') || '1', 10)
+    setCurrentPage(page)
+
+    fetch(`https://api.codebuilder.org/jobs?page=${page}&limit=${postsPerPage}`)
+      .then(res => res.json())
+      .then(data => {
+        setJobs(data.jobs || [])
+        setTotalJobs(data.total || 0)
+      })
+      .catch(() => {
+        setJobs([])
+        setTotalJobs(0)
+      })
+  }, [window.location.search])
 
   return (
     <div className="flex flex-col inset-0 z-50 bg-primary transition-transform">
