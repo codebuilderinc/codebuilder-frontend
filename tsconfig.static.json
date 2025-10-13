@@ -2,6 +2,6 @@
   "extends": "./tsconfig.json",
   "exclude": [
     "node_modules",
-    "src/lib/db.ts"
+    "src/server"
   ]
 }
