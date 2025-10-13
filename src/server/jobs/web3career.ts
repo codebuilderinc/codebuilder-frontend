@@ -1,5 +1,5 @@
 import { upsertJob } from './jobs'
-import { logger } from '@/lib/logger'
+import { logger } from '@/server/logger'
 
 // API URL/config encapsulated here
 const WEB3CAREER_API_URL = 'https://web3.career/api/v1?token=Rg9PrsGP96Z2GB6T9tNZ1AzHzriQEwxa'
@@ -66,3 +66,4 @@ export async function fetchAndStoreWeb3CareerJobs() {
   const jobs = await fetchWeb3CareerJobs()
   await storeWeb3CareerJobs(jobs)
 }
+

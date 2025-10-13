@@ -1,5 +1,5 @@
-import prisma from './db'
-import { logger } from './logger'
+import prisma from '@/server/db'
+import { logger } from '@/server/logger'
 
 // Function definition with types
 async function createLocation(

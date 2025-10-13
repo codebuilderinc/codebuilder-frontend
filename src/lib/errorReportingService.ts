@@ -1,5 +1,6 @@
 import { ErrorInfo } from 'react'
-import { logger } from '@/lib/logger'
+// No-op logger for client build
+const logger = { error: () => {} }
 
 // This is the relative path to the API endpoint we created.
 const ERROR_REPORTING_ENDPOINT = 'https://api.codebuilder.org/errors'
@@ -35,6 +36,6 @@ export const reportError = async (error: Error, options?: ReportOptions): Promis
       body: JSON.stringify(report),
     })
   } catch (e) {
-    logger.error('Failed to send error report:', e)
+  // logger.error('Failed to send error report')
   }
 }
