@@ -2,16 +2,26 @@
 
 import React from 'react'
 import Link from 'next/link'
-import { Prisma } from '@prisma/client'
+// Do not import Prisma types in static build. Define a plain JobWithRelations type matching the API response.
 
-// Type for job with relations
-type JobWithRelations = Prisma.JobGetPayload<{
-  include: {
-    company: true
-    tags: { include: { tag: true } }
-    metadata: true
-  }
-}>
+// Job type matching the structure returned by the external API
+type JobWithRelations = {
+  id: number
+  title: string
+  company?: { name: string } | null
+  tags: { tag: { id: number; name: string } }[]
+  metadata: { id?: number; name: string; value: string }[]
+  author?: string | null
+  location?: string | null
+  source?: string | null
+  url: string
+  postedAt?: string | Date | null
+  createdAt?: string | Date | null
+  isRemote?: boolean | null
+  description?: string | null
+  externalId?: string | null
+  data?: any
+}
 
 interface JobDetailsProps {
   job: JobWithRelations
@@ -27,7 +37,8 @@ const JobDetails: React.FC<JobDetailsProps> = ({ job }) => {
     return job.source || 'unknown'
   }
 
-  const formatDate = (date: Date) => {
+  const formatDate = (date: string | Date | null | undefined) => {
+    if (!date) return '-'
     return new Date(date).toLocaleString()
   }
 
