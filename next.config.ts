@@ -22,7 +22,7 @@ const nextConfig: NextConfig = {
   //basePath: //isGithubPages ? `/${repoName}` : '',
   //assetPrefix: //isGithubPages ? `/${repoName}/` : '',
 
-  allowedDevOrigins: ['https://new.codebuilder.org', 'https://new.codebuilder.org:443', 'https://dev.codebuilder.org', 'https://dev.codebuilder.org:443'], // resolves the CORS warning
+  allowedDevOrigins: ['https://api.codebuilder.org', 'https://new.codebuilder.org', 'https://new.codebuilder.org:443', 'https://dev.codebuilder.org', 'https://dev.codebuilder.org:443'], // resolves the CORS warning
 
   // Note: If you are using next/image, you may need to add an
   // unoptimized: true flag here if you are not using a custom loader.
