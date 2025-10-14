@@ -65,8 +65,9 @@ jobs:
       - name: 🏗 Generate Static Build
         env:
           NEXT_OUTPUT_MODE: export
+          GITHUB_PAGES: 1
         run: |
-          echo "Building static files..."
+          echo "Building static files for GitHub Pages..."
           pnpm build
           touch out/.nojekyll
 

@@ -5,6 +5,9 @@ const isStaticExport = process.env.NEXT_OUTPUT_MODE === 'export'
 
 console.log(`Next.js static export mode: ${isStaticExport}`)
 
+const repoName = 'codebuilder-frontend';
+const isGithubPages = !!process.env.GITHUB_PAGES;
+
 const nextConfig: NextConfig = {
   /**
    * FIX: The 'turbo' settings have been moved to the top-level 'turbopack' property
@@ -16,6 +19,8 @@ const nextConfig: NextConfig = {
 
   // Conditionally set the output mode for the build.
   output: isStaticExport ? 'export' : undefined,
+  basePath: isGithubPages ? `/${repoName}` : '',
+  assetPrefix: isGithubPages ? `/${repoName}/` : '',
 
   allowedDevOrigins: ['https://new.codebuilder.org', 'https://new.codebuilder.org:443'], // resolves the CORS warning
 
