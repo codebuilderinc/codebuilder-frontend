@@ -19,8 +19,8 @@ const nextConfig: NextConfig = {
 
   // Conditionally set the output mode for the build.
   output: isStaticExport ? 'export' : undefined,
-  basePath: './', //isGithubPages ? `/${repoName}` : '',
-  assetPrefix: './', //isGithubPages ? `/${repoName}/` : '',
+  //basePath: //isGithubPages ? `/${repoName}` : '',
+  //assetPrefix: //isGithubPages ? `/${repoName}/` : '',
 
   allowedDevOrigins: ['https://new.codebuilder.org', 'https://new.codebuilder.org:443', 'https://dev.codebuilder.org', 'https://dev.codebuilder.org:443'], // resolves the CORS warning
 
