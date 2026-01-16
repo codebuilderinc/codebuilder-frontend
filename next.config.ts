@@ -9,7 +9,7 @@ console.log(`Next.js static export mode: ${isStaticExport}`)
 const repoName = 'codebuilder-frontend';
 const isGithubPages = !!process.env.GITHUB_PAGES;
 
-const nextConfig: NextConfig = {
+const nextConfig = {
   /**
    * FIX: The 'turbo' settings have been moved to the top-level 'turbopack' property
    * as Turbopack is now considered stable in Next.js.
@@ -65,7 +65,7 @@ const nextConfig: NextConfig = {
 
     return config
   },
-}
+} as unknown as NextConfig;
 
 // // Only include page.* files for static export, include route.* for all other builds
 // if (isStaticExport) {
