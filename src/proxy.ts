@@ -106,7 +106,7 @@ function shouldLog(pathname: string): boolean {
 /**
  * Enhanced middleware function with comprehensive HTTP access logging
  */
-export function middleware(request: NextRequest): NextResponse {
+export function proxy(request: NextRequest): NextResponse {
   // Use Date.now() for Edge Runtime compatibility
   const startTime = Date.now()
   const { pathname, search } = request.nextUrl
