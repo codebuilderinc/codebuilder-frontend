@@ -1,6 +1,7 @@
 # This file is ONLY for running the database on your local machine
 # for development tasks like running migrations.
 
+name: codebuilder
 services:
   db:
     image: postgres:15-alpine
