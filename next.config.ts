@@ -1,4 +1,5 @@
 import type { NextConfig } from 'next'
+import path from 'path'
 
 // A helper variable to easily check if we are in static export mode.
 const isStaticExport = process.env.NEXT_OUTPUT_MODE === 'export'
@@ -14,6 +15,7 @@ const nextConfig: NextConfig = {
    * as Turbopack is now considered stable in Next.js.
    */
   turbopack: {
+    root: path.resolve(__dirname),
     resolveExtensions: ['.mdx', '.tsx', '.ts', '.jsx', '.js', '.mjs', '.json'],
   },
 
