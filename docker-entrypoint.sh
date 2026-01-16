@@ -10,10 +10,31 @@ set -e
 export FORCE_COLOR=1
 export NODE_ENV=${NODE_ENV:-production}
 
-# The host for the database, read from an environment variable.
-# We'll set this to 'db' in the docker-compose.yml file.
-DB_HOST=${DATABASE_HOST:-db}
-DB_PORT=${DATABASE_PORT:-5432}
+# Determine DB host/port for readiness checks.
+# Prefer DATABASE_URL so the healthcheck matches what Prisma will use.
+if [ -n "${DATABASE_URL:-}" ]; then
+      DB_URL=$(printf '%s' "$DATABASE_URL" | sed 's/^"//; s/"$//')
+      DB_HOSTPORT=$(printf '%s' "$DB_URL" | sed -E 's#^[a-zA-Z0-9+.-]+://[^@]+@([^/]+)/.*#\1#')
+
+      # If parsing failed (no '@' segment), fall back to explicit vars/defaults.
+      if [ "$DB_HOSTPORT" = "$DB_URL" ]; then
+            DB_HOST=${DATABASE_HOST:-db}
+            DB_PORT=${DATABASE_PORT:-5432}
+      else
+            DB_HOST_FROM_URL=${DB_HOSTPORT%%:*}
+            DB_PORT_FROM_URL=${DB_HOSTPORT##*:}
+            if [ "$DB_HOST_FROM_URL" = "$DB_HOSTPORT" ]; then
+                  DB_PORT_FROM_URL=5432
+            fi
+
+            DB_HOST=${DATABASE_HOST:-$DB_HOST_FROM_URL}
+            DB_PORT=${DATABASE_PORT:-$DB_PORT_FROM_URL}
+      fi
+else
+      # We'll set this to 'db' in docker-compose.yml, but default safely.
+      DB_HOST=${DATABASE_HOST:-db}
+      DB_PORT=${DATABASE_PORT:-5432}
+fi
 
 # Colors for output
 RED='\033[0;31m'
@@ -27,7 +48,7 @@ echo -e "${YELLOW}⏳ Waiting for database at $DB_HOST:$DB_PORT to be ready...${
 
 # Loop until we can successfully connect to the database port.
 # nc (netcat) is a small utility perfect for this.
-while ! nc -z $DB_HOST $DB_PORT; do
+while ! nc -z "$DB_HOST" "$DB_PORT"; do
       sleep 1 # wait for 1 second before trying again
 done
 
