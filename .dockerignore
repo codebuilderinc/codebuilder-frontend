@@ -3,3 +3,7 @@ node_modules
 Dockerfile
 .git
 .gitignore
+
+# Avoid copying local dev env overrides into Docker images.
+# Next.js loads .env.local with high precedence, which can break builds.
+.env.local
