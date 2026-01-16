@@ -3,6 +3,7 @@ import React from 'react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import JobDetails from '@/components/jobs/JobDetails'
+import type { ApiResponse, JobWithRelations } from '@/lib/jobs/types'
 
 interface JobPageProps {
   params: Promise<{ id: string }>
@@ -21,7 +22,8 @@ export default async function JobPage({ params }: JobPageProps) {
   if (!res.ok) {
     notFound()
   }
-  const job = await res.json()
+  const json: ApiResponse<JobWithRelations> | JobWithRelations = await res.json()
+  const job = (json as any)?.success === true ? (json as any).data : json
   if (!job) {
     notFound()
   }
@@ -65,7 +67,8 @@ export async function generateMetadata({ params }: JobPageProps) {
       title: 'Job Not Found',
     }
   }
-  const job = await res.json()
+  const json: ApiResponse<JobWithRelations> | JobWithRelations = await res.json()
+  const job = (json as any)?.success === true ? (json as any).data : json
   if (!job) {
     return {
       title: 'Job Not Found',

@@ -41,19 +41,21 @@ const SubscribeButton: React.FC = () => {
       }
 
       const registration = await navigator.serviceWorker.ready
-  logger.info('Service worker ready')
+      logger.info('Service worker ready')
 
       const response = await fetch('https://api.codebuilder.org/notifications/public-key')
       if (!response.ok) throw new Error('Failed to fetch public key')
-      const { publicKey } = await response.json()
- logger.info('Public key received')
+      const { data } = await response.json()
+      const publicKey = data.publicKey
+      logger.info('Public key received')
 
       const convertedVapidKey = urlBase64ToUint8Array(publicKey)
       const subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: convertedVapidKey,
       })
-   logger.info('Push subscription created')
+
+      logger.info('Push subscription created')
 
       // Format the subscription for the API
       const subscriptionData = {
@@ -64,7 +66,7 @@ const SubscribeButton: React.FC = () => {
           auth: btoa(String.fromCharCode(...new Uint8Array(subscription.getKey('auth')!))),
         },
       }
-  // logger.info('Sending subscription data')
+      //logger.info('Sending subscription data')
 
       const subscribeResponse = await fetch('https://api.codebuilder.org/notifications/subscribe', {
         method: 'POST',
@@ -83,7 +85,7 @@ const SubscribeButton: React.FC = () => {
       alert('Successfully subscribed to notifications!')
       setIsSubscribed(true)
     } catch (error) {
-   logger.error('Subscription error')
+      logger.error('Subscription error', error)
       alert(`Subscription failed: ${error.message}`)
     } finally {
       setLoading(false)

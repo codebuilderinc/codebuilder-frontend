@@ -2,26 +2,7 @@
 
 import React from 'react'
 import Link from 'next/link'
-// Do not import Prisma types in static build. Define a plain JobWithRelations type matching the API response.
-
-// Job type matching the structure returned by the external API
-type JobWithRelations = {
-  id: number
-  title: string
-  company?: { name: string } | null
-  tags: { tag: { id: number; name: string } }[]
-  metadata: { id?: number; name: string; value: string }[]
-  author?: string | null
-  location?: string | null
-  source?: string | null
-  url: string
-  postedAt?: string | Date | null
-  createdAt?: string | Date | null
-  isRemote?: boolean | null
-  description?: string | null
-  externalId?: string | null
-  data?: any
-}
+import type { JobWithRelations } from '@/lib/jobs/types'
 
 interface JobDetailsProps {
   job: JobWithRelations
@@ -57,7 +38,7 @@ const JobDetails: React.FC<JobDetailsProps> = ({ job }) => {
     <div className="bg-white rounded-lg shadow-lg overflow-hidden">
       {/* Header */}
       <div className="bg-gradient-to-r from-blue-600 to-blue-700  p-6">
-        <h1 className="text-3xl font-bold mb-2">{job.title}</h1>
+        <h1 className="text-3xl font-bold mb-2 text-white">{job.title}</h1>
         <div className="flex flex-wrap items-center gap-4 text-blue-100">
           <span className="flex items-center">
             <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
