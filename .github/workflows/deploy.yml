@@ -96,24 +96,23 @@ jobs:
           echo "Ensuring build runs in default server mode..."
           export NEXT_OUTPUT_MODE='standalone'
 
-          # Step 4: Build the latest webapp image.
-          echo "Building the latest webapp image..."
+          # Step 4: Build the latest frontend image.
+          echo "Building the latest frontend image..."
           # Get the current commit hash of the prisma submodule
           # This ensures Docker rebuilds the prisma layer when the submodule is updated
           PRISMA_COMMIT=$(git submodule status prisma | awk '{print $1}' | sed 's/^+//')
           echo "Using Prisma submodule commit: $PRISMA_COMMIT"
 
           # Force a complete rebuild with no cache to ensure fresh prisma schema
-          docker compose -p codebuilder build --no-cache webapp
+          docker compose -p codebuilder build --no-cache frontend
 
-          # Step 5: Forcefully remove the old webapp container to prevent conflicts.
-          echo "Forcefully removing old webapp container if it exists..."
-          docker rm -f codebuilder-webapp || true
+          # Step 5: Forcefully remove the old frontend container to prevent conflicts.
+          echo "Forcefully removing old frontend container if it exists..."
+          docker rm -f codebuilder-frontend || true
 
-          # Step 6: Deploy the new webapp container.
-          echo "Deploying the new webapp container..."
-          # Use 'codebuilder' as the stack prefix
-          docker compose -p codebuilder up -d --no-deps webapp
+          # Step 6: Deploy the new frontend container.
+          echo "Deploying the new frontend container..."
+          docker compose -p codebuilder up -d --no-deps frontend
 
       - name: '🗑 Prune Old Docker Images'
         if: always()

@@ -1,11 +1,13 @@
 # Define the services (containers) that make up your application.
+name: codebuilder
 services:
-  # 1. The Next.js Web Application Service
-  webapp:
+  # 1. The Next.js Frontend Service
+  frontend:
     # Build the image from the Dockerfile in the current directory.
     build: .
-    container_name: codebuilder-webapp
-    # Ensure the webapp starts after the database is ready.
+    image: codebuilder-frontend
+    container_name: codebuilder-frontend
+    # Ensure the frontend starts after the database is ready.
     depends_on:
       - db
     # Restart the container automatically unless it is explicitly stopped.

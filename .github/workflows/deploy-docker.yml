@@ -40,11 +40,11 @@ jobs:
       # 🐳 Docker Operations
       # ========================
       - name: '🛠 Build Docker Image'
-        run: docker build -t codebuilder-webapp:latest .
+        run: docker build -t codebuilder-frontend:latest .
 
       - name: '🗑 Cleanup Old Containers'
         run: |
-          docker ps -aq --filter name=codebuilder-webapp | xargs -r docker rm -f
+          docker ps -aq --filter name=codebuilder-frontend | xargs -r docker rm -f
 
       - name: '🚀 Launch New Container'
         run: |
@@ -52,5 +52,5 @@ jobs:
             --network host \
             -p 3000:3000 \
             --env-file .env \
-            --name codebuilder-webapp \
-            codebuilder-webapp:latest
+            --name codebuilder-frontend \
+            codebuilder-frontend:latest
