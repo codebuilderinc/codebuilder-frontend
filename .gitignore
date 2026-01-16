@@ -44,3 +44,6 @@ next-env.d.ts
 #secrets
 google-services.json
 .vscode/settings.json
+
+#generated prisma files
+src/generated
