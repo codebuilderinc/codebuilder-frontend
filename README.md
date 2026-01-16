@@ -1,57 +1,89 @@
-# Codebuilder Webapp
+# Codebuilder Frontend
 
 [![Deploy Production Docker Container](https://github.com/codebuilderinc/codebuilder-frontend/actions/workflows/deploy-docker.yml/badge.svg)](https://github.com/codebuilderinc/codebuilder-frontend/actions/workflows/deploy-docker.yml)
 
+Next.js frontend for Codebuilder.
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## Environment Files
 
-## Getting Started
+- `pnpm dev` (Next.js dev server) loads environment variables in this order:
+	- `.env.local` (preferred for local-only overrides)
+	- `.env`
+- Docker Compose loads `.env` because `docker-compose.yml` explicitly uses `env_file: ./.env`.
 
-First, setup your mysql database and edit the .env.example file. 
+Important: inside Docker, Postgres must be reached via `db:5432` (service name + container port), not `localhost`.
 
-```bash 
-cp .env.example .env.local
-```
+## Commands
 
-Run the development server:
+Run any command as:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm <command>
+```
+
+List all available commands:
+
+```bash
+pnpm run
+```
+
+### Core
+
+```bash
 pnpm dev
-# or
-bun dev
+pnpm build
+pnpm build:static
+pnpm start
+pnpm lint
 ```
 
-Build the production Docker container:
+- `dev`: Start Next.js dev server (Turbopack).
+- `build`: Production build.
+- `build:static`: Static export build (only if export mode is supported).
+- `start`: Run production server from `.next` build output.
+- `lint`: Run linting.
+
+### Local DB (for development)
+
 ```bash
-docker run -d --network host -p 3000:3000 --env-file .env --name codebuilder-webapp codebuilder-webapp:latest
+pnpm dev:db:start
+pnpm dev:db:stop
+pnpm dev:db:prepare
 ```
 
-Note: The production website will automatically build & deploy through a GH action anytime a push is made to main.
+- `dev:db:start`: Start the local Postgres container using `docker-compose.local.yml`.
+- `dev:db:stop`: Stop/remove the local Postgres container.
+- `dev:db:prepare`: Create the Prisma shadow database inside Postgres (safe to re-run).
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Prisma
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+pnpm prisma:migrate
+pnpm prisma:generate
+pnpm prisma:studio
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `prisma:migrate`: Run Prisma migrations in development mode.
+- `prisma:generate`: Regenerate Prisma client.
+- `prisma:studio`: Launch Prisma Studio.
 
-## Learn More
+### Docker (Production / Server)
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+pnpm prod:up
+pnpm prod:down
+pnpm prod:logs
+pnpm prod:reset
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `prod:up`: Rebuild and redeploy the Docker Compose stack (frontend + db). This is the main manual deploy command.
+- `prod:down`: Stop/remove the stack containers and networks (does not delete external volumes unless `--volumes` is used).
+- `prod:logs`: Tail logs for the `frontend` service.
+- `prod:reset`: WARNING: brings the stack down with `--volumes` and starts fresh (will wipe DB data).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## CI / Deployment
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+On push to `main`, the GitHub Actions workflow rebuilds and redeploys the Docker services on the self-hosted runner.
 
 ## Activity
 ![Alt](https://repobeats.axiom.co/api/embed/f01e046c8b7d8a2c653ee751c55c2345072872c4.svg "Repobeats analytics image")
