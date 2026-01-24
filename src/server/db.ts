@@ -1,6 +1,10 @@
 
-import { PrismaClient, Prisma } from '@prisma/client'
+//import { PrismaClient, Prisma } from '@prisma/client'
+import { PrismaClient, Prisma } from './../generated/prisma/client'
 import { withAccelerate } from '@prisma/extension-accelerate'
+import { PrismaPg } from '@prisma/adapter-pg';
+
+const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
 
 // Create a singleton instance of PrismaClient extended with accelerate.
 const prismaClientSingleton = () => {
@@ -12,7 +16,8 @@ const prismaClientSingleton = () => {
 
 	return new PrismaClient({
 		log: logConfig,
-	}).$extends(withAccelerate())
+		adapter,
+	})
 }
 
 declare const globalThis: {

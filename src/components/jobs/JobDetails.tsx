@@ -37,7 +37,7 @@ const JobDetails: React.FC<JobDetailsProps> = ({ job }) => {
   return (
     <div className="bg-white rounded-lg shadow-lg overflow-hidden">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-blue-700  p-6">
+      <div className="bg-linear-to-r from-blue-600 to-blue-700  p-6">
         <h1 className="text-3xl font-bold mb-2 text-white">{job.title}</h1>
         <div className="flex flex-wrap items-center gap-4 text-blue-100">
           <span className="flex items-center">

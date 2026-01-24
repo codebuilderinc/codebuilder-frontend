@@ -1,9 +1,10 @@
 import webpush, { WebPushError } from 'web-push'
 import { messaging } from '@/server/firebase'
-import { Subscription } from '@prisma/client'
-import { JsonValue } from '@prisma/client/runtime/library'
+//import { Subscription } from '@prisma/client'
+//import { JsonValue } from '@prisma/client/runtime/library'
 import prisma from '@/server/db'
 import { logger } from '@/server/logger'
+import { Prisma, Subscription } from '../generated/prisma/client'
 
 // Initialize VAPID keys for web push notifications
 webpush.setVapidDetails(
@@ -97,7 +98,7 @@ export async function sendNotification(
  * @param keys The JsonValue that should contain web push keys.
  * @returns True if the object has valid auth and p256dh strings; otherwise, false.
  */
-export function isWebKeys(keys: JsonValue): keys is { auth: string; p256dh: string } {
+export function isWebKeys(keys: Prisma.JsonValue): keys is { auth: string; p256dh: string } {
   return (
     typeof keys === 'object' &&
     keys !== null &&
@@ -115,7 +116,7 @@ export function isWebKeys(keys: JsonValue): keys is { auth: string; p256dh: stri
  * @param keys The JsonValue that should contain the FCM token.
  * @returns True if the object has a valid token string; otherwise, false.
  */
-export function isFcmKeys(keys: JsonValue): keys is { token: string } {
+export function isFcmKeys(keys: Prisma.JsonValue): keys is { token: string } {
   return (
     typeof keys === 'object' &&
     keys !== null &&

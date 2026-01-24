@@ -1,5 +1,6 @@
-import { PrismaClient } from '@prisma/client'
-const prisma = new PrismaClient()
+//import { PrismaClient } from '@prisma/client'
+import prisma from '@/server/db'
+//const prisma = new PrismaClient()
 
 /**
  * Input structure for creating or updating a job record.
@@ -21,6 +22,7 @@ export type JobInput = {
     data?: any
   }
 }
+
 
 /**
  * Creates or updates a job record along with its tags, metadata, and source.
