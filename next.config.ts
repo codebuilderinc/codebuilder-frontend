@@ -4,7 +4,7 @@ import path from 'path'
 // A helper variable to easily check if we are in static export mode.
 const isStaticExport = process.env.NEXT_OUTPUT_MODE === 'export'
 
-console.log(`Next.js static export mode: ${isStaticExport}`)
+console.log(`\n Next.js static export mode: ${isStaticExport}`)
 
 const repoName = 'codebuilder-frontend';
 const isGithubPages = !!process.env.GITHUB_PAGES;
@@ -33,9 +33,9 @@ const nextConfig = {
     unoptimized: isStaticExport,
   },
 
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
+  //eslint: {
+  //  ignoreDuringBuilds: true,
+  //},
 
   // Enable logging configuration
   logging: {
