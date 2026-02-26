@@ -1,3 +1,5 @@
+import type { PageInfo } from '@/lib/pagination'
+
 export type JobCompany = {
   id?: number
   name: string
@@ -37,13 +39,6 @@ export type JobWithRelations = {
   isRemote?: boolean | null
   externalId?: string | null
   data?: unknown
-}
-
-export type PageInfo = {
-  hasNextPage: boolean
-  hasPreviousPage: boolean
-  startCursor: string
-  endCursor: string
 }
 
 export type JobsListData = {
