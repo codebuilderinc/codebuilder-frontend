@@ -36,7 +36,7 @@ export default function Home() {
   }
 
   return (
-    <div className="font-(family-name:--font-geist-sans)">
+    <div className="font-[family-name:var(--font-geist-sans)]">
       <div className="h-[450px] md:h-[550px] relative z-10">
         <div className="preload-images"></div>
         <HeroCarousel />
