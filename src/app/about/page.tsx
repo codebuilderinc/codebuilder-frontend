@@ -7,7 +7,7 @@ import { useEffect } from 'react'
 export default function About() {
   useEffect(() => {
     const timer = setTimeout(() => {
-      throw new Error('This is a simulated server error.')
+      //throw new Error('This is a simulated server error.')
     }, 1000)
 
     return () => clearTimeout(timer)
@@ -26,15 +26,12 @@ export default function About() {
       </div>
 
       {/* Main Content */}
-      <div className="z-10 flex items-center sm:items-start ">
-        <div className="flex w-screen">
+      <div className="z-10 flex items-center  ">
+        <div className="flex flex-col">
           <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
             <li className="mb-2">
               Get started by editing{' '}
-              <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-                src/app/page.tsx
-              </code>
-              .
+              <code className="bg-black/5 dark:bg-white/6 px-1 py-0.5 rounded font-semibold">src/app/page.tsx</code>.
             </li>
             <li>Save and see your changes instantly.</li>
           </ol>

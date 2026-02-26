@@ -66,34 +66,34 @@ const StickyHeader: React.FC = () => {
             </div>
           </Link>
           {/* Desktop Nav Menu */}
-          <nav className="hidden md:flex items-center space-x-16">
+          <nav className="hidden md:flex items-center space-x-2">
             <Link
               href="/"
-              className="text-shadow text-[#f1f1f1] hover:text-[#09afdf] font-medium transition-transform duration-200 ease-in-out hover:scale-105"
+              className="text-shadow text-[#f1f1f1] hover:text-[#09afdf] font-medium transition-all duration-200 ease-in-out hover:scale-105 px-4 py-3 rounded"
             >
               Home
             </Link>
             <Link
               href="/about"
-              className="text-shadow text-[#f1f1f1] hover:text-[#09afdf] transition-transform duration-200 ease-in-out hover:scale-105"
+              className="text-shadow text-[#f1f1f1] hover:text-[#09afdf] transition-all duration-200 ease-in-out hover:scale-105 px-4 py-3 rounded"
             >
               About
             </Link>
             <Link
               href="/test-router-transition"
-              className="text-shadow text-[#f1f1f1] hover:text-[#09afdf] transition-transform duration-200 ease-in-out hover:scale-105"
+              className="text-shadow text-[#f1f1f1] hover:text-[#09afdf] transition-all duration-200 ease-in-out hover:scale-105 px-4 py-3 rounded"
             >
               Services
             </Link>
             <Link
               href="/jobs"
-              className="text-shadow text-[#f1f1f1] hover:text-[#09afdf] transition-transform duration-200 ease-in-out hover:scale-105"
+              className="text-shadow text-[#f1f1f1] hover:text-[#09afdf] transition-all duration-200 ease-in-out hover:scale-105 px-4 py-3 rounded"
             >
               Portfolio
             </Link>
             <Link
               href="/web3career"
-              className="text-shadow text-[#f1f1f1] hover:text-[#09afdf] transition-transform duration-200 ease-in-out hover:scale-105"
+              className="text-shadow text-[#f1f1f1] hover:text-[#09afdf] transition-all duration-200 ease-in-out hover:scale-105 px-4 py-3 rounded"
             >
               Contact
             </Link>
@@ -146,39 +146,39 @@ const StickyHeader: React.FC = () => {
           mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
         } transition-transform duration-300 ease-in-out z-30`}
       >
-        <nav className="flex flex-col items-start p-6 space-y-4">
+        <nav className="flex flex-col items-start p-6 space-y-1">
           <Link
             href="/"
             onClick={toggleMobileMenu}
-            className="hover:text-[#09afdf] transition-transform duration-200 ease-in-out hover:scale-105"
+            className="hover:text-[#09afdf] transition-all duration-200 ease-in-out hover:scale-105 w-full px-3 py-2 rounded"
           >
             Home
           </Link>
           <Link
             href="/about"
             onClick={toggleMobileMenu}
-            className="hover:text-[#09afdf] transition-transform duration-200 ease-in-out hover:scale-105"
+            className="hover:text-[#09afdf] transition-all duration-200 ease-in-out hover:scale-105 w-full px-3 py-2 rounded"
           >
             About
           </Link>
           <Link
             href="/test"
             onClick={toggleMobileMenu}
-            className="hover:text-[#09afdf] transition-transform duration-200 ease-in-out hover:scale-105"
+            className="hover:text-[#09afdf] transition-all duration-200 ease-in-out hover:scale-105 w-full px-3 py-2 rounded"
           >
             Services
           </Link>
           <a
             href="#"
             onClick={toggleMobileMenu}
-            className="hover:text-[#09afdf] transition-transform duration-200 ease-in-out hover:scale-105"
+            className="hover:text-[#09afdf] transition-all duration-200 ease-in-out hover:scale-105 w-full px-3 py-2 rounded"
           >
             Portfolio
           </a>
           <a
             href="#"
             onClick={toggleMobileMenu}
-            className="hover:text-[#09afdf] transition-transform duration-200 ease-in-out hover:scale-105"
+            className="hover:text-[#09afdf] transition-all duration-200 ease-in-out hover:scale-105 w-full px-3 py-2 rounded"
           >
             Contact
           </a>
