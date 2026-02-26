@@ -65,35 +65,29 @@ const FeatureSection = () => {
   }, [])
 
   return (
-    <section className="bg-gray-100 py-4 md:py-6">
+    <section className="bg-gray-100 py-4 md:py-8">
       <div className="container mx-auto px-8 md:px-20 lg:px-32">
         <div className="z-5 grid grid-cols-1 md:grid-cols-3 gap-2 items-stretch">
           {features.map((feature, index) => (
             <div
               key={index}
               data-index={index}
-              className={`feature-box transition-opacity duration-300 flex flex-col h-full justify-center rounded-lg mx-2 ${
-                visibleSections.includes(index)
-                  ? 'animate__animated animate__slideInDown'
-                  : 'opacity-0'
+              className={`feature-box transition-opacity duration-300 flex flex-col h-full rounded-lg mx-2 ${
+                visibleSections.includes(index) ? 'animate__animated animate__slideInDown' : 'opacity-0'
               }`}
               style={{
                 animationDelay: `${index * 0.1}s`, // Add a custom delay based on the index
               }}
             >
-              <div className="flex items-start">
+              <div className="flex items-start h-full">
                 <span className="text-[2rem] mr-4 flex-shrink-0">
                   <FontAwesomeIcon icon={feature.icon} {...feature.iconProps} />
                 </span>
-                <div className="flex flex-col flex-1">
-                  <h4
-                    className={`${Raleway.className} text-[#333333] leading-[1.2] text-[19px] font-normal`}
-                  >
+                <div className="flex flex-col flex-1 h-full">
+                  <h4 className={`${Raleway.className} text-[#333333] leading-[1.2] text-[19px] font-normal`}>
                     {feature.title}
                   </h4>
-                  <p className="mt-2 mb-3 text-[#999999] text-[16px] font-light">
-                    {feature.description}
-                  </p>
+                  <p className="mt-2 mb-3 text-[#999999] text-[16px] font-light flex-grow">{feature.description}</p>
                   <CustomButton
                     text="Read More"
                     link={feature.link}
