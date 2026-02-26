@@ -431,7 +431,7 @@ export default function CarouselSlider() {
                 variants={parentStagger}
                 initial="initial"
                 animate="animate"
-                className="relative z-10 flex flex-col container mx-auto items-start justify-start h-full px-4 md:px-20 lg:px-32 pt-26 md:pt-28"
+                className="relative z-10 flex flex-col container mx-auto items-start justify-start h-full px-4 md:px-20 lg:px-32 pt-[6.5rem] md:pt-[7rem]"
               >
                 <motion.h2 variants={childUp} className="text-white text-3xl md:text-[42px] font-light mb-4">
                   {slides[idx].title}
