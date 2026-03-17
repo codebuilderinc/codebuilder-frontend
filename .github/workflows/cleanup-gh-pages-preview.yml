@@ -1,0 +1,37 @@
+name: 🧹 Cleanup GitHub Pages Preview
+
+on:
+  pull_request:
+    types: [closed]
+
+permissions:
+  contents: write
+
+jobs:
+  cleanup:
+    name: 🗑 Remove Preview Deployment
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🔍 Checkout gh-pages branch
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          fetch-depth: 1
+
+      - name: 🧹 Remove preview directory
+        run: |
+          BRANCH="${{ github.head_ref }}"
+          SAFE_BRANCH=$(echo "$BRANCH" | sed 's/[^a-zA-Z0-9._-]/-/g')
+          PREVIEW_DIR="preview/${SAFE_BRANCH}"
+
+          if [ -d "$PREVIEW_DIR" ]; then
+            echo "Removing preview directory: $PREVIEW_DIR"
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git rm -rf "$PREVIEW_DIR"
+            git commit -m "🧹 Remove preview for closed PR #${{ github.event.pull_request.number }} ($BRANCH)"
+            git push
+          else
+            echo "No preview directory found at $PREVIEW_DIR, skipping cleanup."
+          fi
