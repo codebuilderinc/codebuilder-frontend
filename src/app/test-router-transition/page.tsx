@@ -28,7 +28,7 @@ export default function HomePage() {
         <div className="relative z-0 items-center lg:flex">
           <Reveal>
             <Image
-              src={'/images/hero-slides/slide-1-iphone.jpg'}
+              src={'/images/hero-slides/slide-1-iphone.avif'}
               alt=""
               width={460}
               height={580}
@@ -50,11 +50,7 @@ export default function HomePage() {
           ignore transition
         </Link>
 
-        <TransitionLink
-          href="/demo"
-          data-transition-ignore
-          className="underline underline-offset-4"
-        >
+        <TransitionLink href="/demo" data-transition-ignore className="underline underline-offset-4">
           custom link
         </TransitionLink>
 

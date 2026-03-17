@@ -10,7 +10,7 @@ import { Raleway } from './fonts'
 import FeatureSection from '../components/index/feature-section'
 import { motion, useAnimation } from 'motion/react'
 import AutoScrollingPortfolio from '../components/index/scrolling-portfolio'
-import ContactSection from '../components/index/contact-banner'
+import ContactSection from '../components/layout/contact-banner'
 import AccordionTabsSection from '../components/index/accordion-tabs'
 
 export default function Home() {
