@@ -1,16 +1,21 @@
 'use client'
 
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef, useCallback } from 'react'
 import 'animate.css'
 import { Pacifico, Roboto } from '@/app/fonts'
 import Link from 'next/link'
-import { AppProgressBar as ProgressBar } from 'next-nprogress-bar'
+import { usePathname } from 'next/navigation'
 
 const StickyHeader: React.FC = () => {
   const [isSticky, setIsSticky] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [loadingProgress, setLoadingProgress] = useState(0)
+  const [isLoading, setIsLoading] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
+  const pathname = usePathname()
+  const prevPathRef = useRef(pathname)
+  const progressTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   const handleScroll = () => {
     const scrollTop = window.scrollY
@@ -22,7 +27,6 @@ const StickyHeader: React.FC = () => {
   }
 
   const handleClickOutside = (event: MouseEvent) => {
-    // Check if click is outside the menu and hamburger button
     if (
       menuRef.current &&
       !menuRef.current.contains(event.target as Node) &&
@@ -32,6 +36,79 @@ const StickyHeader: React.FC = () => {
       setMobileMenuOpen(false)
     }
   }
+
+  // Start loading animation on link click
+  const startLoading = useCallback(() => {
+    setIsLoading(true)
+    setLoadingProgress(0)
+    if (progressTimerRef.current) clearInterval(progressTimerRef.current)
+
+    let progress = 0
+    progressTimerRef.current = setInterval(() => {
+      progress += Math.random() * 12 + 3
+      if (progress >= 85) {
+        progress = 85 // Stall at 85% until navigation completes
+        if (progressTimerRef.current) clearInterval(progressTimerRef.current)
+      }
+      setLoadingProgress(progress)
+    }, 100)
+  }, [])
+
+  // Complete loading animation
+  const completeLoading = useCallback(() => {
+    if (progressTimerRef.current) clearInterval(progressTimerRef.current)
+    setLoadingProgress(100)
+    // Keep at 100% for a moment before hiding
+    setTimeout(() => {
+      setIsLoading(false)
+      setLoadingProgress(0)
+    }, 400)
+  }, [])
+
+  // Detect route changes
+  useEffect(() => {
+    if (pathname !== prevPathRef.current) {
+      prevPathRef.current = pathname
+      completeLoading()
+    }
+  }, [pathname, completeLoading])
+
+  // Intercept link clicks to start loading bar
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement
+      const anchor = target.closest('a')
+      if (anchor && anchor.href) {
+        const url = new URL(anchor.href, window.location.origin)
+        // Only trigger for internal navigation
+        if (url.origin === window.location.origin && url.pathname !== pathname) {
+          startLoading()
+        }
+      }
+    }
+    document.addEventListener('click', handleClick)
+    return () => document.removeEventListener('click', handleClick)
+  }, [pathname, startLoading])
+
+  // Show loading bar on initial page load with minimum display time
+  useEffect(() => {
+    setIsLoading(true)
+    setLoadingProgress(0)
+    let progress = 0
+    const timer = setInterval(() => {
+      progress += Math.random() * 18 + 8
+      if (progress >= 100) {
+        progress = 100
+        clearInterval(timer)
+        setTimeout(() => {
+          setIsLoading(false)
+          setLoadingProgress(0)
+        }, 300)
+      }
+      setLoadingProgress(progress)
+    }, 80)
+    return () => clearInterval(timer)
+  }, [])
 
   useEffect(() => {
     window.addEventListener('scroll', handleScroll)
@@ -47,7 +124,7 @@ const StickyHeader: React.FC = () => {
       <header
         className={`fixed animate__animated animate__slideInDown header ${
           isSticky ? 'sticky' : ''
-        } shadow-md bg-[rgba(57,66,69,0.8)] border-t-[rgba(37,42,44,0.5)] z-[22] w-full left-0 border-b border-b-[rgba(0,0,0,0.07)] text-[#cacaca]`}
+        } shadow-md bg-[rgba(57,66,69,0.92)] border-t-[rgba(37,42,44,0.5)] z-[22] w-full left-0 border-b border-b-[rgba(0,0,0,0.07)] text-[#cacaca]`}
       >
         <div className="container mx-auto px-8 md:px-20 lg:px-32 w-full flex justify-between items-center p-2">
           {/* Logo and Text Link to Home Page */}
@@ -58,9 +135,7 @@ const StickyHeader: React.FC = () => {
                 <h1 className="text-[#09afdf] inline">CodeBuilder</h1>&nbsp;
                 <h1 className="text-white inline">Inc.</h1>
               </div>
-              <div
-                className={`${Roboto.className} text-shadow text-[#f1f1f1] text-[11px] font-light`}
-              >
+              <div className={`${Roboto.className} text-shadow text-[#f1f1f1] text-[11px] font-light`}>
                 Software Engineering Solutions
               </div>
             </div>
@@ -80,19 +155,19 @@ const StickyHeader: React.FC = () => {
               About
             </Link>
             <Link
-              href="/test-router-transition"
+              href="/services"
               className="text-shadow text-[#f1f1f1] hover:text-[#09afdf] transition-all duration-200 ease-in-out hover:scale-105 px-4 py-3 rounded"
             >
               Services
             </Link>
             <Link
-              href="/jobs"
+              href="/portfolio"
               className="text-shadow text-[#f1f1f1] hover:text-[#09afdf] transition-all duration-200 ease-in-out hover:scale-105 px-4 py-3 rounded"
             >
               Portfolio
             </Link>
             <Link
-              href="/web3career"
+              href="/contact"
               className="text-shadow text-[#f1f1f1] hover:text-[#09afdf] transition-all duration-200 ease-in-out hover:scale-105 px-4 py-3 rounded"
             >
               Contact
@@ -162,26 +237,26 @@ const StickyHeader: React.FC = () => {
             About
           </Link>
           <Link
-            href="/test"
+            href="/services"
             onClick={toggleMobileMenu}
             className="hover:text-[#09afdf] transition-all duration-200 ease-in-out hover:scale-105 w-full px-3 py-2 rounded"
           >
             Services
           </Link>
-          <a
-            href="#"
+          <Link
+            href="/portfolio"
             onClick={toggleMobileMenu}
             className="hover:text-[#09afdf] transition-all duration-200 ease-in-out hover:scale-105 w-full px-3 py-2 rounded"
           >
             Portfolio
-          </a>
-          <a
-            href="#"
+          </Link>
+          <Link
+            href="/contact"
             onClick={toggleMobileMenu}
             className="hover:text-[#09afdf] transition-all duration-200 ease-in-out hover:scale-105 w-full px-3 py-2 rounded"
           >
             Contact
-          </a>
+          </Link>
           <button
             className="text-white bg-[rgba(0,0,0,0.2)] border px-4 py-2 rounded hover:bg-[rgba(0,0,0,0.3)]"
             onClick={toggleMobileMenu}
@@ -190,13 +265,17 @@ const StickyHeader: React.FC = () => {
           </button>
         </nav>
       </div>
-      {/* Loading Progress Bar */}
-      <div className="flex z-50 h-[1px]" id="loadingBar">
-        <ProgressBar
-          height="1px"
-          color="#3abee5"
-          options={{ showSpinner: false, parent: '#loadingBar', speed: 1000 }}
-          shallowRouting
+      {/* Loading Progress Bar — blue line under header */}
+      <div
+        className={`fixed left-0 w-full z-50 transition-opacity duration-300 ${isLoading ? 'opacity-100' : 'opacity-0'}`}
+        style={{ top: '74px', height: '3px' }}
+      >
+        <div
+          className="h-full bg-[#09afdf] shadow-[0_0_8px_rgba(9,175,223,0.6)]"
+          style={{
+            width: `${loadingProgress}%`,
+            transition: loadingProgress === 0 ? 'none' : 'width 0.2s ease-out',
+          }}
         />
       </div>
     </>

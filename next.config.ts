@@ -6,8 +6,11 @@ const isStaticExport = process.env.NEXT_OUTPUT_MODE === 'export'
 
 console.log(`\n Next.js static export mode: ${isStaticExport}`)
 
-const repoName = 'codebuilder-frontend';
-const isGithubPages = !!process.env.GITHUB_PAGES;
+const repoName = 'codebuilder-frontend'
+const isGithubPages = !!process.env.GITHUB_PAGES
+// Set by the GitHub Pages workflow to support preview deployments in subdirectories.
+// e.g. "/codebuilder-frontend" for main, "/codebuilder-frontend/preview/my-branch" for previews.
+const ghPagesBasePath = process.env.NEXT_BASE_PATH || ''
 
 const nextConfig = {
   /**
@@ -21,10 +24,16 @@ const nextConfig = {
 
   // Conditionally set the output mode for the build.
   output: isStaticExport ? 'export' : undefined,
-  //basePath: //isGithubPages ? `/${repoName}` : '',
-  //assetPrefix: //isGithubPages ? `/${repoName}/` : '',
+  basePath: ghPagesBasePath || undefined,
+  assetPrefix: ghPagesBasePath ? `${ghPagesBasePath}/` : undefined,
 
-  allowedDevOrigins: ['https://api.codebuilder.org', 'https://new.codebuilder.org', 'https://new.codebuilder.org:443', 'https://dev.codebuilder.org', 'https://dev.codebuilder.org:443'], // resolves the CORS warning
+  allowedDevOrigins: [
+    'https://api.codebuilder.org',
+    'https://new.codebuilder.org',
+    'https://new.codebuilder.org:443',
+    'https://dev.codebuilder.org',
+    'https://dev.codebuilder.org:443',
+  ], // resolves the CORS warning
 
   // Note: If you are using next/image, you may need to add an
   // unoptimized: true flag here if you are not using a custom loader.
@@ -65,7 +74,7 @@ const nextConfig = {
 
     return config
   },
-} as unknown as NextConfig;
+} as unknown as NextConfig
 
 // // Only include page.* files for static export, include route.* for all other builds
 // if (isStaticExport) {
