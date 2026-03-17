@@ -60,9 +60,7 @@ const AutoScrollingPortfolio: React.FC = () => {
   return (
     <section className="bg-gray-100 py-4 md:py-6">
       <div className="container mx-auto py-4 px-8 md:px-20 lg:px-32">
-        <h1
-          className={`mb-2 text-2xl text-[#333333] font-normal tracking-normal ${Raleway.className}`}
-        >
+        <h1 className={`mb-2 text-2xl text-[#333333] font-normal tracking-normal ${Raleway.className}`}>
           Recent Clients
         </h1>
         <div className="separator-2 mb-2" />
@@ -84,22 +82,12 @@ const AutoScrollingPortfolio: React.FC = () => {
                 className={`shadow-1 ${Roboto.className} bg-[#fafafa] p-[15px] border-t border-b flex-shrink-0 w-1/4 shadow-lg border border-gray-200 rounded-lg text-center m-2 flex flex-col`}
               >
                 <img src={client.image} alt={client.name} className="h-20 mx-auto" />
-                <h3 className={`${Raleway.className} text-[20px] font-light mt-4`}>
-                  {client.name}
-                </h3>
+                <h3 className={`${Raleway.className} text-[20px] font-light mt-4`}>{client.name}</h3>
                 <div className="separator w-full my-1"></div>
-                <p className="text-[#888888] text-[13px] font-light flex-grow px-2">
-                  {client.description}
-                </p>
+                <p className="text-[#888888] text-[13px] font-light flex-grow px-2">{client.description}</p>
 
                 <div className="mt-auto">
-                  <CustomButton
-                    text="Read More"
-                    link={'/'}
-                    icon={faArrowRight}
-                    size="md"
-                    type="animatedHover"
-                  />
+                  <CustomButton text="Read More" link={'/'} icon={faArrowRight} size="md" type="animatedHover" />
                 </div>
               </div>
             ))}
