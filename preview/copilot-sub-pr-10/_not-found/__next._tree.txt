@@ -1,5 +1,5 @@
-:HL["/preview/copilot-sub-pr-10/_next/static/chunks/effeb4ed5d6629da.css","style"]
+:HL["/preview/copilot-sub-pr-10/_next/static/chunks/64f2d712d551e5ee.css","style"]
 :HL["/preview/copilot-sub-pr-10/_next/static/chunks/6780f94ff92651b5.css","style"]
 :HL["/preview/copilot-sub-pr-10/_next/static/chunks/c5458499e1b4ac35.css","style"]
 :HL["/images/payments_accepted.png","image"]
-0:{"buildId":"hA0jsPt0Q9U6bXFPU0raN","tree":{"name":"","paramType":null,"paramKey":"","hasRuntimePrefetch":false,"slots":{"children":{"name":"/_not-found","paramType":null,"paramKey":"/_not-found","hasRuntimePrefetch":false,"slots":{"children":{"name":"__PAGE__","paramType":null,"paramKey":"__PAGE__","hasRuntimePrefetch":false,"slots":null,"isRootLayout":false}},"isRootLayout":false}},"isRootLayout":true},"staleTime":300}
+0:{"buildId":"FFGnuvVq8pu-472mrCU5w","tree":{"name":"","paramType":null,"paramKey":"","hasRuntimePrefetch":false,"slots":{"children":{"name":"/_not-found","paramType":null,"paramKey":"/_not-found","hasRuntimePrefetch":false,"slots":{"children":{"name":"__PAGE__","paramType":null,"paramKey":"__PAGE__","hasRuntimePrefetch":false,"slots":null,"isRootLayout":false}},"isRootLayout":false}},"isRootLayout":true},"staleTime":300}
