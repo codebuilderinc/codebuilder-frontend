@@ -2,57 +2,93 @@ name: 🚀 Deploy Static Next.js to GitHub Pages
 
 on:
   push:
-    branches: ['main'] # Triggers on push to main branch
+    branches: ['**'] # Triggers on push to any branch
+  pull_request:
+    types: [opened, synchronize, reopened]
   workflow_dispatch: # Allows manual triggering
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
+  pull-requests: write
 
 concurrency:
-  group: 'pages'
-  cancel-in-progress: false
+  group: 'pages-${{ github.head_ref || github.ref_name }}'
+  cancel-in-progress: true
 
 jobs:
-  build:
-    name: 🏗 Build Static Site
+  build-and-deploy:
+    name: 🏗 Build & Deploy
     runs-on: ubuntu-latest
-
-
 
     steps:
       - name: 🔍 Checkout repository
         uses: actions/checkout@v4
 
+      - name: 🔧 Set deployment variables
+        id: vars
+        run: |
+          REPO_NAME="${{ github.event.repository.name }}"
+          # Custom domain means no repo name prefix in the URL path.
+          # Set CUSTOM_DOMAIN to your domain, or leave empty to use github.io/<repo> URLs.
+          CUSTOM_DOMAIN="dev.codebuilder.org"
+
+          # Get the branch name (works for both push and PR events)
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            BRANCH="${{ github.head_ref }}"
+          else
+            BRANCH="${{ github.ref_name }}"
+          fi
+
+          # Sanitize branch name for use in URL paths
+          SAFE_BRANCH=$(echo "$BRANCH" | sed 's/[^a-zA-Z0-9._-]/-/g')
+
+          if [ -n "$CUSTOM_DOMAIN" ]; then
+            BASE_URL="https://${CUSTOM_DOMAIN}"
+          else
+            BASE_URL="https://${{ github.repository_owner }}.github.io/${REPO_NAME}"
+          fi
+
+          if [ "$BRANCH" = "main" ]; then
+            if [ -n "$CUSTOM_DOMAIN" ]; then
+              echo "base_path=" >> $GITHUB_OUTPUT
+            else
+              echo "base_path=/${REPO_NAME}" >> $GITHUB_OUTPUT
+            fi
+            echo "dest_dir=" >> $GITHUB_OUTPUT
+            echo "keep_files=false" >> $GITHUB_OUTPUT
+            echo "preview_url=${BASE_URL}/" >> $GITHUB_OUTPUT
+          else
+            echo "base_path=/preview/${SAFE_BRANCH}" >> $GITHUB_OUTPUT
+            echo "dest_dir=preview/${SAFE_BRANCH}" >> $GITHUB_OUTPUT
+            echo "keep_files=true" >> $GITHUB_OUTPUT
+            echo "preview_url=${BASE_URL}/preview/${SAFE_BRANCH}/" >> $GITHUB_OUTPUT
+          fi
+
+          echo "branch=$BRANCH" >> $GITHUB_OUTPUT
+          echo "safe_branch=$SAFE_BRANCH" >> $GITHUB_OUTPUT
+
       - name: 🔎 Detect package manager
         id: detect-pm
         run: |
           if [ -f "pnpm-lock.yaml" ]; then
-            echo "manager=pnpm" >> $GITHUB_ENV
-            echo "command=install" >> $GITHUB_ENV
-            echo "runner=pnpm exec" >> $GITHUB_ENV
+            echo "manager=pnpm" >> $GITHUB_OUTPUT
+            echo "command=install" >> $GITHUB_OUTPUT
+            echo "runner=pnpm exec" >> $GITHUB_OUTPUT
           else
-            echo "manager=npm" >> $GITHUB_ENV
-            echo "command=ci" >> $GITHUB_ENV
-            echo "runner=npx --no-install" >> $GITHUB_ENV
+            echo "manager=npm" >> $GITHUB_OUTPUT
+            echo "command=ci" >> $GITHUB_OUTPUT
+            echo "runner=npx --no-install" >> $GITHUB_OUTPUT
           fi
 
       - name: 📦 Install pnpm
-        if: env.manager == 'pnpm'
+        if: steps.detect-pm.outputs.manager == 'pnpm'
         run: npm install -g pnpm
 
       - name: ⚙️ Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: ${{ env.manager }}
-
-      - name: 🌐 Setup GitHub Pages
-        uses: actions/configure-pages@v5
-
-      # NOTE: We do NOT need to create .env or secrets here, as we provide them directly to the build step below.
-
+          node-version: '24'
+          cache: ${{ steps.detect-pm.outputs.manager }}
 
       - name: 🚫 Ephemerally delete server/api files
         run: |
@@ -60,30 +96,58 @@ jobs:
           rm -rf src/app/api src/server src/proxy.ts src/app/jobs/[id] src/app/[...not-found] prisma.config.ts
 
       - name: 📥 Install dependencies
-        run: ${{ env.manager }} ${{ env.command }}
+        run: ${{ steps.detect-pm.outputs.manager }} ${{ steps.detect-pm.outputs.command }}
 
       - name: 🏗 Generate Static Build
         env:
           NEXT_OUTPUT_MODE: export
           GITHUB_PAGES: 1
+          NEXT_BASE_PATH: ${{ steps.vars.outputs.base_path }}
         run: |
           echo "Building static files for GitHub Pages..."
+          echo "Base path: $NEXT_BASE_PATH"
+          echo "Preview URL: ${{ steps.vars.outputs.preview_url }}"
           pnpm build
           touch out/.nojekyll
 
-      - name: 📤 Upload static site
-        uses: actions/upload-pages-artifact@v3
+      - name: 🚀 Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
         with:
-          path: ./out # With 'output: export', Next.js automatically puts files here.
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./out
+          destination_dir: ${{ steps.vars.outputs.dest_dir }}
+          keep_files: ${{ steps.vars.outputs.keep_files }}
+          cname: dev.codebuilder.org
 
-  deploy:
-    name: 🚀 Deploy to GitHub Pages
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: 🌍 Deploy
-        id: deployment
-        uses: actions/deploy-pages@v4
+      - name: 💬 Comment preview URL on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const url = '${{ steps.vars.outputs.preview_url }}';
+            const sha = context.sha.substring(0, 7);
+            const body = `🚀 **Preview deployment ready!**\n\n📎 **Preview URL:** ${url}\n\n_Deployed from commit \`${sha}\`_`;
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const botComment = comments.find(c => c.body.includes('Preview deployment ready!'));
+
+            if (botComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }
