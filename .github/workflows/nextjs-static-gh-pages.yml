@@ -58,24 +58,24 @@ jobs:
         id: detect-pm
         run: |
           if [ -f "pnpm-lock.yaml" ]; then
-            echo "manager=pnpm" >> $GITHUB_ENV
-            echo "command=install" >> $GITHUB_ENV
-            echo "runner=pnpm exec" >> $GITHUB_ENV
+            echo "manager=pnpm" >> $GITHUB_OUTPUT
+            echo "command=install" >> $GITHUB_OUTPUT
+            echo "runner=pnpm exec" >> $GITHUB_OUTPUT
           else
-            echo "manager=npm" >> $GITHUB_ENV
-            echo "command=ci" >> $GITHUB_ENV
-            echo "runner=npx --no-install" >> $GITHUB_ENV
+            echo "manager=npm" >> $GITHUB_OUTPUT
+            echo "command=ci" >> $GITHUB_OUTPUT
+            echo "runner=npx --no-install" >> $GITHUB_OUTPUT
           fi
 
       - name: 📦 Install pnpm
-        if: env.manager == 'pnpm'
+        if: steps.detect-pm.outputs.manager == 'pnpm'
         run: npm install -g pnpm
 
       - name: ⚙️ Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: ${{ env.manager }}
+          node-version: '24'
+          cache: ${{ steps.detect-pm.outputs.manager }}
 
       - name: 🚫 Ephemerally delete server/api files
         run: |
@@ -83,7 +83,7 @@ jobs:
           rm -rf src/app/api src/server src/proxy.ts src/app/jobs/[id] src/app/[...not-found] prisma.config.ts
 
       - name: 📥 Install dependencies
-        run: ${{ env.manager }} ${{ env.command }}
+        run: ${{ steps.detect-pm.outputs.manager }} ${{ steps.detect-pm.outputs.command }}
 
       - name: 🏗 Generate Static Build
         env:
