@@ -50,7 +50,7 @@ export default function ProgressBar({ label, percentage, index = 0 }: ProgressBa
     <div ref={ref} className="mb-3">
       <div className="relative h-7 bg-[#e0e0e0] rounded-sm overflow-hidden">
         <div
-          className="h-full rounded-r-sm transition-all duration-800 ease-out flex items-center"
+          className="h-full rounded-r-sm transition-all duration-[800ms] ease-out flex items-center"
           style={{
             width: `${width}%`,
             background: color.bg,

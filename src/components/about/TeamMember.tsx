@@ -1,7 +1,6 @@
 'use client'
 
 import Image from 'next/image'
-import Link from 'next/link'
 import ProgressBar from './ProgressBar'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEnvelope, faPhone, faDiamond, faUsers, faMoneyBill, faCode } from '@fortawesome/free-solid-svg-icons'
@@ -15,10 +14,8 @@ interface Skill {
 }
 
 interface ContactLink {
-  icon: string
   label: string
   href: string
-  iconPack?: 'solid' | 'brands'
 }
 
 interface TeamMemberProps {

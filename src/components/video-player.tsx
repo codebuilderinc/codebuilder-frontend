@@ -3,13 +3,14 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 interface VideoPlayerProps {
   mp4Src: string
-  webmSrc: string
+  webmSrc?: string
   posterSrc: string
 }
 
 const VideoPlayer: React.FC<VideoPlayerProps> = ({ mp4Src, webmSrc, posterSrc }) => {
   const videoRef = useRef<HTMLVideoElement>(null)
   const [isPlaying, setIsPlaying] = useState(false)
+  const retryTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const attemptPlay = useCallback(async () => {
     const video = videoRef.current
@@ -22,7 +23,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ mp4Src, webmSrc, posterSrc })
       setIsPlaying(true)
     } catch {
       // Autoplay was blocked — retry once after a short delay
-      setTimeout(async () => {
+      retryTimerRef.current = setTimeout(async () => {
+        retryTimerRef.current = null
         try {
           if (video.paused) {
             await video.play()
@@ -56,8 +58,19 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ mp4Src, webmSrc, posterSrc })
     return () => {
       video.removeEventListener('playing', onPlaying)
       video.removeEventListener('canplay', onCanPlay)
+      if (retryTimerRef.current !== null) {
+        clearTimeout(retryTimerRef.current)
+        retryTimerRef.current = null
+      }
     }
   }, [attemptPlay])
+
+  const getType = (src: string) => {
+    if (src.endsWith('.webm')) return 'video/webm'
+    if (src.endsWith('.mp4')) return 'video/mp4'
+    if (src.endsWith('.ogg') || src.endsWith('.ogv')) return 'video/ogg'
+    return undefined
+  }
 
   return (
     <div className="relative w-full h-full">
@@ -78,8 +91,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ mp4Src, webmSrc, posterSrc })
         controls={false}
         preload="auto"
       >
-        <source src={webmSrc} type="video/webm" />
-        <source src={mp4Src} type="video/mp4" />
+        {webmSrc && <source src={webmSrc} type={getType(webmSrc)} />}
+        <source src={mp4Src} type={getType(mp4Src)} />
       </video>
     </div>
   )

@@ -38,16 +38,16 @@ const PortfolioModal: React.FC<PortfolioModalProps> = ({
 }) => {
   const [openAccordion, setOpenAccordion] = useState<number | null>(null)
   const backdropRef = useRef<HTMLDivElement>(null)
+  const titleId = useRef(`portfolio-modal-title-${Math.random().toString(36).slice(2)}`)
 
   useEffect(() => {
     if (isOpen) {
+      const previousOverflow = document.body.style.overflow
       document.body.style.overflow = 'hidden'
       setOpenAccordion(null)
-    } else {
-      document.body.style.overflow = ''
-    }
-    return () => {
-      document.body.style.overflow = ''
+      return () => {
+        document.body.style.overflow = previousOverflow
+      }
     }
   }, [isOpen])
 
@@ -65,9 +65,34 @@ const PortfolioModal: React.FC<PortfolioModalProps> = ({
     if (e.target === backdropRef.current) onClose()
   }
 
+  // Safely render description with an optional inline link
+  const renderDescription = () => {
+    if (!link || !description.includes(link.label)) {
+      return description
+    }
+    const parts = description.split(link.label)
+    return (
+      <>
+        {parts[0]}
+        <a
+          href={link.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-[#09afdf] hover:underline"
+        >
+          {link.label}
+        </a>
+        {parts.slice(1).join(link.label)}
+      </>
+    )
+  }
+
   return (
     <div
       ref={backdropRef}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby={titleId.current}
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 animate-fadeIn"
       onClick={handleBackdropClick}
     >
@@ -76,7 +101,7 @@ const PortfolioModal: React.FC<PortfolioModalProps> = ({
       >
         {/* Modal Header */}
         <div className="flex items-center justify-between px-5 py-3 border-b border-gray-200">
-          <h4 className="text-lg font-semibold text-[#333]">{title}</h4>
+          <h4 id={titleId.current} className="text-lg font-semibold text-[#333]">{title}</h4>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-gray-700 transition-colors text-xl leading-none p-1"
@@ -105,22 +130,7 @@ const PortfolioModal: React.FC<PortfolioModalProps> = ({
                 <strong>Founded</strong> - {founded} &middot; <strong>Client Since</strong> - {clientSince}
               </p>
               <p className="text-sm text-[#666]">
-                {link ? (
-                  <>
-                    {description.split(link.label)[0]}
-                    <a
-                      href={link.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-[#09afdf] hover:underline"
-                    >
-                      {link.label}
-                    </a>
-                    {description.split(link.label)[1]}
-                  </>
-                ) : (
-                  description
-                )}
+                {renderDescription()}
               </p>
             </div>
           </div>
