@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import VideoPlayer from '@/components/video-player'
 import PortfolioCard from '@/components/portfolio/PortfolioCard'
@@ -266,6 +266,7 @@ export default function Portfolio() {
   const [bannerVisible, setBannerVisible] = useState(false)
   const [activeModal, setActiveModal] = useState<string | null>(null)
   const [toastMessage, setToastMessage] = useState<string | null>(null)
+  const toastTimeoutRef = useRef<number | null>(null)
 
   useEffect(() => {
     setBannerVisible(true)
@@ -274,8 +275,23 @@ export default function Portfolio() {
   // Show toast notification (mirroring notyError from Laravel)
   const showToast = (message: string) => {
     setToastMessage(message)
-    setTimeout(() => setToastMessage(null), 3000)
+    if (toastTimeoutRef.current !== null) {
+      clearTimeout(toastTimeoutRef.current)
+    }
+    const timeoutId = window.setTimeout(() => {
+      setToastMessage(null)
+      toastTimeoutRef.current = null
+    }, 3000)
+    toastTimeoutRef.current = timeoutId
   }
+
+  useEffect(() => {
+    return () => {
+      if (toastTimeoutRef.current !== null) {
+        clearTimeout(toastTimeoutRef.current)
+      }
+    }
+  }, [])
 
   const handleReadMore = (item: (typeof portfolioItems)[0]) => {
     if (item.comingSoon) {
