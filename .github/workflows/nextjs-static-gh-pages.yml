@@ -117,6 +117,7 @@ jobs:
           publish_dir: ./out
           destination_dir: ${{ steps.vars.outputs.dest_dir }}
           keep_files: ${{ steps.vars.outputs.keep_files }}
+          cname: dev.codebuilder.org
 
       - name: 💬 Comment preview URL on PR
         if: github.event_name == 'pull_request'
