@@ -55,7 +55,9 @@ jobs:
               echo "base_path=/${REPO_NAME}" >> $GITHUB_OUTPUT
             fi
             echo "dest_dir=" >> $GITHUB_OUTPUT
-            echo "keep_files=false" >> $GITHUB_OUTPUT
+            # keep_files must be true so preview/ directories are preserved
+            echo "keep_files=true" >> $GITHUB_OUTPUT
+            echo "is_main=true" >> $GITHUB_OUTPUT
             echo "preview_url=${BASE_URL}/" >> $GITHUB_OUTPUT
           else
             echo "base_path=/preview/${SAFE_BRANCH}" >> $GITHUB_OUTPUT
@@ -109,6 +111,25 @@ jobs:
           echo "Preview URL: ${{ steps.vars.outputs.preview_url }}"
           pnpm build
           touch out/.nojekyll
+
+      - name: 🧹 Clean stale root files from gh-pages (main only)
+        if: steps.vars.outputs.is_main == 'true'
+        run: |
+          # Checkout the gh-pages branch into a temp directory
+          git fetch origin gh-pages || true
+          mkdir -p /tmp/gh-pages-current
+          cd /tmp/gh-pages-current
+          git init
+          git remote add origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+          git fetch origin gh-pages --depth=1 || exit 0
+          git checkout gh-pages || exit 0
+
+          # Delete everything EXCEPT the preview/ directory and CNAME
+          find . -maxdepth 1 ! -name '.' ! -name '.git' ! -name 'preview' ! -name 'CNAME' -exec rm -rf {} +
+
+          git add -A
+          git diff --cached --quiet || git -c user.name="github-actions" -c user.email="github-actions@github.com" commit -m "clean stale root files before main deploy"
+          git push origin gh-pages || true
 
       - name: 🚀 Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
