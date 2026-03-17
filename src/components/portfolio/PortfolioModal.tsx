@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useId, useRef, useState } from 'react'
 import Image from 'next/image'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheck, faTimes } from '@fortawesome/free-solid-svg-icons'
@@ -38,7 +38,8 @@ const PortfolioModal: React.FC<PortfolioModalProps> = ({
 }) => {
   const [openAccordion, setOpenAccordion] = useState<number | null>(null)
   const backdropRef = useRef<HTMLDivElement>(null)
-  const titleId = useRef(`portfolio-modal-title-${Math.random().toString(36).slice(2)}`)
+  const generatedId = useId()
+  const titleId = `portfolio-modal-title-${generatedId}`
 
   useEffect(() => {
     if (isOpen) {
@@ -65,7 +66,7 @@ const PortfolioModal: React.FC<PortfolioModalProps> = ({
     if (e.target === backdropRef.current) onClose()
   }
 
-  // Safely render description with an optional inline link
+  // Safely render description with optional inline links for all occurrences of link.label
   const renderDescription = () => {
     if (!link || !description.includes(link.label)) {
       return description
@@ -73,16 +74,21 @@ const PortfolioModal: React.FC<PortfolioModalProps> = ({
     const parts = description.split(link.label)
     return (
       <>
-        {parts[0]}
-        <a
-          href={link.href}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-[#09afdf] hover:underline"
-        >
-          {link.label}
-        </a>
-        {parts.slice(1).join(link.label)}
+        {parts.map((part, i) => (
+          <React.Fragment key={i}>
+            {part}
+            {i < parts.length - 1 && (
+              <a
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#09afdf] hover:underline"
+              >
+                {link.label}
+              </a>
+            )}
+          </React.Fragment>
+        ))}
       </>
     )
   }
@@ -92,7 +98,7 @@ const PortfolioModal: React.FC<PortfolioModalProps> = ({
       ref={backdropRef}
       role="dialog"
       aria-modal="true"
-      aria-labelledby={titleId.current}
+      aria-labelledby={titleId}
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 animate-fadeIn"
       onClick={handleBackdropClick}
     >
@@ -101,7 +107,7 @@ const PortfolioModal: React.FC<PortfolioModalProps> = ({
       >
         {/* Modal Header */}
         <div className="flex items-center justify-between px-5 py-3 border-b border-gray-200">
-          <h4 id={titleId.current} className="text-lg font-semibold text-[#333]">{title}</h4>
+          <h4 id={titleId} className="text-lg font-semibold text-[#333]">{title}</h4>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-gray-700 transition-colors text-xl leading-none p-1"

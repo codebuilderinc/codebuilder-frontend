@@ -7,6 +7,13 @@ interface VideoPlayerProps {
   posterSrc: string
 }
 
+function getType(src: string): string | undefined {
+  if (src.endsWith('.webm')) return 'video/webm'
+  if (src.endsWith('.mp4')) return 'video/mp4'
+  if (src.endsWith('.ogg') || src.endsWith('.ogv')) return 'video/ogg'
+  return undefined
+}
+
 const VideoPlayer: React.FC<VideoPlayerProps> = ({ mp4Src, webmSrc, posterSrc }) => {
   const videoRef = useRef<HTMLVideoElement>(null)
   const [isPlaying, setIsPlaying] = useState(false)
@@ -64,13 +71,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ mp4Src, webmSrc, posterSrc })
       }
     }
   }, [attemptPlay])
-
-  const getType = (src: string) => {
-    if (src.endsWith('.webm')) return 'video/webm'
-    if (src.endsWith('.mp4')) return 'video/mp4'
-    if (src.endsWith('.ogg') || src.endsWith('.ogv')) return 'video/ogg'
-    return undefined
-  }
 
   return (
     <div className="relative w-full h-full">
