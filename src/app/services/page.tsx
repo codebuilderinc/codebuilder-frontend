@@ -174,7 +174,6 @@ export default function Services() {
           <div className="absolute inset-0 opacity-90">
             <VideoPlayer
               mp4Src="/videos/network-technology-services.mp4"
-              webmSrc="/videos/network-technology-services.mp4"
               posterSrc="/videos/cover-images/network-technology-services-poster.jpg"
             />
           </div>

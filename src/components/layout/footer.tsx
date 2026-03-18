@@ -6,15 +6,15 @@ import { faEnvelope, faPhone, faMapMarkerAlt } from '@fortawesome/free-solid-svg
 
 const Footer: React.FC = () => {
   const socialLinks = [
-    { icon: faFacebook, href: 'http://www.facebook.com/codebuilder.us', title: 'Facebook', color: '#4267B2' },
-    { icon: faTwitter, href: 'http://www.twitter.com/codebuilderio', title: 'Twitter', color: '#1DA1F2' },
+    { icon: faFacebook, href: 'https://www.facebook.com/codebuilder.us', title: 'Facebook', color: '#4267B2' },
+    { icon: faTwitter, href: 'https://www.twitter.com/codebuilderio', title: 'Twitter', color: '#1DA1F2' },
     {
       icon: faGooglePlus,
       href: 'https://plus.google.com/u/1/108752322274477001531',
       title: 'Google+',
       color: '#E05E53',
     },
-    { icon: faSkype, href: 'skype:andrew.c.corbin', title: 'Skype', color: '#05ACF2' },
+    { icon: faSkype, href: 'skype:andrew.c.corbin', title: 'Skype', color: '#05ACF2', noBlank: true },
     { icon: faLinkedin, href: 'https://www.linkedin.com/company/25053333/', title: 'LinkedIn', color: '#0077B5' },
     { icon: faReddit, href: 'https://www.reddit.com/user/codebuilderus', title: 'Reddit', color: '#7FC2FE' },
   ]
@@ -37,8 +37,8 @@ const Footer: React.FC = () => {
                 <a
                   key={social.title}
                   href={social.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  target={social.noBlank ? undefined : '_blank'}
+                  rel={social.noBlank ? undefined : 'noopener noreferrer'}
                   title={social.title}
                   className="bg-[#3d4749] shadow-lg font-normal h-10 w-10 flex items-center justify-center rounded-full outline-none mr-2 hover:shadow-xl hover:bg-[#4a5658] transition-all"
                 >
@@ -104,9 +104,6 @@ const Footer: React.FC = () => {
                 />
                 <ul className="list-none">
                   {[
-                    { label: 'Technology', href: '/technology' },
-                    { label: 'Sitemap', href: '/sitemap' },
-                    { label: 'Privacy Policy', href: '/privacy-policy' },
                     { label: 'Contact Us', href: '/contact' },
                   ].map((link) => (
                     <li key={link.label}>

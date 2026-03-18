@@ -23,13 +23,12 @@ export async function POST(request: Request) {
     // Mock successful response
     // In production, this would send an email via a service like SendGrid,
     // Resend, or forward to the Laravel backend at /contact/submit
-    console.log('[Contact Form] New submission:', {
-      name,
-      email,
-      subject,
-      message: message.substring(0, 100) + (message.length > 100 ? '...' : ''),
-      timestamp: new Date().toISOString(),
-    })
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[Contact Form] New submission:', {
+        subject,
+        timestamp: new Date().toISOString(),
+      })
+    }
 
     return NextResponse.json({ success: true, message: 'Your message has been sent successfully.' }, { status: 200 })
   } catch {

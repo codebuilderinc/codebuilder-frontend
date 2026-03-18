@@ -86,7 +86,6 @@ export default function Contact() {
           <div className="absolute inset-0 opacity-40">
             <VideoPlayer
               mp4Src="/videos/contact-background.mp4"
-              webmSrc="/videos/contact-background.mp4"
               posterSrc="/videos/cover-images/contact-background-poster.jpg"
             />
           </div>
@@ -428,7 +427,7 @@ export default function Contact() {
                   <iframe
                     className="border-0 w-full rounded"
                     style={{ height: '300px' }}
-                    src="//www.google.com/maps/embed/v1/place?q=1211%2022nd%20Ave%20NE%20Minneapolis%20MN&zoom=17&key=AIzaSyCdnSPXfE71_GBBjj1lZYzmkohP_E9Ivm8"
+                    src={`//www.google.com/maps/embed/v1/place?q=1211%2022nd%20Ave%20NE%20Minneapolis%20MN&zoom=17&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`}
                     allowFullScreen
                     loading="lazy"
                     referrerPolicy="no-referrer-when-downgrade"

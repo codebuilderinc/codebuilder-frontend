@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { motion } from 'motion/react'
 import { Raleway } from 'next/font/google'
 import { useInView } from 'react-intersection-observer'
+import Link from 'next/link'
 
 const raleway = Raleway({ subsets: ['latin'] })
 
@@ -9,6 +10,8 @@ const ContactSection: React.FC = () => {
   const [hasAnimated, setHasAnimated] = useState(false)
   const [showLargeText, setShowLargeText] = useState(true)
   const [isHovered, setIsHovered] = useState(false)
+  const initialTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const revertTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const { ref, inView } = useInView({
     triggerOnce: true,
@@ -18,19 +21,28 @@ const ContactSection: React.FC = () => {
   useEffect(() => {
     if (inView && !hasAnimated) {
       // Trigger the initial animation with a delay
-      const initialAnimationTimeout = setTimeout(() => {
+      initialTimerRef.current = setTimeout(() => {
+        initialTimerRef.current = null
         setHasAnimated(true)
         setShowLargeText(false) // Switch to smaller text
 
         // Revert back to the larger text after 2 seconds
-        const revertTimeout = setTimeout(() => {
+        revertTimerRef.current = setTimeout(() => {
+          revertTimerRef.current = null
           setShowLargeText(true)
         }, 2000)
-
-        return () => clearTimeout(revertTimeout)
       }, 500)
+    }
 
-      return () => clearTimeout(initialAnimationTimeout)
+    return () => {
+      if (initialTimerRef.current !== null) {
+        clearTimeout(initialTimerRef.current)
+        initialTimerRef.current = null
+      }
+      if (revertTimerRef.current !== null) {
+        clearTimeout(revertTimerRef.current)
+        revertTimerRef.current = null
+      }
     }
   }, [inView, hasAnimated])
 
@@ -88,18 +100,18 @@ const ContactSection: React.FC = () => {
               initial={{ opacity: 0, scale: 0.5 }}
               transition={{ duration: 0.3 }}
             >
-              Don't hesitate—seize the moment!
+              Don&apos;t hesitate—seize the moment!
             </motion.h2>
           </div>
 
           {/* Contact Button */}
           <div className="w-full md:w-1/3 mt-4 md:mt-0 flex justify-center md:justify-start items-center">
-            <a
+            <Link
               href="/contact"
               className="px-6 py-3 text-lg bg-transparent border border-gray-300 text-white hover:bg-gray-300 hover:text-black rounded transition"
             >
               Contact Us <i className="fas fa-envelope ml-2"></i>
-            </a>
+            </Link>
           </div>
         </div>
       </motion.div>
