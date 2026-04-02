@@ -1,0 +1,6 @@
+1:"$Sreact.fragment"
+2:"$Sreact.suspense"
+3:I[59778,["/_next/static/chunks/ce094222675ad647.js","/_next/static/chunks/0ec320a6341db344.js","/_next/static/chunks/793666fdc9a25ca0.js","/_next/static/chunks/6955dc040aae2890.js","/_next/static/chunks/847e0b625975e17f.js"],"default"]
+4:I[59784,["/_next/static/chunks/22cc7e52bdf1428e.js","/_next/static/chunks/0330526d6e7c6ac8.js"],"OutletBoundary"]
+0:{"buildId":"qIiCjK7kYlrGEtmMQJ3f8","rsc":["$","$1","c",{"children":[["$","$2",null,{"fallback":["$","div",null,{"className":"py-12","children":"Loading jobs..."}],"children":["$","$L3",null,{}]}],[["$","script","script-0",{"src":"/_next/static/chunks/6955dc040aae2890.js","async":true}],["$","script","script-1",{"src":"/_next/static/chunks/847e0b625975e17f.js","async":true}]],["$","$L4",null,{"children":["$","$2",null,{"name":"Next.MetadataOutlet","children":"$@5"}]}]]}],"loading":null,"isPartial":false}
+5:null
