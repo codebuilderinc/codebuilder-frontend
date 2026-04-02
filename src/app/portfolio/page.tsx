@@ -301,10 +301,6 @@ export default function Portfolio() {
     setActiveModal(item.id)
   }
 
-  // Split portfolio items into rows of 4
-  const row1 = portfolioItems.slice(0, 4)
-  const row2 = portfolioItems.slice(4, 8)
-
   return (
     <div className={`${Raleway.className}`}>
       {/* Toast Notification */}
@@ -388,9 +384,9 @@ export default function Portfolio() {
             }}
           />
 
-          {/* Row 1 */}
+          {/* Portfolio Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
-            {row1.map((item, index) => (
+            {portfolioItems.map((item, index) => (
               <PortfolioCard
                 key={item.id}
                 imageSrc={item.imageSrc}
@@ -398,24 +394,8 @@ export default function Portfolio() {
                 title={item.title}
                 description={item.description}
                 onReadMore={() => handleReadMore(item)}
-                animationEffect={['fadeInLeft', 'fadeInUp', 'fadeInUp', 'fadeInRight'][index]}
-                animationDelay={index * 150}
-              />
-            ))}
-          </div>
-
-          {/* Row 2 */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
-            {row2.map((item, index) => (
-              <PortfolioCard
-                key={item.id}
-                imageSrc={item.imageSrc}
-                imageAlt={item.imageAlt}
-                title={item.title}
-                description={item.description}
-                onReadMore={() => handleReadMore(item)}
-                animationEffect={['fadeInLeft', 'fadeInUp', 'fadeInUp', 'fadeInRight'][index]}
-                animationDelay={index * 150}
+                animationEffect={['fadeInLeft', 'fadeInUp', 'fadeInUp', 'fadeInRight'][index % 4]}
+                animationDelay={(index % 4) * 150}
               />
             ))}
           </div>

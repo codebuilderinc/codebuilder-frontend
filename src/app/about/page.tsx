@@ -6,8 +6,7 @@ import VideoPlayer from '@/components/video-player'
 import TeamMember from '@/components/about/TeamMember'
 import Counter from '@/components/about/Counter'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faEnvelope, faPhone, faDiamond, faUsers, faMoneyBill, faCode } from '@fortawesome/free-solid-svg-icons'
-import { faGithub, faLinkedin, faDiscord } from '@fortawesome/free-brands-svg-icons'
+import { faDiamond, faUsers, faMoneyBill, faCode } from '@fortawesome/free-solid-svg-icons'
 import { Roboto, Raleway, Pacifico } from '../fonts'
 import { useEffect, useState } from 'react'
 import ContactSection from '@/components/layout/contact-banner'
@@ -31,10 +30,10 @@ const teamMembers = [
       { label: 'Smart Contracts (Solidity)', percentage: 72 },
     ],
     contactLinks: [
-      { icon: 'envelope', label: 'Email', href: 'mailto:andrew@codebuilder.us' },
-      { icon: 'github', label: 'GitHub', href: 'https://github.com/digitalnomad91' },
-      { icon: 'linkedin', label: 'LinkedIn', href: 'https://linkedin.com/digitalnomad91' },
-      { icon: 'discord', label: 'Discord', href: 'https://discord.com/users/542088220117303316' },
+      { label: 'Email', href: 'mailto:andrew@codebuilder.us' },
+      { label: 'GitHub', href: 'https://github.com/digitalnomad91' },
+      { label: 'LinkedIn', href: 'https://linkedin.com/digitalnomad91' },
+      { label: 'Discord', href: 'https://discord.com/users/542088220117303316' },
     ],
   },
   {
@@ -52,8 +51,8 @@ const teamMembers = [
       { label: 'Database Administration', percentage: 65 },
     ],
     contactLinks: [
-      { icon: 'phone', label: 'Call', href: 'tel:+18453638331' },
-      { icon: 'envelope', label: 'Email', href: 'mailto:kevin@codebuilder.us' },
+      { label: 'Call', href: 'tel:+18453638331' },
+      { label: 'Email', href: 'mailto:kevin@codebuilder.us' },
     ],
   },
   {
@@ -68,7 +67,7 @@ const teamMembers = [
       { label: 'JavaScript (ES7)', percentage: 82 },
       { label: 'Linux / Bash', percentage: 74 },
     ],
-    contactLinks: [{ icon: 'envelope', label: 'Email', href: 'mailto:larrygoodrie@gmail.com' }],
+    contactLinks: [{ label: 'Email', href: 'mailto:larrygoodrie@gmail.com' }],
   },
   {
     name: 'Tom Johnson',
@@ -82,7 +81,7 @@ const teamMembers = [
       { label: 'JavaScript (ES7)', percentage: 88 },
       { label: 'Linux / Bash', percentage: 70 },
     ],
-    contactLinks: [{ icon: 'envelope', label: 'Email', href: 'mailto:tom@codebuilder.us' }],
+    contactLinks: [{ label: 'Email', href: 'mailto:tom@codebuilder.us' }],
   },
 ]
 

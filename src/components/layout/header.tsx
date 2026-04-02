@@ -76,9 +76,16 @@ const StickyHeader: React.FC = () => {
   // Intercept link clicks to start loading bar
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
+      // Ignore modified clicks, middle-click, and shift-click (these open new tabs/windows)
+      if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
+
       const target = e.target as HTMLElement
       const anchor = target.closest('a')
       if (anchor && anchor.href) {
+        // Ignore links that open in a new tab/window
+        const targetAttr = anchor.getAttribute('target')
+        if (targetAttr && targetAttr !== '_self') return
+
         const url = new URL(anchor.href, window.location.origin)
         // Only trigger for internal navigation
         if (url.origin === window.location.origin && url.pathname !== pathname) {
@@ -142,40 +149,28 @@ const StickyHeader: React.FC = () => {
           </Link>
           {/* Desktop Nav Menu */}
           <nav className="hidden md:flex items-center space-x-2">
-            <Link
-              href="/"
-              className="text-shadow text-[#f1f1f1] hover:text-[#09afdf] font-medium transition-all duration-200 ease-in-out hover:scale-105 px-4 py-3 rounded"
-            >
-              Home
-            </Link>
-            <Link
-              href="/about"
-              className="text-shadow text-[#f1f1f1] hover:text-[#09afdf] transition-all duration-200 ease-in-out hover:scale-105 px-4 py-3 rounded"
-            >
-              About
-            </Link>
-            <Link
-              href="/services"
-              className="text-shadow text-[#f1f1f1] hover:text-[#09afdf] transition-all duration-200 ease-in-out hover:scale-105 px-4 py-3 rounded"
-            >
-              Services
-            </Link>
-            <Link
-              href="/portfolio"
-              className="text-shadow text-[#f1f1f1] hover:text-[#09afdf] transition-all duration-200 ease-in-out hover:scale-105 px-4 py-3 rounded"
-            >
-              Portfolio
-            </Link>
-            <Link
-              href="/contact"
-              className="text-shadow text-[#f1f1f1] hover:text-[#09afdf] transition-all duration-200 ease-in-out hover:scale-105 px-4 py-3 rounded"
-            >
-              Contact
-            </Link>
-            <Link
-              href="/invoice"
-              className="flex items-center justify-center text-white bg-[rgba(0,0,0,0.2)] border border-[rgba(0,0,0,0.1)] px-4 py-[5px] text-[12px] leading-[1.4666667] rounded-[3px] my-[5px] transition-transform duration-200 ease-in-out hover:bg-[rgba(0,0,0,0.3)] hover:scale-105 focus:outline-none"
-            >
+            {[
+              { href: '/', label: 'Home' },
+              { href: '/about', label: 'About' },
+              { href: '/services', label: 'Services' },
+              { href: '/portfolio', label: 'Portfolio' },
+              { href: '/contact', label: 'Contact' },
+            ].map(({ href, label }) => {
+              const isActive = href === '/' ? pathname === '/' : pathname.startsWith(href)
+              return (
+                <Link
+                  key={href}
+                  href={href}
+                  aria-current={isActive ? 'page' : undefined}
+                  className={`text-shadow font-medium transition-all duration-200 ease-in-out hover:scale-105 px-4 py-3 rounded ${
+                    isActive ? 'text-[#09afdf]' : 'text-[#f1f1f1] hover:text-[#09afdf]'
+                  }`}
+                >
+                  {label}
+                </Link>
+              )
+            })}
+            <button className="flex items-center justify-center text-white bg-[rgba(0,0,0,0.2)] border border-[rgba(0,0,0,0.1)] px-4 py-[5px] text-[12px] leading-[1.4666667] rounded-[3px] my-[5px] transition-transform duration-200 ease-in-out hover:bg-[rgba(0,0,0,0.3)] hover:scale-105 focus:outline-none">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="w-4 h-4 mr-2"
@@ -225,43 +220,29 @@ const StickyHeader: React.FC = () => {
         } transition-transform duration-300 ease-in-out z-30`}
       >
         <nav className="flex flex-col items-start p-6 space-y-1">
-          <Link
-            href="/"
-            onClick={toggleMobileMenu}
-            className="hover:text-[#09afdf] transition-all duration-200 ease-in-out hover:scale-105 w-full px-3 py-2 rounded"
-          >
-            Home
-          </Link>
-          <Link
-            href="/about"
-            onClick={toggleMobileMenu}
-            className="hover:text-[#09afdf] transition-all duration-200 ease-in-out hover:scale-105 w-full px-3 py-2 rounded"
-          >
-            About
-          </Link>
-          <Link
-            href="/services"
-            onClick={toggleMobileMenu}
-            className="hover:text-[#09afdf] transition-all duration-200 ease-in-out hover:scale-105 w-full px-3 py-2 rounded"
-          >
-            Services
-          </Link>
-          <Link
-            href="/portfolio"
-            onClick={toggleMobileMenu}
-            className="hover:text-[#09afdf] transition-all duration-200 ease-in-out hover:scale-105 w-full px-3 py-2 rounded"
-          >
-            Portfolio
-          </Link>
-          <Link
-            href="/contact"
-            onClick={toggleMobileMenu}
-            className="hover:text-[#09afdf] transition-all duration-200 ease-in-out hover:scale-105 w-full px-3 py-2 rounded"
-          >
-            Contact
-          </Link>
-          <Link
-            href="/invoice"
+          {[
+            { href: '/', label: 'Home' },
+            { href: '/about', label: 'About' },
+            { href: '/services', label: 'Services' },
+            { href: '/portfolio', label: 'Portfolio' },
+            { href: '/contact', label: 'Contact' },
+          ].map(({ href, label }) => {
+            const isActive = href === '/' ? pathname === '/' : pathname.startsWith(href)
+            return (
+              <Link
+                key={href}
+                href={href}
+                onClick={toggleMobileMenu}
+                aria-current={isActive ? 'page' : undefined}
+                className={`transition-all duration-200 ease-in-out hover:scale-105 w-full px-3 py-2 rounded ${
+                  isActive ? 'text-[#09afdf]' : 'hover:text-[#09afdf]'
+                }`}
+              >
+                {label}
+              </Link>
+            )
+          })}
+          <button
             className="text-white bg-[rgba(0,0,0,0.2)] border px-4 py-2 rounded hover:bg-[rgba(0,0,0,0.3)]"
             onClick={toggleMobileMenu}
           >
