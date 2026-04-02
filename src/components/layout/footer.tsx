@@ -104,6 +104,9 @@ const Footer: React.FC = () => {
                 />
                 <ul className="list-none">
                   {[
+                    { label: 'Technology', href: '/technology' },
+                    { label: 'Sitemap', href: '/sitemap' },
+                    { label: 'Privacy Policy', href: '/privacy-policy' },
                     { label: 'Contact Us', href: '/contact' },
                   ].map((link) => (
                     <li key={link.label}>
