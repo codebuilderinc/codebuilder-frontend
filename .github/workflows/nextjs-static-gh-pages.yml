@@ -94,8 +94,8 @@ jobs:
 
       - name: 🚫 Ephemerally delete server/api files
         run: |
-          echo "Deleting src/app/api, src/server, src/proxy.ts, and src/app/jobs/[id] for static build..."
-          rm -rf src/app/api src/server src/proxy.ts src/app/jobs/[id] src/app/[...not-found] prisma.config.ts
+          echo "Deleting server/api files for static build..."
+          rm -rf src/app/blog[slug], src/app/invoice/[id] src/app/api src/server src/proxy.ts src/app/jobs/[id] src/app/[...not-found] prisma.config.ts
 
       - name: 📥 Install dependencies
         run: ${{ steps.detect-pm.outputs.manager }} ${{ steps.detect-pm.outputs.command }}
