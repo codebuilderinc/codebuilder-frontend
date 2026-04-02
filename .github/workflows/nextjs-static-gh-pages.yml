@@ -92,10 +92,24 @@ jobs:
           node-version: '24'
           cache: ${{ steps.detect-pm.outputs.manager }}
 
+      - name: 📦 Cache Next.js build
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ github.workspace }}/.next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-
+
       - name: 🚫 Ephemerally delete server/api files
+        env:
+          STATIC_BUILD_REMOVE_PATHS: ${{ vars.STATIC_BUILD_REMOVE_PATHS }}
         run: |
+          DEFAULT_PATHS="'src/app/blog/[slug]' 'src/app/invoice/[id]' src/app/api src/server src/proxy.ts 'src/app/jobs/[id]' 'src/app/[...not-found]' prisma.config.ts"
+          PATHS="${STATIC_BUILD_REMOVE_PATHS:-$DEFAULT_PATHS}"
           echo "Deleting server/api files for static build..."
-          rm -rf src/app/blog/[slug], src/app/invoice/[id] src/app/api src/server src/proxy.ts src/app/jobs/[id] src/app/[...not-found] prisma.config.ts
+          echo "Paths: $PATHS"
+          eval rm -rf $PATHS
 
       - name: 📥 Install dependencies
         run: ${{ steps.detect-pm.outputs.manager }} ${{ steps.detect-pm.outputs.command }}
