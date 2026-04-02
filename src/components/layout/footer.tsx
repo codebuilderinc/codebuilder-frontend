@@ -21,7 +21,7 @@ const Footer: React.FC = () => {
 
   return (
     <footer
-      className="pt-8 pb-6 text-[#ddd] border-t-2 border-[#09afdf]"
+      className="pt-8 pb-6 text-[#ddd]"
       style={{ background: 'linear-gradient(180deg, #2d3436 0%, #262c2e 40%, #1e2425 100%)' }}
     >
       <div className="container mx-auto px-8 md:px-20 lg:px-32">
