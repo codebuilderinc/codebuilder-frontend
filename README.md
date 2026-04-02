@@ -2,11 +2,6 @@
 
 [![Deploy Next.js Docker App](https://github.com/codebuilderinc/codebuilder-frontend/actions/workflows/deploy.yml/badge.svg)](https://github.com/codebuilderinc/codebuilder-frontend/actions/workflows/deploy.yml) [![Deploy Static Next.js to GitHub Pages](https://github.com/codebuilderinc/codebuilder-frontend/actions/workflows/nextjs-static-gh-pages.yml/badge.svg)](https://github.com/codebuilderinc/codebuilder-frontend/actions/workflows/nextjs-static-gh-pages.yml)
 
-<!-- DEPLOYMENT-URL:START -->
-🌐 **Live Preview:** [https://dev.codebuilder.org/preview/feature-new-pages-and-ui-improvements/](https://dev.codebuilder.org/preview/feature-new-pages-and-ui-improvements/)
-<sub>Deployed from `6243f24` on 2026-04-02</sub>
-<!-- DEPLOYMENT-URL:END -->
-
 Next.js frontend for Codebuilder.
 
 ## Environment Files
