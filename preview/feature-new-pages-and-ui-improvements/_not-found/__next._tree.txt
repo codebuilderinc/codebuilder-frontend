@@ -2,4 +2,4 @@
 :HL["/preview/feature-new-pages-and-ui-improvements/_next/static/chunks/6780f94ff92651b5.css","style"]
 :HL["/preview/feature-new-pages-and-ui-improvements/_next/static/chunks/c5458499e1b4ac35.css","style"]
 :HL["/images/payments_accepted.png","image"]
-0:{"buildId":"KY0twVYk5rE1YLI2vuu4B","tree":{"name":"","paramType":null,"paramKey":"","hasRuntimePrefetch":false,"slots":{"children":{"name":"/_not-found","paramType":null,"paramKey":"/_not-found","hasRuntimePrefetch":false,"slots":{"children":{"name":"__PAGE__","paramType":null,"paramKey":"__PAGE__","hasRuntimePrefetch":false,"slots":null,"isRootLayout":false}},"isRootLayout":false}},"isRootLayout":true},"staleTime":300}
+0:{"buildId":"rbrCLLQGLn0yy8pUP4b96","tree":{"name":"","paramType":null,"paramKey":"","hasRuntimePrefetch":false,"slots":{"children":{"name":"/_not-found","paramType":null,"paramKey":"/_not-found","hasRuntimePrefetch":false,"slots":{"children":{"name":"__PAGE__","paramType":null,"paramKey":"__PAGE__","hasRuntimePrefetch":false,"slots":null,"isRootLayout":false}},"isRootLayout":false}},"isRootLayout":true},"staleTime":300}
