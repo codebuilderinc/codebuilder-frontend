@@ -2,7 +2,7 @@ name: 🚀 Deploy Static Next.js to GitHub Pages
 
 on:
   push:
-    branches: ['**'] # Triggers on push to any branch
+    branches: ['main'] # Only trigger push on main; PR branches use pull_request event
   pull_request:
     types: [opened, synchronize, reopened]
   workflow_dispatch: # Allows manual triggering
