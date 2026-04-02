@@ -1,6 +1,6 @@
 export const blogCategories = [
   'General',
-  'Web Develeopment',
+  'Web Development',
   'Mobile Applications',
   'Database Administration',
   'Server Administration',

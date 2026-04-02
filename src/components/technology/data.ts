@@ -23,7 +23,7 @@ export const technologySections: TechnologySection[] = [
         title: 'Node.js / Socket.io',
         icon: '/images/favicons/node.png',
         description:
-          'Node.js is an open source JavaScript runtime environment that can be used for developing client-side and server-side applications. It has an event-drive architecture that makes it very useful for near-real-time communication in the browser.',
+          'Node.js is an open source JavaScript runtime environment that can be used for developing client-side and server-side applications. It has an event-driven architecture that makes it very useful for near-real-time communication in the browser.',
       },
       {
         id: 'composer',
@@ -48,7 +48,7 @@ export const technologySections: TechnologySection[] = [
       },
       {
         id: 'python',
-        title: 'Python / Twistd / Django / Etc...',
+        title: 'Python / Twisted / Django / Etc...',
         icon: '/images/favicons/py.png',
         description:
           'Python is a great language and we make use it whenever appropriate. We have experience working with Twisted, Django, and more.',
@@ -79,14 +79,14 @@ export const technologySections: TechnologySection[] = [
         title: 'MySQL / MariaDB',
         icon: '/images/favicons/mysql.ico',
         description:
-          'Our engineers are data experts and can build, upgrade, or maintain your relational database(s). We understand SQL security and query optmiziation well, and will structure your database / application architecture in an efficient manner.',
+          'Our engineers are data experts and can build, upgrade, or maintain your relational database(s). We understand SQL security and query optimization well, and will structure your database / application architecture in an efficient manner.',
       },
       {
         id: 'postgres',
         title: 'PostgreSQL',
         icon: '/images/favicons/postgres.ico',
         description:
-          'Our engineers are data experts and can build, upgrade, or maintain your relational database(s). We understand SQL security and query optmiziation well, and will structure your database / application architecture in an efficient manner.',
+          'Our engineers are data experts and can build, upgrade, or maintain your relational database(s). We understand SQL security and query optimization well, and will structure your database / application architecture in an efficient manner.',
       },
       {
         id: 'nosql',
@@ -163,7 +163,7 @@ export const technologySections: TechnologySection[] = [
         title: 'Virtualization (Docker, XenServer, Oracle VM, etc...)',
         icon: '/images/favicons/docker.png',
         description:
-          'Our engineers is comfortable working their way around virtualization technology and can setup any Operating System on as many Virtual Machines necessary to meet your organizational needs.',
+          'Our engineers are comfortable working their way around virtualization technology and can setup any Operating System on as many Virtual Machines necessary to meet your organizational needs.',
       },
     ],
   },

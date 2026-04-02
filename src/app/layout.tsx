@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   description: 'Custom software engineering solutions that are elegantly designed with scalability in mind.',
   openGraph: {
     title: 'CodeBuilder, Inc. - Software Engineering Solutions.',
-    description: 'Custom software engineering solutions that are elegantly designed with scalability in mind..',
+    description: 'Custom software engineering solutions that are elegantly designed with scalability in mind.',
     type: 'website',
   },
 }

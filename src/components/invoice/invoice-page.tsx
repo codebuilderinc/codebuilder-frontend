@@ -1,7 +1,6 @@
 'use client'
 
 import Image from 'next/image'
-import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
@@ -239,9 +238,9 @@ export function InvoicePage() {
                   <abbr title="Phone">P:</abbr> (612) 567-2633
                   <br />
                   E-mail:{' '}
-                  <Link href="mailto:info@codebuilder.us" className="text-[#09afdf]">
+                  <a href="mailto:info@codebuilder.us" className="text-[#09afdf]">
                     info@codebuilder.us
-                  </Link>
+                  </a>
                 </address>
               </div>
               <div className="text-left md:text-right">

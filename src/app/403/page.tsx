@@ -11,9 +11,9 @@ const ASCII = [
   ' \\______)___/ \\____|\\____)______/ \\____|_|_|\\____|\\____)_| (_)_|\\___/ ',
 ]
 
-const PROMPT = "404. The page you requested cannot be found right now. Try typing 'hack the world'."
+const PROMPT = "403. Access denied. Try typing 'hack the world'."
 const MATRIX_TEXT =
-  'You are a slave. Like everyone else, you were born into bondage, born into a prison that you cannot smell or taste or touch. A prison...for your mind....Unfortunatly, no one can be..._told_ what the Matrix is...you have to see it for yourself.'
+  'You are a slave. Like everyone else, you were born into bondage, born into a prison that you cannot smell or taste or touch. A prison...for your mind....Unfortunately, no one can be..._told_ what the Matrix is...you have to see it for yourself.'
 
 export default function FourOhThreePage() {
   const [input, setInput] = useState('')
@@ -103,7 +103,7 @@ export default function FourOhThreePage() {
       const value = input.trim().toLowerCase()
 
       if (value === 'hack the world') {
-        setLines((prev) => [...prev])
+        setLines((prev) => [...prev, input])
         setInput('')
         setCurrentOutput('')
         setIsTyping(true)

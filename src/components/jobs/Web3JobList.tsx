@@ -58,7 +58,7 @@ const JobList = () => {
       <ul>
         {jobs.map((job) => (
           <li key={job.id}>
-            <Link href={job.url} target="_blank" rel="noopener noreferrer">
+            <div>
               <h2>{job.title}</h2>
               <p>Company: {job.company_name}</p>
               <p>Location: {job.location}</p>
@@ -75,7 +75,7 @@ const JobList = () => {
                   Apply Here
                 </Link>
               </p>
-            </Link>
+            </div>
           </li>
         ))}
       </ul>

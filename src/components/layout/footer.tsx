@@ -48,14 +48,14 @@ const Footer: React.FC = () => {
             </div>
             {/* Contact info */}
             <div className="flex flex-col gap-1 text-sm mt-2 mb-6 lg:mb-0">
-              <Link href="mailto:info@codebuilder.us" className="text-[#ccc] hover:text-[#09afdf] transition-colors">
+              <a href="mailto:info@codebuilder.us" className="text-[#ccc] hover:text-[#09afdf] transition-colors">
                 <FontAwesomeIcon icon={faEnvelope} className="text-[#09afdf] text-[10px] mr-1.5" />
                 info@codebuilder.us
-              </Link>
-              <Link href="tel:+16125672633" className="text-[#ccc] hover:text-[#09afdf] transition-colors">
+              </a>
+              <a href="tel:+16125672633" className="text-[#ccc] hover:text-[#09afdf] transition-colors">
                 <FontAwesomeIcon icon={faPhone} className="text-[#09afdf] text-[10px] mr-1.5" />
                 +1 (612) 567-2633
-              </Link>
+              </a>
               <span className="text-[#ccc]">
                 <FontAwesomeIcon icon={faMapMarkerAlt} className="text-[#09afdf] text-[10px] mr-1.5" />
                 Minneapolis, MN

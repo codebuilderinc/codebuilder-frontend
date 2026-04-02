@@ -115,13 +115,13 @@ export function CliOverlay() {
     event.preventDefault()
     const value = input.trim().toLowerCase()
     if (value === 'hack the world') {
-      setLines((prev) => [...prev, `> ${input}`])
+      setLines((prev) => [...prev, input])
       setInput('')
       setMatrixEnabled(true)
       return
     }
 
-    setLines((prev) => [...prev, `> ${input}`, 'Sorry that command is not recognized.'])
+    setLines((prev) => [...prev, input, 'Sorry that command is not recognized.'])
     setInput('')
   }
 
