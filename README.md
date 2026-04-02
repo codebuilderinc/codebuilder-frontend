@@ -4,7 +4,7 @@
 
 <!-- DEPLOYMENT-URL:START -->
 🌐 **Live Preview:** [https://dev.codebuilder.org/preview/feature-new-pages-and-ui-improvements/](https://dev.codebuilder.org/preview/feature-new-pages-and-ui-improvements/)
-<sub>Deployed from `2a04ae7` on 2026-04-02</sub>
+<sub>Deployed from `6c6f226` on 2026-04-02</sub>
 <!-- DEPLOYMENT-URL:END -->
 
 Next.js frontend for Codebuilder.
