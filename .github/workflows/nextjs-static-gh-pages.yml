@@ -23,6 +23,29 @@ jobs:
     steps:
       - name: 🔍 Checkout repository
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 🧹 Strip stale deployment markers from README
+        if: github.event_name == 'push'
+        run: |
+          if [ -f README.md ] && grep -q '<!-- DEPLOYMENT-URL:START -->' README.md; then
+            echo "Stripping stale deployment markers from README..."
+            # Remove everything between markers (inclusive), handling duplicates
+            sed -i '/<!-- DEPLOYMENT-URL:START -->/,/<!-- DEPLOYMENT-URL:END -->/d' README.md
+            # Also clean up any git conflict markers that might be left over
+            sed -i '/^<<<<<<</d; /^=======/d; /^>>>>>>>/d' README.md
+            # Remove resulting double-blank-lines
+            sed -i '/^$/N;/^\n$/d' README.md
+            if ! git diff --quiet README.md; then
+              git config user.name "github-actions"
+              git config user.email "github-actions@github.com"
+              git add README.md
+              git commit -m "ci: clean stale deployment markers from README [skip ci]"
+              git push
+              echo "Cleaned up stale deployment markers."
+            fi
+          fi
 
       - name: 🔧 Set deployment variables
         id: vars
@@ -186,3 +209,83 @@ jobs:
                 body,
               });
             }
+
+      - name: 📝 Update README with deployment URL
+        if: github.event_name == 'push'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const branch = '${{ steps.vars.outputs.branch }}';
+            const previewUrl = '${{ steps.vars.outputs.preview_url }}';
+            const sha = context.sha.substring(0, 7);
+            const date = new Date().toISOString().split('T')[0];
+
+            // Fetch current README from the source branch
+            let readmeData;
+            try {
+              readmeData = await github.rest.repos.getContent({
+                owner, repo, path: 'README.md', ref: branch,
+              });
+            } catch (e) {
+              console.log('No README.md found, skipping update.');
+              return;
+            }
+
+            const content = Buffer.from(readmeData.data.content, 'base64').toString('utf8');
+
+            const marker = {
+              start: '<!-- DEPLOYMENT-URL:START -->',
+              end: '<!-- DEPLOYMENT-URL:END -->',
+            };
+
+            const section = [
+              marker.start,
+              `> **🌐 Live Preview:** [${previewUrl}](${previewUrl})`,
+              `> Deployed from \`${sha}\` on ${date}`,
+              marker.end,
+            ].join('\n');
+
+            let updated;
+            if (content.includes(marker.start)) {
+              // Replace existing section
+              const re = new RegExp(
+                `${marker.start}[\\s\\S]*?${marker.end}`,
+              );
+              updated = content.replace(re, section);
+            } else {
+              // Insert after the first heading line
+              const lines = content.split('\n');
+              const headingIdx = lines.findIndex(l => l.startsWith('# '));
+              if (headingIdx !== -1) {
+                lines.splice(headingIdx + 1, 0, '', section, '');
+                updated = lines.join('\n');
+              } else {
+                updated = section + '\n\n' + content;
+              }
+            }
+
+            if (updated !== content) {
+              await github.rest.repos.createOrUpdateFileContents({
+                owner, repo, path: 'README.md',
+                message: `docs: update deployment URL for ${branch} [skip ci]`,
+                content: Buffer.from(updated).toString('base64'),
+                sha: readmeData.data.sha,
+                branch,
+              });
+              console.log(`README updated with preview URL: ${previewUrl}`);
+            }
+
+      - name: 🌐 Update GitHub repo homepage URL
+        if: github.event_name == 'push' && steps.vars.outputs.is_main == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const previewUrl = '${{ steps.vars.outputs.preview_url }}';
+            await github.rest.repos.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              homepage: previewUrl,
+            });
+            console.log(`Repository homepage updated to: ${previewUrl}`);
