@@ -21,7 +21,7 @@ const Footer: React.FC = () => {
 
   return (
     <footer
-      className="pt-8 pb-6 text-[#ddd] border-t-2 border-[#09afdf]"
+      className="pt-8 pb-6 text-[#ddd]"
       style={{ background: 'linear-gradient(180deg, #2d3436 0%, #262c2e 40%, #1e2425 100%)' }}
     >
       <div className="container mx-auto px-8 md:px-20 lg:px-32">
@@ -34,7 +34,7 @@ const Footer: React.FC = () => {
             </h5>
             <div className="flex mt-6 mb-6">
               {socialLinks.map((social) => (
-                <a
+                <Link
                   key={social.title}
                   href={social.href}
                   target={social.noBlank ? undefined : '_blank'}
@@ -43,7 +43,7 @@ const Footer: React.FC = () => {
                   className="bg-[#3d4749] shadow-lg font-normal h-10 w-10 flex items-center justify-center rounded-full outline-none mr-2 hover:shadow-xl hover:bg-[#4a5658] transition-all"
                 >
                   <FontAwesomeIcon icon={social.icon} style={{ color: social.color }} />
-                </a>
+                </Link>
               ))}
             </div>
             {/* Contact info */}
@@ -104,6 +104,9 @@ const Footer: React.FC = () => {
                 />
                 <ul className="list-none">
                   {[
+                    { label: 'Technology', href: '/technology' },
+                    { label: 'Sitemap', href: '/sitemap' },
+                    { label: 'Privacy Policy', href: '/privacy-policy' },
                     { label: 'Contact Us', href: '/contact' },
                   ].map((link) => (
                     <li key={link.label}>

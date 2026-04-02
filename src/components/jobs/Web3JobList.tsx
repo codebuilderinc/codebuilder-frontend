@@ -2,6 +2,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Link from 'next/link'
 
 interface Job {
   id: string
@@ -57,7 +58,7 @@ const JobList = () => {
       <ul>
         {jobs.map((job) => (
           <li key={job.id}>
-            <a href={job.url} target="_blank" rel="noopener noreferrer">
+            <div>
               <h2>{job.title}</h2>
               <p>Company: {job.company_name}</p>
               <p>Location: {job.location}</p>
@@ -68,15 +69,13 @@ const JobList = () => {
               <p>Remote: {job.remote ? 'Yes' : 'No'}</p>
               <p>Description: {job.description}</p>
               <p>Tags: {job.tags.join(', ')}</p>
-              {job.company_logo && (
-                <img src={job.company_logo} alt={`${job.company_name} logo`} width="100" />
-              )}
+              {job.company_logo && <img src={job.company_logo} alt={`${job.company_name} logo`} width="100" />}
               <p>
-                <a href={job.apply_url} target="_blank" rel="noopener noreferrer">
+                <Link href={job.apply_url} target="_blank" rel="noopener noreferrer">
                   Apply Here
-                </a>
+                </Link>
               </p>
-            </a>
+            </div>
           </li>
         ))}
       </ul>

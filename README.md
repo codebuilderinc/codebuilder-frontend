@@ -1,14 +1,14 @@
 # Codebuilder Frontend
 
-[![Deploy Production Docker Container](https://github.com/codebuilderinc/codebuilder-frontend/actions/workflows/deploy-docker.yml/badge.svg)](https://github.com/codebuilderinc/codebuilder-frontend/actions/workflows/deploy-docker.yml)
+[![Deploy Next.js Docker App](https://github.com/codebuilderinc/codebuilder-frontend/actions/workflows/deploy.yml/badge.svg)](https://github.com/codebuilderinc/codebuilder-frontend/actions/workflows/deploy.yml) [![Deploy Static Next.js to GitHub Pages](https://github.com/codebuilderinc/codebuilder-frontend/actions/workflows/nextjs-static-gh-pages.yml/badge.svg)](https://github.com/codebuilderinc/codebuilder-frontend/actions/workflows/nextjs-static-gh-pages.yml)
 
 Next.js frontend for Codebuilder.
 
 ## Environment Files
 
 - `pnpm dev` (Next.js dev server) loads environment variables in this order:
-	- `.env.local` (preferred for local-only overrides)
-	- `.env`
+  - `.env.local` (preferred for local-only overrides)
+  - `.env`
 - Docker Compose loads `.env` because `docker-compose.yml` explicitly uses `env_file: ./.env`.
 
 Important: inside Docker, Postgres must be reached via `db:5432` (service name + container port), not `localhost`.
@@ -86,4 +86,5 @@ pnpm prod:reset
 On push to `main`, the GitHub Actions workflow rebuilds and redeploys the Docker services on the self-hosted runner.
 
 ## Activity
-![Alt](https://repobeats.axiom.co/api/embed/f01e046c8b7d8a2c653ee751c55c2345072872c4.svg "Repobeats analytics image")
+
+![Alt](https://repobeats.axiom.co/api/embed/f01e046c8b7d8a2c653ee751c55c2345072872c4.svg 'Repobeats analytics image')

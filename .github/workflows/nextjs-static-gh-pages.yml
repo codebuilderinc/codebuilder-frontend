@@ -2,7 +2,7 @@ name: 🚀 Deploy Static Next.js to GitHub Pages
 
 on:
   push:
-    branches: ['**'] # Triggers on push to any branch
+    branches: ['main'] # Only trigger push on main; PR branches use pull_request event
   pull_request:
     types: [opened, synchronize, reopened]
   workflow_dispatch: # Allows manual triggering
@@ -23,6 +23,8 @@ jobs:
     steps:
       - name: 🔍 Checkout repository
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: 🔧 Set deployment variables
         id: vars
@@ -92,10 +94,24 @@ jobs:
           node-version: '24'
           cache: ${{ steps.detect-pm.outputs.manager }}
 
+      - name: 📦 Cache Next.js build
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ github.workspace }}/.next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-
+
       - name: 🚫 Ephemerally delete server/api files
+        env:
+          STATIC_BUILD_REMOVE_PATHS: ${{ vars.STATIC_BUILD_REMOVE_PATHS }}
         run: |
-          echo "Deleting src/app/api, src/server, src/proxy.ts, and src/app/jobs/[id] for static build..."
-          rm -rf src/app/api src/server src/proxy.ts src/app/jobs/[id] src/app/[...not-found] prisma.config.ts
+          DEFAULT_PATHS="'src/app/blog/[slug]' 'src/app/invoice/[id]' src/app/api src/server src/proxy.ts 'src/app/jobs/[id]' 'src/app/[...not-found]' prisma.config.ts"
+          PATHS="${STATIC_BUILD_REMOVE_PATHS:-$DEFAULT_PATHS}"
+          echo "Deleting server/api files for static build..."
+          echo "Paths: $PATHS"
+          eval rm -rf $PATHS
 
       - name: 📥 Install dependencies
         run: ${{ steps.detect-pm.outputs.manager }} ${{ steps.detect-pm.outputs.command }}
@@ -147,7 +163,7 @@ jobs:
           script: |
             const url = '${{ steps.vars.outputs.preview_url }}';
             const sha = context.sha.substring(0, 7);
-            const body = `🚀 **Preview deployment ready!**\n\n📎 **Preview URL:** ${url}\n\n_Deployed from commit \`${sha}\`_`;
+            const body = `🚀 **Preview deployment ready!**\n\n🌐 **Preview URL:** [${url}](${url})\n<sub>Deployed from commit \`${sha}\`</sub>`;
 
             const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,
@@ -171,4 +187,55 @@ jobs:
                 issue_number: context.issue.number,
                 body,
               });
+            }
+
+      - name:  Update PR description with preview URL
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const branch = '${{ steps.vars.outputs.branch }}';
+            const previewUrl = '${{ steps.vars.outputs.preview_url }}';
+            const sha = context.sha.substring(0, 7);
+
+            // Find open PR for this branch
+            const { data: prs } = await github.rest.pulls.list({
+              owner, repo, head: `${owner}:${branch}`, state: 'open',
+            });
+
+            if (prs.length === 0) {
+              console.log(`No open PR found for branch ${branch}, skipping.`);
+              return;
+            }
+
+            const pr = prs[0];
+            const body = pr.body || '';
+
+            const marker = {
+              start: '<!-- GH-PAGES-PREVIEW:START -->',
+              end: '<!-- GH-PAGES-PREVIEW:END -->',
+            };
+
+            const section = [
+              marker.start,
+              `🌐 **Preview:** [${previewUrl}](${previewUrl})`,
+              `<sub>Deployed from \`${sha}\`</sub>`,
+              marker.end,
+            ].join('\n');
+
+            let updated;
+            if (body.includes(marker.start)) {
+              const re = new RegExp(`${marker.start}[\\s\\S]*?${marker.end}`);
+              updated = body.replace(re, section);
+            } else {
+              // Prepend to top of PR description
+              updated = section + '\n\n' + body;
+            }
+
+            if (updated !== body) {
+              await github.rest.pulls.update({
+                owner, repo, pull_number: pr.number, body: updated,
+              });
+              console.log(`PR #${pr.number} description updated with preview URL: ${previewUrl}`);
             }

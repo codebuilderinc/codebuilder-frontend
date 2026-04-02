@@ -10,18 +10,17 @@ import Footer from '../components/layout/footer'
 // Import the components we created
 import ErrorBoundary from '@/components/ErrorBoundary'
 import GlobalErrorHandler from '@/components/GlobalErrorHandler'
+import { CliOverlay } from '@/components/cli-overlay'
 
 export const metadata: Metadata = {
   title: 'CodeBuilder, Inc. - Software Engineering Solutions.',
-  description:
-    'Custom software engineering solutions that are elegantly designed with scalability in mind.',
+  description: 'Custom software engineering solutions that are elegantly designed with scalability in mind.',
   openGraph: {
     title: 'CodeBuilder, Inc. - Software Engineering Solutions.',
-    description:
-      'Custom software engineering solutions that are elegantly designed with scalability in mind..',
+    description: 'Custom software engineering solutions that are elegantly designed with scalability in mind.',
     type: 'website',
   },
-}  
+}
 
 export default function RootLayout({
   children,
@@ -59,7 +58,7 @@ export default function RootLayout({
          */}
 
         {/* Other Meta Tags, Links, Etc... */}
-        
+
         {/* Service Worker Registration */}
         <Script id="sw-register" strategy="afterInteractive">
           {`
@@ -75,34 +74,37 @@ export default function RootLayout({
           `}
         </Script>
       </head>
-      <body className={`${Raleway.className} antialiased bg-white`}>
+      <body className={`${Raleway.className} antialiased bg-white overflow-x-hidden`}>
         {/*
           The GlobalErrorHandler is an invisible component that sets up
           window-level event listeners for catching uncaught errors.
         */}
         <GlobalErrorHandler />
+        <CliOverlay />
         <div className="flex flex-col min-h-screen">
           <Header />
-          <LayoutTransition
-            initial={{ opacity: 0 }}
-            animate={{ x: 100, opacity: 1 }}
-            exit={{ opacity: 0 }}
-            style={{ position: 'absolute' }}
-          >
-            {/* Main content area */}
-            <main className="flex text-black bg-white">
-              {' '}
-              {/*
+          <div className="relative flex-1 overflow-x-hidden">
+            <LayoutTransition
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              style={{ position: 'absolute' }}
+            >
+              {/* Main content area */}
+              <main className="flex text-black bg-white">
+                {' '}
+                {/*
                 The ErrorBoundary wraps your entire application. It will catch
                 any rendering errors and display a fallback UI instead of crashing.
               */}
-              <ErrorBoundary>
-                <div className="w-screen">{children}</div>
-              </ErrorBoundary>
-            </main>
-            {/* Footer */}
-            <Footer />
-          </LayoutTransition>
+                <ErrorBoundary>
+                  <div className="w-screen">{children}</div>
+                </ErrorBoundary>
+              </main>
+              {/* Footer */}
+              <Footer />
+            </LayoutTransition>
+          </div>
         </div>
       </body>
     </html>
