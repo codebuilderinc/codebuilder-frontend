@@ -34,7 +34,7 @@ const Footer: React.FC = () => {
             </h5>
             <div className="flex mt-6 mb-6">
               {socialLinks.map((social) => (
-                <a
+                <Link
                   key={social.title}
                   href={social.href}
                   target="_blank"
@@ -43,19 +43,19 @@ const Footer: React.FC = () => {
                   className="bg-[#3d4749] shadow-lg font-normal h-10 w-10 flex items-center justify-center rounded-full outline-none mr-2 hover:shadow-xl hover:bg-[#4a5658] transition-all"
                 >
                   <FontAwesomeIcon icon={social.icon} style={{ color: social.color }} />
-                </a>
+                </Link>
               ))}
             </div>
             {/* Contact info */}
             <div className="flex flex-col gap-1 text-sm mt-2 mb-6 lg:mb-0">
-              <a href="mailto:info@codebuilder.us" className="text-[#ccc] hover:text-[#09afdf] transition-colors">
+              <Link href="mailto:info@codebuilder.us" className="text-[#ccc] hover:text-[#09afdf] transition-colors">
                 <FontAwesomeIcon icon={faEnvelope} className="text-[#09afdf] text-[10px] mr-1.5" />
                 info@codebuilder.us
-              </a>
-              <a href="tel:+16125672633" className="text-[#ccc] hover:text-[#09afdf] transition-colors">
+              </Link>
+              <Link href="tel:+16125672633" className="text-[#ccc] hover:text-[#09afdf] transition-colors">
                 <FontAwesomeIcon icon={faPhone} className="text-[#09afdf] text-[10px] mr-1.5" />
                 +1 (612) 567-2633
-              </a>
+              </Link>
               <span className="text-[#ccc]">
                 <FontAwesomeIcon icon={faMapMarkerAlt} className="text-[#09afdf] text-[10px] mr-1.5" />
                 Minneapolis, MN

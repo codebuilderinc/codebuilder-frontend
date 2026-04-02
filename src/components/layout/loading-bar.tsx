@@ -24,7 +24,7 @@ const LoadingBar = () => {
   return (
     loading && (
       <div
-        className="flex w-full h-[10px] z-50 bg-blue-500 animate__animated animate__fadeIn animate__faster"
+        className="flex w-full h-[2px] z-50 bg-blue-500 animate__animated animate__fadeIn animate__faster"
         style={{ animationDuration: '0.5s' }}
       >
         <div className="h-full bg-blue-600 animate-pulse" style={{ width: '100%' }} />

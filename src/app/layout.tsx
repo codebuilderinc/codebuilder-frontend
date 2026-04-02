@@ -10,18 +10,17 @@ import Footer from '../components/layout/footer'
 // Import the components we created
 import ErrorBoundary from '@/components/ErrorBoundary'
 import GlobalErrorHandler from '@/components/GlobalErrorHandler'
+import { CliOverlay } from '@/components/cli-overlay'
 
 export const metadata: Metadata = {
   title: 'CodeBuilder, Inc. - Software Engineering Solutions.',
-  description:
-    'Custom software engineering solutions that are elegantly designed with scalability in mind.',
+  description: 'Custom software engineering solutions that are elegantly designed with scalability in mind.',
   openGraph: {
     title: 'CodeBuilder, Inc. - Software Engineering Solutions.',
-    description:
-      'Custom software engineering solutions that are elegantly designed with scalability in mind..',
+    description: 'Custom software engineering solutions that are elegantly designed with scalability in mind..',
     type: 'website',
   },
-}  
+}
 
 export default function RootLayout({
   children,
@@ -59,7 +58,7 @@ export default function RootLayout({
          */}
 
         {/* Other Meta Tags, Links, Etc... */}
-        
+
         {/* Service Worker Registration */}
         <Script id="sw-register" strategy="afterInteractive">
           {`
@@ -81,6 +80,7 @@ export default function RootLayout({
           window-level event listeners for catching uncaught errors.
         */}
         <GlobalErrorHandler />
+        <CliOverlay />
         <div className="flex flex-col min-h-screen">
           <Header />
           <LayoutTransition

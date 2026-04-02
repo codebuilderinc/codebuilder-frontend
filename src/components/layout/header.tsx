@@ -172,7 +172,10 @@ const StickyHeader: React.FC = () => {
             >
               Contact
             </Link>
-            <button className="flex items-center justify-center text-white bg-[rgba(0,0,0,0.2)] border border-[rgba(0,0,0,0.1)] px-4 py-[5px] text-[12px] leading-[1.4666667] rounded-[3px] my-[5px] transition-transform duration-200 ease-in-out hover:bg-[rgba(0,0,0,0.3)] hover:scale-105 focus:outline-none">
+            <Link
+              href="/invoice"
+              className="flex items-center justify-center text-white bg-[rgba(0,0,0,0.2)] border border-[rgba(0,0,0,0.1)] px-4 py-[5px] text-[12px] leading-[1.4666667] rounded-[3px] my-[5px] transition-transform duration-200 ease-in-out hover:bg-[rgba(0,0,0,0.3)] hover:scale-105 focus:outline-none"
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="w-4 h-4 mr-2"
@@ -188,7 +191,7 @@ const StickyHeader: React.FC = () => {
                 />
               </svg>
               Pay Invoice
-            </button>
+            </Link>
           </nav>
           {/* Hamburger Menu */}
           <button
@@ -257,12 +260,13 @@ const StickyHeader: React.FC = () => {
           >
             Contact
           </Link>
-          <button
+          <Link
+            href="/invoice"
             className="text-white bg-[rgba(0,0,0,0.2)] border px-4 py-2 rounded hover:bg-[rgba(0,0,0,0.3)]"
             onClick={toggleMobileMenu}
           >
             Pay Invoice
-          </button>
+          </Link>
         </nav>
       </div>
       {/* Loading Progress Bar — blue line under header */}
