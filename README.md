@@ -6,7 +6,7 @@
 <!-- DEPLOYMENT-URL:END -->
 
 
-[![Deploy Production Docker Container](https://github.com/codebuilderinc/codebuilder-frontend/actions/workflows/deploy-docker.yml/badge.svg)](https://github.com/codebuilderinc/codebuilder-frontend/actions/workflows/deploy-docker.yml)
+[![Deploy Next.js Docker App](https://github.com/codebuilderinc/codebuilder-frontend/actions/workflows/deploy.yml/badge.svg)](https://github.com/codebuilderinc/codebuilder-frontend/actions/workflows/deploy.yml) [![Deploy Static Next.js to GitHub Pages](https://github.com/codebuilderinc/codebuilder-frontend/actions/workflows/nextjs-static-gh-pages.yml/badge.svg)](https://github.com/codebuilderinc/codebuilder-frontend/actions/workflows/nextjs-static-gh-pages.yml)
 
 Next.js frontend for Codebuilder.
 
