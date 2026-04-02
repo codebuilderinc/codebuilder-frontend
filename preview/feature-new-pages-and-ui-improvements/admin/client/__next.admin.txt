@@ -1,0 +1,4 @@
+1:"$Sreact.fragment"
+2:I[66996,["/preview/feature-new-pages-and-ui-improvements/_next/static/chunks/dfc36d3f9cfa44da.js","/preview/feature-new-pages-and-ui-improvements/_next/static/chunks/0b74117b55c7ae65.js"],"default"]
+3:I[22301,["/preview/feature-new-pages-and-ui-improvements/_next/static/chunks/dfc36d3f9cfa44da.js","/preview/feature-new-pages-and-ui-improvements/_next/static/chunks/0b74117b55c7ae65.js"],"default"]
+0:{"buildId":"v2ct1RCzz76W5hPhvjQla","rsc":["$","$1","c",{"children":[null,["$","$L2",null,{"parallelRouterKey":"children","template":["$","$L3",null,{}]}]]}],"loading":null,"isPartial":false}
