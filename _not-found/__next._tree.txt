@@ -1,0 +1,5 @@
+:HL["/_next/static/chunks/9f389f473ccea8c3.css","style"]
+:HL["/_next/static/chunks/6780f94ff92651b5.css","style"]
+:HL["/_next/static/chunks/c5458499e1b4ac35.css","style"]
+:HL["/images/payments_accepted.png","image"]
+0:{"buildId":"VPUIjDFbERi_MheNQGcX6","tree":{"name":"","paramType":null,"paramKey":"","hasRuntimePrefetch":false,"slots":{"children":{"name":"/_not-found","paramType":null,"paramKey":"/_not-found","hasRuntimePrefetch":false,"slots":{"children":{"name":"__PAGE__","paramType":null,"paramKey":"__PAGE__","hasRuntimePrefetch":false,"slots":null,"isRootLayout":false}},"isRootLayout":false}},"isRootLayout":true},"staleTime":300}
