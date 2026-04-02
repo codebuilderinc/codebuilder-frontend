@@ -1,5 +1,11 @@
 # Codebuilder Frontend
 
+<!-- DEPLOYMENT-URL:START -->
+> **🌐 Live Preview:** [https://dev.codebuilder.org/preview/feature-new-pages-and-ui-improvements/](https://dev.codebuilder.org/preview/feature-new-pages-and-ui-improvements/)
+> Deployed from `446b63b` on 2026-04-02
+<!-- DEPLOYMENT-URL:END -->
+
+
 [![Deploy Production Docker Container](https://github.com/codebuilderinc/codebuilder-frontend/actions/workflows/deploy-docker.yml/badge.svg)](https://github.com/codebuilderinc/codebuilder-frontend/actions/workflows/deploy-docker.yml)
 
 Next.js frontend for Codebuilder.
