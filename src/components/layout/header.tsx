@@ -242,7 +242,8 @@ const StickyHeader: React.FC = () => {
               </Link>
             )
           })}
-          <button
+          <Link
+            href="/invoice"
             className="text-white bg-[rgba(0,0,0,0.2)] border px-4 py-2 rounded hover:bg-[rgba(0,0,0,0.3)]"
             onClick={toggleMobileMenu}
           >
