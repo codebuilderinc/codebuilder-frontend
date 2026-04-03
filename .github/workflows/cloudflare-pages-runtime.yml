@@ -1,0 +1,56 @@
+name: ☁️ Deploy to Cloudflare Pages (Runtime)
+
+on:
+  push:
+    branches: ['main']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cloudflare-pages-runtime-${{ github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  deploy-runtime:
+    name: 🏗 Build and Deploy Runtime
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🔍 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: ⚙️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'pnpm'
+
+      - name: 📥 Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: 🏗 Build Next.js for runtime
+        env:
+          NEXT_OUTPUT_MODE: standalone
+        run: pnpm build
+
+      - name: 🏗 Build Cloudflare Pages output (functions + static)
+        run: pnpm dlx @cloudflare/next-on-pages@1
+
+      - name: 🚀 Deploy runtime app to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: >-
+            pages deploy .vercel/output/static
+            --project-name=${{ secrets.CLOUDFLARE_PAGES_PROJECT_NAME_RUNTIME }}
+            --branch=${{ github.ref_name }}
+            --commit-hash=${{ github.sha }}
+            --functions=.vercel/output/functions
