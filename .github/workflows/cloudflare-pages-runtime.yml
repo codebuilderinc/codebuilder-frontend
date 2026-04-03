@@ -21,6 +21,23 @@ jobs:
       - name: 🔍 Checkout repository
         uses: actions/checkout@v4
 
+      - name: 🔒 Verify Google services secret exists
+        run: |
+          if [ -z "${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}" ]; then
+            echo "❌ GOOGLE_SERVICES_JSON_BASE64 secret is missing"
+            exit 1
+          fi
+
+      - name: 📁 Create google-services.json
+        run: |
+          echo "$GOOGLE_SERVICES_JSON_BASE64" | base64 --decode > google-services.json
+          if ! jq empty google-services.json; then
+            echo "❌ google-services.json is invalid"
+            exit 1
+          fi
+        env:
+          GOOGLE_SERVICES_JSON_BASE64: ${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}
+
       - name: 📦 Install pnpm
         run: npm install -g pnpm@10
 
