@@ -46,6 +46,20 @@ jobs:
         run: |
           pnpm build
 
+      - name: 🔎 Debug Cloudflare Pages access
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: >-
+            pages project list
+
+      - name: 📝 Debug target Pages project
+        run: |
+          echo "Target Pages project: $PROJECT_NAME"
+        env:
+          PROJECT_NAME: ${{ secrets.CLOUDFLARE_PAGES_PROJECT_NAME }}
+
       - name: 🚀 Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
         with:
