@@ -45,7 +45,7 @@ const ContactSection: React.FC = () => {
   }
 
   return (
-    <section ref={ref} className="">
+    <section ref={ref} className="border-b-1 border-[#FFFFFF]">
       <motion.div
         className="h-24 text-white flex items-center justify-center relative overflow-hidden"
         initial={{
