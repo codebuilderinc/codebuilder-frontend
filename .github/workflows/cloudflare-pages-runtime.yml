@@ -1,0 +1,97 @@
+name: ☁️ Deploy to Cloudflare Pages (Runtime)
+
+on:
+  push:
+    branches: ['main']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cloudflare-pages-runtime-${{ github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  deploy-runtime:
+    name: 🏗 Build and Deploy Runtime
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🔍 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🔒 Verify Google services secret exists
+        run: |
+          if [ -z "${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}" ]; then
+            echo "❌ GOOGLE_SERVICES_JSON_BASE64 secret is missing"
+            exit 1
+          fi
+
+      - name: 📁 Create google-services.json
+        run: |
+          echo "$GOOGLE_SERVICES_JSON_BASE64" | base64 --decode > google-services.json
+          if ! jq empty google-services.json; then
+            echo "❌ google-services.json is invalid"
+            exit 1
+          fi
+        env:
+          GOOGLE_SERVICES_JSON_BASE64: ${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}
+
+      - name: 📦 Install pnpm
+        run: npm install -g pnpm@10
+
+      - name: ⚙️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'pnpm'
+
+      - name: 📥 Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: 🏗 Build Next.js for runtime
+        env:
+          NEXT_OUTPUT_MODE: standalone
+        run: pnpm build
+
+      - name: 🏗 Build Cloudflare Pages output (functions + static)
+        run: pnpm dlx @cloudflare/next-on-pages@1
+
+      - name: 🔎 Verify Cloudflare Pages project exists
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          PROJECT_NAME: ${{ secrets.CLOUDFLARE_PAGES_PROJECT_NAME_RUNTIME }}
+        run: |
+          RESPONSE=$(curl -fsSL \
+            -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+            -H "Content-Type: application/json" \
+            "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/pages/projects")
+
+          COUNT=$(printf '%s' "$RESPONSE" | jq '.result | length')
+          MATCH=$(printf '%s' "$RESPONSE" | jq --arg name "$PROJECT_NAME" 'any(.result[]?; .name == $name)')
+
+          echo "Pages projects visible in this account: $COUNT"
+
+          if [ "$MATCH" != "true" ]; then
+            echo "Configured Pages project was not found in the provided Cloudflare account."
+            echo "Verify CLOUDFLARE_ACCOUNT_ID points to the same account that owns the Pages project."
+            echo "Visible project names:"
+            printf '%s' "$RESPONSE" | jq -r '.result[]?.name'
+            exit 1
+          fi
+
+          echo "Configured Pages project exists in the target account."
+
+      - name: 🚀 Deploy runtime app to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: >-
+            pages deploy .vercel/output/static
+            --project-name=${{ secrets.CLOUDFLARE_PAGES_PROJECT_NAME_RUNTIME }}
+            --branch=${{ github.ref_name }}
+            --commit-hash=${{ github.sha }}
+            --functions=.vercel/output/functions

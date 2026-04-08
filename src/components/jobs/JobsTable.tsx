@@ -45,7 +45,7 @@ const JobsTable: React.FC<Props> = ({
   }
 
   const handleRowClick = (jobId: number) => {
-    router.push(`/jobs/${jobId}`)
+    router.push(`/jobs/details?id=${jobId}`)
   }
 
   const colSpan = 8
