@@ -1,5 +1,0 @@
-:HL["/preview/dependabot-npm_and_yarn-npm_and_yarn-f67b6d3854/_next/static/chunks/07bli9~p_ss_s.css","style"]
-:HL["/preview/dependabot-npm_and_yarn-npm_and_yarn-f67b6d3854/_next/static/chunks/0donsgs5lq9cw.css","style"]
-:HL["/preview/dependabot-npm_and_yarn-npm_and_yarn-f67b6d3854/_next/static/chunks/0hy2klih26w4l.css","style"]
-:HL["/images/payments_accepted.png","image"]
-0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"/_not-found","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}},"staleTime":300,"buildId":"dkLXixetEAmpaYPkZnGEP"}
