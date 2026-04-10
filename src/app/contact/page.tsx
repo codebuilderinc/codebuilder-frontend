@@ -427,7 +427,7 @@ export default function Contact() {
                   <iframe
                     className="border-0 w-full rounded"
                     style={{ height: '300px' }}
-                    src={`//www.google.com/maps/embed/v1/place?q=1211%2022nd%20Ave%20NE%20Minneapolis%20MN&zoom=17&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`}
+                    src="https://maps.google.com/maps?q=2429%20Nicollet%20Ave%20NE%20Minneapolis%20MN&z=17&output=embed"
                     allowFullScreen
                     loading="lazy"
                     referrerPolicy="no-referrer-when-downgrade"
