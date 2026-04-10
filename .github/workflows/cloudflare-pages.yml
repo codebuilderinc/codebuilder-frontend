@@ -1,0 +1,83 @@
+name: ☁️ Deploy to Cloudflare Pages
+
+on:
+  push:
+    branches: ['**']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cloudflare-pages-${{ github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: 🏗 Build and Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🔍 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 📦 Install pnpm
+        run: npm install -g pnpm@10
+
+      - name: ⚙️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'pnpm'
+
+      - name: 🚫 Remove server-only paths for export build
+        run: |
+          echo "Pruning dynamic/server paths not supported by static export..."
+          rm -rf src/app/api src/server src/proxy.ts src/app/jobs/[id] src/app/[...not-found] prisma.config.ts
+
+      - name: 📥 Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: 🏗 Build static export
+        env:
+          NEXT_OUTPUT_MODE: export
+          GITHUB_PAGES: 1
+          NEXT_BASE_PATH: ''
+        run: |
+          pnpm build
+
+      - name: 🔎 Verify Cloudflare Pages project exists
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          PROJECT_NAME: ${{ secrets.CLOUDFLARE_PAGES_PROJECT_NAME }}
+        run: |
+          RESPONSE=$(curl -fsSL \
+            -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+            -H "Content-Type: application/json" \
+            "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/pages/projects")
+
+          COUNT=$(printf '%s' "$RESPONSE" | jq '.result | length')
+          MATCH=$(printf '%s' "$RESPONSE" | jq --arg name "$PROJECT_NAME" 'any(.result[]?; .name == $name)')
+
+          echo "Pages projects visible in this account: $COUNT"
+
+          if [ "$MATCH" != "true" ]; then
+            echo "Configured Pages project was not found in the provided Cloudflare account."
+            echo "Verify CLOUDFLARE_ACCOUNT_ID points to the same account that owns the Pages project."
+            echo "Visible project names:"
+            printf '%s' "$RESPONSE" | jq -r '.result[]?.name'
+            exit 1
+          fi
+
+          echo "Configured Pages project exists in the target account."
+
+      - name: 🚀 Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: >-
+            pages deploy out
+            --project-name=${{ secrets.CLOUDFLARE_PAGES_PROJECT_NAME }}
+            --branch=${{ github.ref_name }}
