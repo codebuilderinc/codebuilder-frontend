@@ -107,7 +107,7 @@ jobs:
         env:
           STATIC_BUILD_REMOVE_PATHS: ${{ vars.STATIC_BUILD_REMOVE_PATHS }}
         run: |
-          DEFAULT_PATHS="'src/app/blog/[slug]' 'src/app/invoice/[id]' src/app/api src/server src/proxy.ts 'src/app/jobs/[id]' 'src/app/[...not-found]' prisma.config.ts"
+          DEFAULT_PATHS="'src/app/blog/[slug]' 'src/app/invoice/[id]' src/app/api src/server src/proxy.ts 'src/app/jobs/[id]' 'src/app/[...not-found]' prisma.config.ts 'src/app/jobs/details/[id]/page.tsx'"
           PATHS="${STATIC_BUILD_REMOVE_PATHS:-$DEFAULT_PATHS}"
           echo "Deleting server/api files for static build..."
           echo "Paths: $PATHS"
