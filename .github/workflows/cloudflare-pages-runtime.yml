@@ -28,13 +28,9 @@ jobs:
             exit 1
           fi
 
-      - name: 📁 Create google-services.json
+      - name: 📁 Set Google services environment variable
         run: |
-          echo "$GOOGLE_SERVICES_JSON_BASE64" | base64 --decode > google-services.json
-          if ! jq empty google-services.json; then
-            echo "❌ google-services.json is invalid"
-            exit 1
-          fi
+          echo "GOOGLE_SERVICES_JSON=$(echo "$GOOGLE_SERVICES_JSON_BASE64" | base64 --decode)" >> $GITHUB_ENV
         env:
           GOOGLE_SERVICES_JSON_BASE64: ${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}
 
@@ -49,7 +45,8 @@ jobs:
 
       - name: 📥 Install dependencies
         run: pnpm install --frozen-lockfile
-
+      - name: 🔧 Generate Prisma client
+        run: pnpm prisma generate
       - name: 🏗 Build Next.js for runtime
         env:
           NEXT_OUTPUT_MODE: standalone
