@@ -1,11 +1,11 @@
-
 import admin, { ServiceAccount } from 'firebase-admin'
-import serviceAccount from '@/../google-services.json' // Update with the path to your key
 
-if (!admin.apps.length) {
-	admin.initializeApp({
-		credential: admin.credential.cert(serviceAccount as string | ServiceAccount),
-	})
+const serviceAccount = process.env.GOOGLE_SERVICES_JSON ? JSON.parse(process.env.GOOGLE_SERVICES_JSON) : null
+
+if (!admin.apps.length && serviceAccount) {
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount as ServiceAccount),
+  })
 }
 
 export const messaging = admin.messaging()
