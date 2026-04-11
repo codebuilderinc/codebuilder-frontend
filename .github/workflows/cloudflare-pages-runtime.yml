@@ -30,9 +30,10 @@ jobs:
 
       - name: 📁 Set Google services environment variable
         run: |
-          echo 'GOOGLE_SERVICES_JSON<<EOF' >> $GITHUB_ENV
-          base64 --decode <<< "$GOOGLE_SERVICES_JSON_BASE64" >> $GITHUB_ENV
-          echo 'EOF' >> $GITHUB_ENV
+          echo "$GOOGLE_SERVICES_JSON_BASE64" | base64 -d > /tmp/google-services.json
+          echo "GOOGLE_SERVICES_JSON<<EOF" >> $GITHUB_ENV
+          cat /tmp/google-services.json >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
         env:
           GOOGLE_SERVICES_JSON_BASE64: ${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}
 
