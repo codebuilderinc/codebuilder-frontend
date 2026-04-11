@@ -33,7 +33,7 @@ jobs:
       - name: 🚫 Remove server-only paths for export build
         run: |
           echo "Pruning dynamic/server paths not supported by static export..."
-          rm -rf src/app/api src/server src/proxy.ts src/app/jobs/[id] src/app/[...not-found] prisma.config.ts
+          rm -rf src/app/blog/[slug] src/app/invoice/[id] src/app/api src/server src/proxy.ts src/app/jobs/[id] src/app/[...not-found] prisma.config.ts src/app/jobs/details/[id]/page.tsx
 
       - name: 📥 Install dependencies
         run: pnpm install --frozen-lockfile
