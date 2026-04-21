@@ -401,7 +401,7 @@ export default function CarouselSlider() {
       onMouseLeave={() => setShowBtns(false)}
     >
       {/* slides --------------------------------------------- */}
-      <div className="relative w-full h-[450px] md:h-[550px] flex items-center justify-center">
+      <div className="relative w-full h-[400px] md:h-[550px] flex items-center justify-center">
         <AnimatePresence initial={false} custom={dir} onExitComplete={() => setBusy(false)}>
           <motion.div
             key={idx}
@@ -431,7 +431,7 @@ export default function CarouselSlider() {
                 variants={parentStagger}
                 initial="initial"
                 animate="animate"
-                className="relative z-10 flex flex-col container mx-auto items-start justify-start h-full px-4 md:px-20 lg:px-32 pt-[6.5rem] md:pt-[7rem]"
+                className="relative z-10 flex flex-col container mx-auto items-start justify-start h-full px-4 md:px-16 lg:px-16 pt-[5.5rem] md:pt-[7.5rem]"
               >
                 <motion.h2 variants={childUp} className="text-white text-3xl md:text-[42px] font-light mb-4">
                   {slides[idx].title}

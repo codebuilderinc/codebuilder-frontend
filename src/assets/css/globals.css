@@ -26,7 +26,10 @@ body {
 
 .header {
   height: 74px;
-  position: relative;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
   transition: all 0.5s ease;
   box-shadow: none;
   display: flex;

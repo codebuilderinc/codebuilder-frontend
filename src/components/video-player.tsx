@@ -5,6 +5,7 @@ interface VideoPlayerProps {
   mp4Src: string
   webmSrc?: string
   posterSrc: string
+  objectPosition?: string
 }
 
 function getType(src: string): string | undefined {
@@ -14,7 +15,7 @@ function getType(src: string): string | undefined {
   return undefined
 }
 
-const VideoPlayer: React.FC<VideoPlayerProps> = ({ mp4Src, webmSrc, posterSrc }) => {
+const VideoPlayer: React.FC<VideoPlayerProps> = ({ mp4Src, webmSrc, posterSrc, objectPosition = 'center' }) => {
   const videoRef = useRef<HTMLVideoElement>(null)
   const [isPlaying, setIsPlaying] = useState(false)
   const retryTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -75,7 +76,13 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ mp4Src, webmSrc, posterSrc })
   return (
     <div className="relative w-full h-full">
       {/* Poster/still image — always rendered underneath, visible until video plays */}
-      <img src={posterSrc} alt="" aria-hidden="true" className="absolute inset-0 w-full h-full object-cover" />
+      <img
+        src={posterSrc}
+        alt=""
+        aria-hidden="true"
+        className="absolute inset-0 w-full h-full object-cover"
+        style={{ objectPosition }}
+      />
 
       {/* Video element — layered on top, fades in once playing */}
       <video
@@ -83,6 +90,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ mp4Src, webmSrc, posterSrc })
         className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${
           isPlaying ? 'opacity-100' : 'opacity-0'
         }`}
+        style={{ objectPosition }}
         poster={posterSrc}
         autoPlay
         playsInline

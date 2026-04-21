@@ -78,12 +78,7 @@ const PortfolioModal: React.FC<PortfolioModalProps> = ({
           <React.Fragment key={i}>
             {part}
             {i < parts.length - 1 && (
-              <a
-                href={link.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[#09afdf] hover:underline"
-              >
+              <a href={link.href} target="_blank" rel="noopener noreferrer" className="text-[#09afdf] hover:underline">
                 {link.label}
               </a>
             )}
@@ -107,7 +102,9 @@ const PortfolioModal: React.FC<PortfolioModalProps> = ({
       >
         {/* Modal Header */}
         <div className="flex items-center justify-between px-5 py-3 border-b border-gray-200">
-          <h4 id={titleId} className="text-lg font-semibold text-[#333]">{title}</h4>
+          <h4 id={titleId} className="text-lg font-semibold text-[#333]">
+            {title}
+          </h4>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-gray-700 transition-colors text-xl leading-none p-1"
@@ -135,9 +132,7 @@ const PortfolioModal: React.FC<PortfolioModalProps> = ({
               <p className="text-sm text-[#666] mb-1">
                 <strong>Founded</strong> - {founded} &middot; <strong>Client Since</strong> - {clientSince}
               </p>
-              <p className="text-sm text-[#666]">
-                {renderDescription()}
-              </p>
+              <p className="text-sm text-[#666]">{renderDescription()}</p>
             </div>
           </div>
 
@@ -149,9 +144,7 @@ const PortfolioModal: React.FC<PortfolioModalProps> = ({
                 <button
                   onClick={() => setOpenAccordion(openAccordion === index ? null : index)}
                   className={`w-full text-left px-4 py-3 flex items-center gap-2 text-sm font-medium transition-colors duration-200 ${
-                    openAccordion === index
-                      ? 'bg-[#09afdf] text-white'
-                      : 'text-[#09afdf] hover:bg-gray-50'
+                    openAccordion === index ? 'bg-[#09afdf] text-white' : 'text-[#09afdf] hover:bg-gray-50'
                   }`}
                 >
                   <FontAwesomeIcon icon={faCheck} className="text-xs" />

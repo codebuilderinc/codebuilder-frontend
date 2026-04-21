@@ -80,13 +80,14 @@ export default function Contact() {
   return (
     <div className={`${Raleway.className}`}>
       {/* ── Hero Section with Video Background ── */}
-      <section className="relative w-full min-h-[320px] overflow-hidden">
+      <section className="relative w-full min-h-[380px] overflow-hidden">
         {/* Video Background */}
         <div className="absolute inset-0">
           <div className="absolute inset-0 opacity-40">
             <VideoPlayer
               mp4Src="/videos/contact-background.mp4"
               posterSrc="/videos/cover-images/contact-background-poster.jpg"
+              objectPosition="center 75%"
             />
           </div>
           {/* Dark overlay — matches .dark-translucent-bg */}
@@ -94,7 +95,7 @@ export default function Contact() {
         </div>
 
         {/* Hero Content — accounts for 74px fixed header */}
-        <div className="relative z-10 flex items-center justify-center min-h-[320px] pt-[74px] px-4 py-10">
+        <div className="relative z-10 flex items-center justify-center min-h-[380px] pt-[94px] px-4 py-10">
           <div className="text-center max-w-3xl mx-auto">
             {/* Heading */}
             <h2
@@ -337,7 +338,7 @@ export default function Contact() {
                 {/* Company Name */}
                 <h3 className="text-[22px] mb-4">
                   <span className={`${Pacifico.className} text-[#09afdf]`}>CodeBuilder</span>
-                  <span className="text-[#999] font-light">.us</span>
+                  <span className="text-[#999] font-light">, Inc.</span>
                 </h3>
 
                 {/* Separator */}

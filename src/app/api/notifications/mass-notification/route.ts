@@ -21,14 +21,12 @@ export const POST = withLogging(async (request: NextRequest) => {
       title: `${title}`,
       body: body,
       url: url,
-      icon: 'https://new.codebuilder.org/images/logo2.png',
-      badge: 'https://new.codebuilder.org/images/logo2.png',
+      icon: 'https://codebuilder.org/images/logo2.png',
+      badge: 'https://codebuilder.org/images/logo2.png',
     }
 
     // Loop and send notifications concurrently
-    const notificationPromises = subscriptions.map((sub) =>
-      sendNotification(sub, notificationPayload)
-    )
+    const notificationPromises = subscriptions.map((sub) => sendNotification(sub, notificationPayload))
 
     // Wait for all notifications to complete
     await Promise.all(notificationPromises)

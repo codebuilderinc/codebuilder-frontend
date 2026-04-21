@@ -168,13 +168,14 @@ export default function Services() {
   return (
     <div className={`${Raleway.className}`}>
       {/* ── Hero Section with Video Background ── */}
-      <section className="relative w-full min-h-[320px] overflow-hidden">
+      <section className="relative w-full min-h-[380px] overflow-hidden">
         {/* Video Background */}
         <div className="absolute inset-0">
           <div className="absolute inset-0 opacity-90">
             <VideoPlayer
               mp4Src="/videos/network-technology-services.mp4"
               posterSrc="/videos/cover-images/network-technology-services-poster.jpg"
+              objectPosition="top"
             />
           </div>
           {/* Dark overlay — matches .dark-translucent-bg */}
@@ -182,11 +183,11 @@ export default function Services() {
         </div>
 
         {/* Hero Content */}
-        <div className="relative z-10 flex items-center justify-center min-h-[320px] pt-[74px] px-4 py-10">
+        <div className="relative z-10 flex items-center justify-center min-h-[380px] pt-[74px] px-4 py-10">
           <div className="text-center max-w-3xl mx-auto">
             {/* "Our Services" heading */}
             <h1
-              className={`text-white text-[28px] font-normal mb-4 drop-shadow-md ${
+              className={`text-white text-[28px] font-normal mb-2 drop-shadow-md ${
                 bannerVisible ? 'animate__animated animate__zoomIn' : 'opacity-0'
               }`}
               style={{
