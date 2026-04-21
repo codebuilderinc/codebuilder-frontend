@@ -129,9 +129,9 @@ const StickyHeader: React.FC = () => {
   return (
     <>
       <header
-        className={`fixed animate__animated animate__slideInDown header ${
-          isSticky ? 'sticky' : ''
-        } shadow-md bg-[rgba(57,66,69,0.92)] border-t-[rgba(37,42,44,0.5)] z-[22] w-full left-0 border-b border-b-[rgba(0,0,0,0.07)] text-[#cacaca]`}
+        className={`animate__animated animate__slideInDown header ${
+          isSticky ? 'sticky bg-[rgba(57,66,69,0.95)]' : 'bg-[rgba(57,66,69,0.8)]'
+        } shadow-md border-t-[rgba(37,42,44,0.5)] z-[22] w-full left-0 border-b border-b-[rgba(0,0,0,0.07)] text-[#cacaca]`}
       >
         <div className="container mx-auto px-8 md:px-20 lg:px-32 w-full flex justify-between items-center p-2">
           {/* Logo and Text Link to Home Page */}

@@ -311,7 +311,7 @@ export default function Portfolio() {
       )}
 
       {/* Hero Banner with Video Background */}
-      <div className="relative w-full overflow-hidden" style={{ minHeight: '308px' }}>
+      <div className="relative w-full overflow-hidden" style={{ minHeight: '380px' }}>
         {/* Video Background */}
         <div className="absolute inset-0">
           <div className="absolute inset-0 opacity-40">
@@ -326,7 +326,7 @@ export default function Portfolio() {
         </div>
 
         {/* Banner Content */}
-        <div className="relative z-10 flex items-center justify-center h-full py-10 pt-[calc(74px+25px)] px-4">
+        <div className="relative z-10 flex items-center justify-center h-full py-10 pt-[calc(75px+45px)] px-4">
           <div className="text-center max-w-3xl mx-auto">
             <h1
               className={`text-white text-[28px] font-normal mb-4 drop-shadow-md ${

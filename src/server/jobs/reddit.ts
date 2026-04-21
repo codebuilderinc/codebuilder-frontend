@@ -3,7 +3,6 @@ import Snoowrap from 'snoowrap'
 import { CommentStream } from 'snoostorm'
 import { sendNotification } from '@/server/notifications'
 
-
 /**
  * Fetches recent posts from a list of subreddits.
  * @param subreddits Array of subreddit names (without the "r/" prefix).
@@ -41,7 +40,6 @@ export const fetchRedditPosts = async (subreddits: string[]) => {
 
   return allPosts
 }
-
 
 // Fetches and stores new Reddit job posts in the database
 
@@ -89,13 +87,11 @@ export async function storeRedditJobPosts(posts: Array<any>) {
         title: `${post.title} (${post.subreddit})`,
         body: `Posted by /u/${post.author}`,
         url: post.url,
-        icon: 'https://new.codebuilder.org/images/logo2.png',
-        badge: 'https://new.codebuilder.org/images/logo2.png',
+        icon: 'https://codebuilder.org/images/logo2.png',
+        badge: 'https://codebuilder.org/images/logo2.png',
       }
 
-      const notificationPromises = subscriptions.map((sub) =>
-        sendNotification(sub, notificationPayload)
-      )
+      const notificationPromises = subscriptions.map((sub) => sendNotification(sub, notificationPayload))
       await Promise.all(notificationPromises)
 
       logger.debug(`Stored new job [${post.url}] from /u/${post.author}`)
@@ -107,7 +103,6 @@ export async function storeRedditJobPosts(posts: Array<any>) {
 
   return newJobs
 }
-
 
 // Checks Reddit inbox for new messages and stores them
 export async function checkRedditMessages() {
@@ -137,9 +132,7 @@ export const redditClient = new Snoowrap({
  * @param item A Snoowrap PrivateMessage or Comment.
  * @returns True if the item is a PrivateMessage.
  */
-function isPrivateMessage(
-  item: Snoowrap.PrivateMessage | Snoowrap.Comment
-): item is Snoowrap.PrivateMessage {
+function isPrivateMessage(item: Snoowrap.PrivateMessage | Snoowrap.Comment): item is Snoowrap.PrivateMessage {
   // Only PrivateMessage objects have the 'new' property.
   return 'new' in item
 }
@@ -191,13 +184,11 @@ export async function storeMessages(items: Array<Snoowrap.PrivateMessage | Snoow
         title: `New ${type} from /u/${createdMsg.author}`,
         body: createdMsg.content,
         url: createdMsg.contextUrl,
-        icon: 'https://new.codebuilder.org/images/logo2.png',
-        badge: 'https://new.codebuilder.org/images/logo2.png',
+        icon: 'https://codebuilder.org/images/logo2.png',
+        badge: 'https://codebuilder.org/images/logo2.png',
       }
 
-      const notificationPromises = subscriptions.map((sub) =>
-        sendNotification(sub, notificationPayload)
-      )
+      const notificationPromises = subscriptions.map((sub) => sendNotification(sub, notificationPayload))
       await Promise.all(notificationPromises)
 
       logger.debug(`Stored new ${type} [${createdMsg.redditId}] from /u/${createdMsg.author}`)
@@ -209,8 +200,6 @@ export async function storeMessages(items: Array<Snoowrap.PrivateMessage | Snoow
 
   return newMessages
 }
-
-
 
 /**
  * Starts a CommentStream for a given subreddit and processes new comments in real time.

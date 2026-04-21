@@ -1,4 +1,4 @@
-"use client"
+'use client'
 
 import React, { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
@@ -75,10 +75,7 @@ export default function JobDetailsClient() {
       <section className="bg-gray-100 py-4 md:py-6">
         <div className="container mx-auto py-16 px-8 md:px-20 lg:px-32">
           <nav className="mb-6">
-            <Link
-              href="/jobs"
-              className="text-blue-600 hover:text-blue-800 transition-colors duration-200"
-            >
+            <Link href="/jobs" className="text-blue-600 hover:text-blue-800 transition-colors duration-200">
               ← Back to Jobs
             </Link>
           </nav>

@@ -142,7 +142,7 @@ export default function About() {
   return (
     <div className={`${Raleway.className}`}>
       {/* Banner with Video Background — pt offsets the fixed header */}
-      <div className="relative w-full h-[420px] overflow-hidden">
+      <div className="relative w-full h-[380px] overflow-hidden">
         {/* Video Background */}
         <div className="absolute inset-0">
           <div className="absolute inset-0 opacity-40">
@@ -157,7 +157,7 @@ export default function About() {
         </div>
 
         {/* Banner Content — pt accounts for 74px fixed header */}
-        <div className="relative z-10 flex items-center justify-center h-full pt-[74px] px-4">
+        <div className="relative z-10 flex items-center justify-center h-full px-4 pt-10">
           <div className="text-center max-w-3xl mx-auto">
             <h2
               className={`text-white text-[28px] uppercase font-light mb-2 drop-shadow-md ${

@@ -16,6 +16,8 @@ jobs:
   deploy:
     name: 🏗 Build and Deploy
     runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     steps:
       - name: 🔍 Checkout repository
@@ -52,10 +54,23 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           PROJECT_NAME: ${{ secrets.CLOUDFLARE_PAGES_PROJECT_NAME }}
         run: |
-          RESPONSE=$(curl -fsSL \
+          echo "Checking variables..."
+          echo "ACCOUNT_ID is set: $(if [ -n "$CLOUDFLARE_ACCOUNT_ID" ]; then echo "Yes (length: ${#CLOUDFLARE_ACCOUNT_ID})"; else echo "No"; fi)"
+          echo "API_TOKEN is set: $(if [ -n "$CLOUDFLARE_API_TOKEN" ]; then echo "Yes (length: ${#CLOUDFLARE_API_TOKEN})"; else echo "No"; fi)"
+          echo "PROJECT_NAME: $PROJECT_NAME"
+
+          RESPONSE=$(curl -s \
             -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
             -H "Content-Type: application/json" \
             "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/pages/projects")
+
+          SUCCESS=$(printf '%s' "$RESPONSE" | jq -r '.success')
+          if [ "$SUCCESS" != "true" ]; then
+            echo "API Request Failed! The token might be invalid or lacking permissions."
+            echo "Errors:"
+            printf '%s' "$RESPONSE" | jq -r '.errors[]? | "\(.code): \(.message)"'
+            exit 1
+          fi
 
           COUNT=$(printf '%s' "$RESPONSE" | jq '.result | length')
           MATCH=$(printf '%s' "$RESPONSE" | jq --arg name "$PROJECT_NAME" 'any(.result[]?; .name == $name)')

@@ -28,6 +28,7 @@ const nextConfig = {
   assetPrefix: ghPagesBasePath ? `${ghPagesBasePath}/` : undefined,
 
   allowedDevOrigins: [
+    'https://codebuilder.org',
     'https://api.codebuilder.org',
     'https://new.codebuilder.org',
     'https://new.codebuilder.org:443',
