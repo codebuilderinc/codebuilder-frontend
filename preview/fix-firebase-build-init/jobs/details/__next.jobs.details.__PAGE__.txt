@@ -1,6 +1,0 @@
-1:"$Sreact.fragment"
-2:"$Sreact.suspense"
-3:I[10012,["/preview/fix-firebase-build-init/_next/static/chunks/0zm40g~y1zsl8.js","/preview/fix-firebase-build-init/_next/static/chunks/0yt1h51q-qst-.js","/preview/fix-firebase-build-init/_next/static/chunks/01v3v7j-0dahc.js","/preview/fix-firebase-build-init/_next/static/chunks/06hxizhpk0732.js","/preview/fix-firebase-build-init/_next/static/chunks/13l~g-~36_2rb.js"],"default"]
-4:I[68031,["/preview/fix-firebase-build-init/_next/static/chunks/0zm40g~y1zsl8.js","/preview/fix-firebase-build-init/_next/static/chunks/0yt1h51q-qst-.js","/preview/fix-firebase-build-init/_next/static/chunks/01v3v7j-0dahc.js","/preview/fix-firebase-build-init/_next/static/chunks/06hxizhpk0732.js"],"OutletBoundary"]
-0:{"rsc":["$","$1","c",{"children":[["$","$2",null,{"fallback":["$","div",null,{"className":"container mx-auto py-16 px-8 md:px-20 lg:px-32","children":"Loading job details..."}],"children":["$","$L3",null,{}]}],[["$","script","script-0",{"src":"/preview/fix-firebase-build-init/_next/static/chunks/13l~g-~36_2rb.js","async":true}]],["$","$L4",null,{"children":["$","$2",null,{"name":"Next.MetadataOutlet","children":"$@5"}]}]]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"v6FQ-ju49CL0gytAoZO9_"}
-5:null
