@@ -1,17 +1,23 @@
 import webpush, { WebPushError } from 'web-push'
-import { messaging } from '@/server/firebase'
+import { getFirebaseMessaging } from '@/server/firebase'
 //import { Subscription } from '@prisma/client'
 //import { JsonValue } from '@prisma/client/runtime/library'
 import prisma from '@/server/db'
 import { logger } from '@/server/logger'
 import { Prisma, Subscription } from '../generated/prisma/client'
 
-// Initialize VAPID keys for web push notifications
-webpush.setVapidDetails(
-  'mailto:your-email@example.com',
-  process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
-  process.env.VAPID_PRIVATE_KEY!
-)
+function configureWebPush() {
+  const publicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
+  const privateKey = process.env.VAPID_PRIVATE_KEY
+
+  if (!publicKey || !privateKey) {
+    throw new Error(
+      'Web push is not configured. Set NEXT_PUBLIC_VAPID_PUBLIC_KEY and VAPID_PRIVATE_KEY.'
+    )
+  }
+
+  webpush.setVapidDetails('mailto:your-email@example.com', publicKey, privateKey)
+}
 
 /**
  * The payload for the notification, including title, body, url, icon, and badge.
@@ -33,6 +39,8 @@ export async function sendNotification(
   try {
     logger.info('Sending notification to subscription:', subscription)
     if (subscription.type === 'web') {
+      configureWebPush()
+
       if (!isWebKeys(subscription.keys)) {
         throw new Error(`Invalid keys for web subscription: ${JSON.stringify(subscription.keys)}`)
       }
@@ -56,6 +64,7 @@ export async function sendNotification(
       if (!isFcmKeys(subscription.keys)) {
         throw new Error(`Invalid keys for FCM subscription: ${JSON.stringify(subscription.keys)}`)
       }
+      const messaging = getFirebaseMessaging()
       const fcmMessage = {
         notification: {
           title: notificationPayload.title,

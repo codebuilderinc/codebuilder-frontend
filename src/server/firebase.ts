@@ -1,11 +1,34 @@
-import admin, { ServiceAccount } from 'firebase-admin'
+import { App, cert, getApps, initializeApp } from 'firebase-admin/app'
+import { getMessaging } from 'firebase-admin/messaging'
 
-const serviceAccount = process.env.GOOGLE_SERVICES_JSON ? JSON.parse(process.env.GOOGLE_SERVICES_JSON) : null
+function getServiceAccount() {
+  const rawServiceAccount = process.env.GOOGLE_SERVICES_JSON
 
-if (!admin.apps.length && serviceAccount) {
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount as ServiceAccount),
+  if (!rawServiceAccount) {
+    return null
+  }
+
+  return JSON.parse(rawServiceAccount)
+}
+
+export function getFirebaseApp(): App {
+  const existingApp = getApps()[0]
+
+  if (existingApp) {
+    return existingApp
+  }
+
+  const serviceAccount = getServiceAccount()
+
+  if (!serviceAccount) {
+    throw new Error('Firebase Admin is not configured. Set GOOGLE_SERVICES_JSON before using FCM.')
+  }
+
+  return initializeApp({
+    credential: cert(serviceAccount),
   })
 }
 
-export const messaging = admin.messaging()
+export function getFirebaseMessaging() {
+  return getMessaging(getFirebaseApp())
+}
