@@ -21,7 +21,7 @@ jobs:
 
     steps:
       - name: 🔍 Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: 🔒 Verify Google services secret exists
         run: |
@@ -33,9 +33,13 @@ jobs:
       - name: 📁 Set Google services environment variable
         run: |
           echo "$GOOGLE_SERVICES_JSON_BASE64" | base64 -d > /tmp/google-services.json
-          echo "GOOGLE_SERVICES_JSON<<EOF" >> $GITHUB_ENV
-          cat /tmp/google-services.json >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
+
+          if ! jq -c . /tmp/google-services.json > /tmp/google-services.compact.json; then
+            echo "❌ GOOGLE_SERVICES_JSON_BASE64 did not decode to valid JSON"
+            exit 1
+          fi
+
+          printf 'GOOGLE_SERVICES_JSON=%s\n' "$(cat /tmp/google-services.compact.json)" >> "$GITHUB_ENV"
         env:
           GOOGLE_SERVICES_JSON_BASE64: ${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}
 
