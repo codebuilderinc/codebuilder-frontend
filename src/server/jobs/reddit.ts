@@ -107,6 +107,7 @@ export async function storeRedditJobPosts(posts: Array<any>) {
 // Checks Reddit inbox for new messages and stores them
 export async function checkRedditMessages() {
   try {
+    const redditClient = getRedditClient()
     const messages = await redditClient.getInbox({ filter: 'messages' })
     return await storeMessages(messages)
   } catch (error: any) {
@@ -118,14 +119,30 @@ import prisma from '@/server/db'
 import { logger } from '@/server/logger'
 import { upsertJob } from './jobs'
 
-// Initialize Reddit API client with environment variables
-export const redditClient = new Snoowrap({
-  userAgent: 'CodeBuilder by /u/taofullstack',
-  clientId: process.env.REDDIT_CLIENT_ID,
-  clientSecret: process.env.REDDIT_CLIENT_SECRET,
-  username: process.env.REDDIT_USERNAME,
-  password: process.env.REDDIT_PASSWORD,
-})
+function getRedditCredentials() {
+  const clientId = process.env.REDDIT_CLIENT_ID
+  const clientSecret = process.env.REDDIT_CLIENT_SECRET
+  const username = process.env.REDDIT_USERNAME
+  const password = process.env.REDDIT_PASSWORD
+
+  if (!clientId || !clientSecret || !username || !password) {
+    throw new Error(
+      'Reddit API credentials are not configured. Set REDDIT_CLIENT_ID, REDDIT_CLIENT_SECRET, REDDIT_USERNAME, and REDDIT_PASSWORD.'
+    )
+  }
+
+  return {
+    userAgent: 'CodeBuilder by /u/taofullstack',
+    clientId,
+    clientSecret,
+    username,
+    password,
+  }
+}
+
+export function getRedditClient() {
+  return new Snoowrap(getRedditCredentials())
+}
 
 /**
  * Type guard to determine if a Snoowrap item is a PrivateMessage.
@@ -215,6 +232,7 @@ export function startRedditCommentStream(
   onComment: (comment: Snoowrap.Comment) => void,
   options: Partial<SnooStormOptions> = {}
 ) {
+  const redditClient = getRedditClient()
   const stream = new CommentStream(redditClient, {
     subreddit,
     limit: options.limit || 10,

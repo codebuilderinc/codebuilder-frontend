@@ -32,6 +32,13 @@ jobs:
             exit 1
           fi
 
+      - name: 🔒 Verify env file secret exists
+        run: |
+          if [ -z "${{ secrets.ENV_FILE_CONTENT }}" ]; then
+            echo "❌ ENV_FILE_CONTENT secret is missing"
+            exit 1
+          fi
+
       - name: 📁 Set Google services environment variable
         run: |
           echo "$GOOGLE_SERVICES_JSON_BASE64" | base64 -d > /tmp/google-services.json
@@ -44,6 +51,11 @@ jobs:
           printf 'GOOGLE_SERVICES_JSON=%s\n' "$(cat /tmp/google-services.compact.json)" >> "$GITHUB_ENV"
         env:
           GOOGLE_SERVICES_JSON_BASE64: ${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}
+
+      - name: ⚙️ Create .env file
+        run: |
+          printf '%s\n' "${{ secrets.ENV_FILE_CONTENT }}" > .env
+          echo "" >> .env
 
       - name: 📦 Install pnpm
         run: npm install -g pnpm@10
