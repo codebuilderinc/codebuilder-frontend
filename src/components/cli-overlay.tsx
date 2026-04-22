@@ -2,13 +2,13 @@
 
 import { useEffect, useRef, useState } from 'react'
 
-const ASCII = [
-  '  ______          _       ______        _ _     _             _       ',
-  ' / _____)        | |     (____  \\      (_) |   | |           (_)      ',
-  '| /      ___   _ | | ____ ____)  )_   _ _| | _ | | ____  ____ _  ___  ',
-  '| |     / _ \\ / || |/ _  )  __  (| | | | | |/ || |/ _  )/ ___) |/ _ \\ ',
-  '| \\____| |_| ( (_| ( (/ /| |__)  ) |_| | | ( (_| ( (/ /| |  _| | |_| |',
-  ' \\______)___/ \\____|\\____)______/ \\____|_|_|\\____|\\____)_| (_)_|\\___/ ',
+const ASCII_DATA = [
+  { green: '   ______          __     ', white: ' ______        _ _     _             _      ' },
+  { green: '  / _____)        | |    ', white: '(____  \\      (_) |   | |           (_)     ' },
+  { green: ' | /      ___   _ | | ____ ', white: '____)  )_   _ _| | _ | | ____  ____ _  ___  ' },
+  { green: ' | |     / _ \\ / || |/ _  )', white: '  __  (| | | | | |/ || |/ _  )/ ___) |/ _ \\ ' },
+  { green: ' | \\____| |_| ( (_| ( (/ /', white: '| |__)  ) |_| | | ( (_| ( (/ /| |  _| | |_| |' },
+  { green: '  \\______)___/ \\____|\\____)', white: '______/ \\____|_|_|\\____|\\____)_| (_)_|\\___/ ' },
 ]
 
 const PROMPT = "404. The page you requested cannot be found right now. Try typing 'hack the world'."
@@ -140,42 +140,57 @@ export function CliOverlay() {
             <button
               type="button"
               onClick={() => setOpen(false)}
-              className="rounded border border-[#1ff042]/30 px-3 py-1 text-[#1ff042]/85"
+              className="rounded border border-[#1ff042]/30 px-3 py-1 text-[#1ff042]/85 transition-colors hover:bg-[#1ff042]/10"
             >
               close
             </button>
           </div>
 
-          <pre className="overflow-x-auto text-[12px] leading-[1.1] text-white md:text-[15px]">{ASCII.join('\n')}</pre>
+          <div className="overflow-x-auto font-mono text-[11px] leading-[1.1] md:text-[14px]">
+            {ASCII_DATA.map((row, i) => (
+              <div key={i} className="whitespace-pre">
+                <span className="text-[#1ff042]">{row.green}</span>
+                <span className="text-white">{row.white}</span>
+              </div>
+            ))}
+            <div className="mt-2 text-center text-[10px] tracking-[0.8em] text-white/60">INCORPORATED</div>
+          </div>
 
-          <div className="mt-5 space-y-3 font-mono text-[14px] font-bold uppercase tracking-[0.14em] text-[#1ff042]">
+          <div className="mt-8 space-y-3 font-mono text-[14px] font-bold uppercase tracking-[0.14em] text-[#1ff042]">
             {lines.map((line, index) => (
               <p key={`${line}-${index}`} className="drop-shadow-[0_0_3px_rgba(31,240,66,0.7)]">
                 &gt; {line}
               </p>
             ))}
-            {matrixEnabled ? <p className="drop-shadow-[0_0_3px_rgba(31,240,66,0.7)]">{typingText}</p> : null}
+            {matrixEnabled ? (
+              <p className="drop-shadow-[0_0_3px_rgba(31,240,66,0.7)] text-white">
+                {typingText}
+                <span className="animate-pulse">_</span>
+              </p>
+            ) : null}
           </div>
 
-          <form onSubmit={onSubmit} className="mt-4">
-            <label className="sr-only" htmlFor="cli-overlay-input">
-              Terminal input
-            </label>
-            <div className="flex items-center gap-3 font-mono text-[14px] font-bold uppercase tracking-[0.14em] text-[#1ff042]">
-              <span>&gt;</span>
-              <input
-                id="cli-overlay-input"
-                ref={inputRef}
-                value={input}
-                onChange={(event) => setInput(event.target.value)}
-                className="min-w-0 flex-1 border-0 bg-transparent p-0 text-[#1ff042] outline-none placeholder:text-[#1ff042]/40"
-                placeholder="type a command"
-                autoComplete="off"
-                autoCorrect="off"
-                spellCheck={false}
-              />
-            </div>
-          </form>
+          {!matrixEnabled && (
+            <form onSubmit={onSubmit} className="mt-4">
+              <label className="sr-only" htmlFor="cli-overlay-input">
+                Terminal input
+              </label>
+              <div className="flex items-center gap-3 font-mono text-[14px] font-bold uppercase tracking-[0.14em] text-[#1ff042]">
+                <span>&gt;</span>
+                <input
+                  id="cli-overlay-input"
+                  ref={inputRef}
+                  value={input}
+                  onChange={(event) => setInput(event.target.value)}
+                  className="min-w-0 flex-1 border-0 bg-transparent p-0 text-[#1ff042] outline-none placeholder:text-[#1ff042]/40"
+                  placeholder="type a command"
+                  autoComplete="off"
+                  autoCorrect="off"
+                  spellCheck={false}
+                />
+              </div>
+            </form>
+          )}
         </div>
       </div>
     </div>
