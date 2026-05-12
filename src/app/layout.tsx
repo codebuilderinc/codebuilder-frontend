@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import '@/assets/css/globals.css'
+import 'react-toastify/dist/ReactToastify.css'
 import Header from '@/components/layout/header'
 import { geistMono, geistSans, Raleway } from './fonts'
 import 'animate.css/animate.min.css'
@@ -11,6 +12,7 @@ import Footer from '../components/layout/footer'
 import ErrorBoundary from '@/components/ErrorBoundary'
 import GlobalErrorHandler from '@/components/GlobalErrorHandler'
 import { CliOverlay } from '@/components/cli-overlay'
+import { ToastProvider } from '@/components/providers/toast-provider'
 
 export const metadata: Metadata = {
   title: 'CodeBuilder, Inc. - Software Engineering Solutions.',
@@ -81,6 +83,7 @@ export default function RootLayout({
         */}
         <GlobalErrorHandler />
         <CliOverlay />
+        <ToastProvider />
         <div className="flex flex-col min-h-screen">
           <Header />
           <div className="relative flex-1 overflow-x-hidden">
