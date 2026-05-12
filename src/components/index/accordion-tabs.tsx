@@ -72,13 +72,19 @@ const AccordionTabsSection: React.FC = () => {
   const activeTabData = tabs.find((t) => t.id === activeTab) || tabs[0]
 
   return (
-    <section className={`${raleway.className} bg-gray-100 py-4 md:py-6`}>
+    <section className={`${raleway.className} bg-gray-100 py-4 md:py-6 pt-2`}>
       <div className="container mx-auto py-4 px-8 md:px-20 lg:px-32">
         <h1
-          className={`mb-2 text-[24px] text-[#333] font-normal tracking-normal ${raleway.className}`}
+          className={`mb-2 text-[20px] md:text-[24px] text-[#333] font-normal tracking-normal ${raleway.className} hidden md:block`}
           style={{ fontFamily: "'Raleway', sans-serif" }}
         >
           Enlist the Expertise of our Professional <strong>Software Engineers</strong> for your Project!
+        </h1>
+        <h1
+          className={`mb-2 text-[20px] text-[#333] font-normal tracking-normal ${raleway.className} md:hidden`}
+          style={{ fontFamily: "'Raleway', sans-serif" }}
+        >
+          Hire Professional <strong>Software Engineers</strong> for Your Project
         </h1>
         {/* separator-2 matching Laravel */}
         <div
@@ -88,7 +94,7 @@ const AccordionTabsSection: React.FC = () => {
               'linear-gradient(to right, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.12) 35%, rgba(0,0,0,0.05) 70%, transparent 100%)',
           }}
         />
-        <p className="text-[#777] text-lg mb-4" style={{ fontFamily: "'Raleway', sans-serif" }}>
+        <p className="text-[#999] text-lg mb-4" style={{ fontFamily: "'Raleway', sans-serif" }}>
           Opt for our services when seeking professional software solutions; let our{' '}
           <Link href="/portfolio" className="text-[#777] underline hover:text-[#555]">
             portfolio
@@ -125,7 +131,7 @@ const AccordionTabsSection: React.FC = () => {
                       transition={{ duration: 0.3, ease: 'easeInOut' }}
                       className="overflow-hidden"
                     >
-                      <div className="py-4 text-[14px] text-[#777] font-light leading-relaxed">{item.content}</div>
+                      <div className="py-4 text-[14px] text-[#999] font-light leading-relaxed">{item.content}</div>
                     </motion.div>
                   </div>
                 )

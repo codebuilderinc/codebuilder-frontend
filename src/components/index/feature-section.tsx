@@ -65,14 +65,14 @@ const FeatureSection = () => {
   }, [])
 
   return (
-    <section className="bg-gray-100 py-4 md:py-8">
+    <section className="bg-gray-100 pb-2 py-4 md:py-8">
       <div className="container mx-auto px-8 md:px-20 lg:px-32">
         <div className="z-5 grid grid-cols-1 md:grid-cols-3 gap-2 items-stretch">
           {features.map((feature, index) => (
             <div
               key={index}
               data-index={index}
-              className={`feature-box transition-opacity duration-300 flex flex-col h-full rounded-lg mx-2 ${
+              className={`feature-box transition-opacity duration-300 flex flex-col h-full rounded-lg mx-2 pt-4 ${
                 visibleSections.includes(index) ? 'animate__animated animate__slideInDown' : 'opacity-0'
               }`}
               style={{
@@ -84,10 +84,14 @@ const FeatureSection = () => {
                   <FontAwesomeIcon icon={feature.icon} {...feature.iconProps} />
                 </span>
                 <div className="flex flex-col flex-1 h-full">
-                  <h4 className={`${Raleway.className} text-[#333333] leading-[1.2] text-[19px] font-normal`}>
+                  <h4
+                    className={`${Raleway.className} text-[#333333] leading-[1.2] text-[19px] font-normal whitespace-nowrap`}
+                  >
                     {feature.title}
                   </h4>
-                  <p className="mt-2 mb-3 text-[#999999] text-[16px] font-light flex-grow">{feature.description}</p>
+                  <p className="mt-2 mb-3 text-[#999999] text-[15px] leading-relaxed flex-grow ">
+                    {feature.description}
+                  </p>
                   <CustomButton
                     text="Read More"
                     link={feature.link}
