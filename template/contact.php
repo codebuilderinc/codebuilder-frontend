@@ -1,0 +1,382 @@
+<?
+include("header.php");
+?>
+			<!-- section start -->
+			<!-- ================ -->
+			<section class="video-background4 pv-40 dark-translucent-bg hovered">
+				<div class="container">
+					<div class="row">
+						<div class="col-md-8 col-md-offset-2">
+							<h2 class="text-center object-non-visible" data-animation-effect="zoomIn" data-effect-delay="100">Contact Us</h2>
+							<div class="separator object-non-visible" data-animation-effect="zoomIn" data-effect-delay="100"></div>
+							<p class="large text-center object-non-visible" data-animation-effect="zoomIn" data-effect-delay="200">Atque ducimus velit, earum quidem, iusto dolorem. Ex ipsam totam quas blanditiis, pariatur maxime ipsa iste, doloremque neque doloribus, error. Corrupti, tenetur.</p>
+						</div>
+					</div>
+				</div>
+			</section>
+			<!-- section end -->
+
+			<!-- main-container start -->
+			<!-- ================ -->
+			<section class="main-container">
+
+				<div class="container">
+					<div class="row">
+
+						<!-- main start -->
+						<!-- ================ -->
+						<div class="main col-md-8 space-bottom">
+							<p class="lead">It would be great to hear from you! Just drop us a line and ask for anything with which you think we could be helpful. We are looking forward to hearing from you!</p>
+							<div class="alert alert-success hidden" id="MessageSent">
+								We have received your message, we will contact you very soon.
+							</div>
+							<div class="alert alert-danger hidden" id="MessageNotSent">
+								Oops! Something went wrong, please verify that you are not a robot or refresh the page and try again.
+							</div>
+							<div class="contact-form">
+								<form id="contact-form-with-recaptcha" class="margin-clear" role="form">
+									<div class="form-group has-feedback">
+										<label for="name">Name*</label>
+										<input type="text" class="form-control" id="name" name="name" placeholder="">
+										<i class="fa fa-user form-control-feedback"></i>
+									</div>
+									<div class="form-group has-feedback">
+										<label for="email">Email*</label>
+										<input type="email" class="form-control" id="email" name="email" placeholder="">
+										<i class="fa fa-envelope form-control-feedback"></i>
+									</div>
+									<div class="form-group has-feedback">
+										<label for="subject">Subject*</label>
+										<input type="text" class="form-control" id="subject" name="subject" placeholder="">
+										<i class="fa fa-navicon form-control-feedback"></i>
+									</div>
+									<div class="form-group has-feedback">
+										<label for="message">Message*</label>
+										<textarea class="form-control" rows="6" id="message" name="message" placeholder=""></textarea>
+										<i class="fa fa-pencil form-control-feedback"></i>
+									</div>
+									<div class="g-recaptcha" data-sitekey="your_site_key"></div>
+									<input type="submit" value="Submit" class="submit-button btn btn-default">
+								</form>
+							</div>
+						</div>
+						<!-- main end -->
+
+						<!-- sidebar start -->
+						<!-- ================ -->
+						<aside class="col-md-3 col-lg-offset-1">
+							<div class="sidebar">
+								<div class="side vertical-divider-left">
+									<h3 class="title logo-font">The <span class="text-default">Project</span></h3>
+									<div class="separator-2 mt-20"></div>
+									<ul class="list">
+										<li><i class="fa fa-home pr-10"></i>795 Folsom Ave, Suite 600<br><span class="pl-20">San Francisco, CA 94107</span></li>
+										<li><i class="fa fa-phone pr-10"></i><abbr title="Phone">P:</abbr> (123) 456-7890</li>
+										<li><i class="fa fa-mobile pr-10 pl-5"></i><abbr title="Phone">M:</abbr> (123) 456-7890</li>
+										<li><i class="fa fa-envelope pr-10"></i><a href="mailto:info@idea.com">info@theproject.com</a></li>
+									</ul>
+									<ul class="social-links circle small margin-clear clearfix animated-effect-1">
+										<li class="twitter"><a target="_blank" href="http://www.twitter.com"><i class="fa fa-twitter"></i></a></li>
+										<li class="skype"><a target="_blank" href="http://www.skype.com"><i class="fa fa-skype"></i></a></li>
+										<li class="linkedin"><a target="_blank" href="http://www.linkedin.com"><i class="fa fa-linkedin"></i></a></li>
+										<li class="googleplus"><a target="_blank" href="http://plus.google.com"><i class="fa fa-google-plus"></i></a></li>
+										<li class="youtube"><a target="_blank" href="http://www.youtube.com"><i class="fa fa-youtube-play"></i></a></li>
+										<li class="flickr"><a target="_blank" href="http://www.flickr.com"><i class="fa fa-flickr"></i></a></li>
+										<li class="facebook"><a target="_blank" href="http://www.facebook.com"><i class="fa fa-facebook"></i></a></li>
+									</ul>
+									<div class="separator-2 mt-20 "></div>
+									<a class="btn btn-gray collapsed map-show btn-animated" data-toggle="collapse" href="#collapseMap" aria-expanded="false" aria-controls="collapseMap">Show Map <i class="fa fa-plus"></i></a>
+								</div>
+							</div>
+						</aside>
+						<!-- sidebar end -->
+					</div>
+				</div>
+			</section>
+			<!-- main-container end -->
+
+			<!-- section start -->
+			<!-- ================ -->
+			<section id="collapseMap">
+				<div id="map-canvas"></div>
+			</section>
+			<!-- section end -->
+
+			<!-- section start -->
+			<!-- ================ -->
+			<section class="section pv-40 background-img-3 dark-translucent-bg" style="background-position:50% 77%;">
+				<div class="container">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="call-to-action text-center">
+								<div class="row">
+									<div class="col-sm-8 col-sm-offset-2">
+										<h2 class="title">Join Us Now</h2>
+										<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Repellendus error pariatur deserunt laudantium nam, mollitia quas nihil inventore, quibusdam?</p>
+										<div class="separator"></div>
+										<form class="form-inline margin-clear">
+											<div class="form-group has-feedback">
+												<label class="sr-only" for="subscribe2">Email address</label>
+												<input type="email" class="form-control" id="subscribe2" placeholder="Enter email" name="subscribe2" required="">
+												<i class="fa fa-envelope form-control-feedback"></i>
+											</div>
+											<button type="submit" class="btn btn-gray-transparent btn-animated margin-clear">Submit <i class="fa fa-send"></i></button>
+										</form>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+			<div class="clearfix"></div>
+			<!-- section end -->
+			
+			<!-- footer top start -->
+			<!-- ================ -->
+			<div class="dark-bg  default-hovered footer-top animated-text">
+				<div class="container">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="call-to-action text-center">
+								<div class="row">
+									<div class="col-sm-8">
+										<h2>Powerful Bootstrap Template</h2>
+										<h2>Waste no more time</h2>
+									</div>
+									<div class="col-sm-4">
+										<p class="mt-10"><a href="#" class="btn btn-animated btn-lg btn-gray-transparent ">Purchase<i class="fa fa-cart-arrow-down pl-20"></i></a></p>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- footer top end -->
+
+			<!-- footer start (Add "dark" class to #footer in order to enable dark footer) -->
+			<!-- ================ -->
+			<footer id="footer" class="clearfix ">
+
+				<!-- .footer start -->
+				<!-- ================ -->
+				<div class="footer">
+					<div class="container">
+						<div class="footer-inner">
+							<div class="row">
+								<div class="col-md-3">
+									<div class="footer-content">
+										<div class="logo-footer"><img id="logo-footer" src="images/logo_light_blue.png" alt=""></div>
+										<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Necessitatibus illo vel dolorum soluta consectetur doloribus sit. Delectus non tenetur odit dicta vitae debitis suscipit doloribus. Ipsa, aut voluptas quaerat... <a href="page-about.html">Learn More<i class="fa fa-long-arrow-right pl-5"></i></a></p>
+										<div class="separator-2"></div>
+										<nav>
+											<ul class="nav nav-pills nav-stacked">
+												<li><a target="_blank" href="http://htmlcoder.me/support">Support</a></li>
+												<li><a href="#">Privacy</a></li>
+												<li><a href="#">Terms</a></li>
+												<li><a href="page-about.html">About</a></li>
+											</ul>
+										</nav>
+									</div>
+								</div>
+								<div class="col-md-3">
+									<div class="footer-content">
+										<h2 class="title">Latest From Blog</h2>
+										<div class="separator-2"></div>
+										<div class="media margin-clear">
+											<div class="media-left">
+												<div class="overlay-container">
+													<img class="media-object" src="images/blog-thumb-1.jpg" alt="blog-thumb">
+													<a href="blog-post.html" class="overlay-link small"><i class="fa fa-link"></i></a>
+												</div>
+											</div>
+											<div class="media-body">
+												<h6 class="media-heading"><a href="blog-post.html">Lorem ipsum dolor sit amet...</a></h6>
+												<p class="small margin-clear"><i class="fa fa-calendar pr-10"></i>Mar 23, 2016</p>
+											</div>
+											<hr>
+										</div>
+										<div class="media margin-clear">
+											<div class="media-left">
+												<div class="overlay-container">
+													<img class="media-object" src="images/blog-thumb-2.jpg" alt="blog-thumb">
+													<a href="blog-post.html" class="overlay-link small"><i class="fa fa-link"></i></a>
+												</div>
+											</div>
+											<div class="media-body">
+												<h6 class="media-heading"><a href="blog-post.html">Lorem ipsum dolor sit amet...</a></h6>
+												<p class="small margin-clear"><i class="fa fa-calendar pr-10"></i>Mar 22, 2016</p>
+											</div>
+											<hr>
+										</div>
+										<div class="media margin-clear">
+											<div class="media-left">
+												<div class="overlay-container">
+													<img class="media-object" src="images/blog-thumb-3.jpg" alt="blog-thumb">
+													<a href="blog-post.html" class="overlay-link small"><i class="fa fa-link"></i></a>
+												</div>
+											</div>
+											<div class="media-body">
+												<h6 class="media-heading"><a href="blog-post.html">Lorem ipsum dolor sit amet...</a></h6>
+												<p class="small margin-clear"><i class="fa fa-calendar pr-10"></i>Mar 21, 2016</p>
+											</div>
+											<hr>
+										</div>
+										<div class="media margin-clear">
+											<div class="media-left">
+												<div class="overlay-container">
+													<img class="media-object" src="images/blog-thumb-4.jpg" alt="blog-thumb">
+													<a href="blog-post.html" class="overlay-link small"><i class="fa fa-link"></i></a>
+												</div>
+											</div>
+											<div class="media-body">
+												<h6 class="media-heading"><a href="blog-post.html">Lorem ipsum dolor sit amet...</a></h6>
+												<p class="small margin-clear"><i class="fa fa-calendar pr-10"></i>Mar 21, 2016</p>
+											</div>
+										</div>
+										<div class="text-right space-top">
+											<a href="blog-large-image-right-sidebar.html" class="link-dark"><i class="fa fa-plus-circle pl-5 pr-5"></i>More</a>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-3">
+									<div class="footer-content">
+										<h2 class="title">Portfolio Gallery</h2>
+										<div class="separator-2"></div>
+										<div class="row grid-space-10">
+											<div class="col-xs-4 col-md-6">
+												<div class="overlay-container mb-10">
+													<img src="images/gallery-1.jpg" alt="">
+													<a href="portfolio-item.html" class="overlay-link small">
+														<i class="fa fa-link"></i>
+													</a>
+												</div>
+											</div>
+											<div class="col-xs-4 col-md-6">
+												<div class="overlay-container mb-10">
+													<img src="images/gallery-2.jpg" alt="">
+													<a href="portfolio-item.html" class="overlay-link small">
+														<i class="fa fa-link"></i>
+													</a>
+												</div>
+											</div>
+											<div class="col-xs-4 col-md-6">
+												<div class="overlay-container mb-10">
+													<img src="images/gallery-3.jpg" alt="">
+													<a href="portfolio-item.html" class="overlay-link small">
+														<i class="fa fa-link"></i>
+													</a>
+												</div>
+											</div>
+											<div class="col-xs-4 col-md-6">
+												<div class="overlay-container mb-10">
+													<img src="images/gallery-4.jpg" alt="">
+													<a href="portfolio-item.html" class="overlay-link small">
+														<i class="fa fa-link"></i>
+													</a>
+												</div>
+											</div>
+											<div class="col-xs-4 col-md-6">
+												<div class="overlay-container mb-10">
+													<img src="images/gallery-5.jpg" alt="">
+													<a href="portfolio-item.html" class="overlay-link small">
+														<i class="fa fa-link"></i>
+													</a>
+												</div>
+											</div>
+											<div class="col-xs-4 col-md-6">
+												<div class="overlay-container mb-10">
+													<img src="images/gallery-6.jpg" alt="">
+													<a href="portfolio-item.html" class="overlay-link small">
+														<i class="fa fa-link"></i>
+													</a>
+												</div>
+											</div>
+										</div>
+										<div class="text-right space-top">
+											<a href="portfolio-grid-2-3-col.html" class="link-dark"><i class="fa fa-plus-circle pl-5 pr-5"></i>More</a>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-3">
+									<div class="footer-content">
+										<h2 class="title">Find Us</h2>
+										<div class="separator-2"></div>
+										<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium odio voluptatem necessitatibus illo vel dolorum soluta.</p>
+										<ul class="social-links circle animated-effect-1">
+											<li class="facebook"><a target="_blank" href="http://www.facebook.com"><i class="fa fa-facebook"></i></a></li>
+											<li class="twitter"><a target="_blank" href="http://www.twitter.com"><i class="fa fa-twitter"></i></a></li>
+											<li class="googleplus"><a target="_blank" href="http://plus.google.com"><i class="fa fa-google-plus"></i></a></li>
+											<li class="linkedin"><a target="_blank" href="http://www.linkedin.com"><i class="fa fa-linkedin"></i></a></li>
+											<li class="xing"><a target="_blank" href="http://www.xing.com"><i class="fa fa-xing"></i></a></li>
+										</ul>
+										<div class="separator-2"></div>
+										<ul class="list-icons">
+											<li><i class="fa fa-map-marker pr-10 text-default"></i> One infinity loop, 54100</li>
+											<li><i class="fa fa-phone pr-10 text-default"></i> +00 1234567890</li>
+											<li><a href="mailto:info@theproject.com"><i class="fa fa-envelope-o pr-10"></i>info@theproject.com</a></li>
+										</ul>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- .footer end -->
+
+				<!-- .subfooter start -->
+				<!-- ================ -->
+				<div class="subfooter">
+					<div class="container">
+						<div class="subfooter-inner">
+							<div class="row">
+								<div class="col-md-12">
+									<p class="text-center">Copyright © 2016 The Project by <a target="_blank" href="http://htmlcoder.me">HtmlCoder</a>. All Rights Reserved</p>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- .subfooter end -->
+
+			</footer>
+			<!-- footer end -->
+			
+		</div>
+		<!-- page-wrapper end -->
+
+		<!-- JavaScript files placed at the end of the document so the pages load faster -->
+		<!-- ================================================== -->
+		<!-- Jquery and Bootstap core js files -->
+		<script type="text/javascript" src="plugins/jquery.min.js"></script>
+		<script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
+		<!-- Modernizr javascript -->
+		<script type="text/javascript" src="plugins/modernizr.js"></script>
+		<!-- Magnific Popup javascript -->
+		<script type="text/javascript" src="plugins/magnific-popup/jquery.magnific-popup.min.js"></script>
+		<!-- Appear javascript -->
+		<script type="text/javascript" src="plugins/waypoints/jquery.waypoints.min.js"></script>
+		<!-- Count To javascript -->
+		<script type="text/javascript" src="plugins/jquery.countTo.js"></script>
+		<!-- Parallax javascript -->
+		<script src="plugins/jquery.parallax-1.1.3.js"></script>
+		<!-- Contact form -->
+		<script src="plugins/jquery.validate.js"></script>
+		<!-- Google Maps javascript -->
+		<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp&amp;key=your_google_map_key"></script>
+		<script type="text/javascript" src="js/google.map.config.js"></script>
+		<!-- Background Video -->
+		<script src="plugins/vide/jquery.vide.js"></script>
+		<!-- Owl carousel javascript -->
+		<script type="text/javascript" src="plugins/owl-carousel/owl.carousel.js"></script>
+		<!-- SmoothScroll javascript -->
+		<script type="text/javascript" src="plugins/jquery.browser.js"></script>
+		<script type="text/javascript" src="plugins/SmoothScroll.js"></script>
+		<!-- Initialization of Plugins -->
+		<script type="text/javascript" src="js/template.js"></script>
+		<!-- Custom Scripts -->
+		<script type="text/javascript" src="js/custom.js"></script>
+
+	</body>
+</html>
