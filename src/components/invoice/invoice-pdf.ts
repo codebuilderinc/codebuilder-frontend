@@ -1,4 +1,4 @@
-import type { TDocumentDefinitions } from 'pdfmake/interfaces'
+import type { TableCell, TDocumentDefinitions } from 'pdfmake/interfaces'
 
 import { invoiceData } from './data'
 
@@ -9,12 +9,12 @@ const TEXT_COLOR = '#2a2a2a'
 const MUTED_COLOR = '#666666'
 const BORDER_COLOR = '#e5e5e5'
 
-let pdfMakePromise: Promise<typeof import('pdfmake/build/pdfmake').default> | null = null
+let pdfMakePromise: Promise<typeof import('pdfmake/build/pdfmake')> | null = null
 
 async function loadPdfMake() {
   if (!pdfMakePromise) {
     pdfMakePromise = (async () => {
-      const [{ default: pdfMake }, fontsModule] = await Promise.all([
+      const [pdfMake, fontsModule] = await Promise.all([
         import('pdfmake/build/pdfmake'),
         import('pdfmake/build/vfs_fonts'),
       ])
@@ -45,7 +45,7 @@ async function loadPdfMake() {
           : undefined) ??
         (isFontDictionary(fontsDefault) ? fontsDefault : undefined)
 
-      if (vfs) {
+      if (vfs && typeof vfs !== 'string') {
         ;(pdfMake as unknown as { vfs: Record<string, string> }).vfs = vfs
       }
 
@@ -76,12 +76,7 @@ function buildDocDefinition(data: InvoiceData): TDocumentDefinitions {
       {},
       { text: `$${data.totalPaid}` },
     ],
-    [
-      { text: 'Late Fees', colSpan: 3, alignment: 'right', bold: true, color: '#555555' },
-      {},
-      {},
-      { text: '$0.00' },
-    ],
+    [{ text: 'Late Fees', colSpan: 3, alignment: 'right', bold: true, color: '#555555' }, {}, {}, { text: '$0.00' }],
     [
       { text: 'Remaining Balance', colSpan: 3, alignment: 'right', bold: true, color: '#555555' },
       {},
@@ -167,7 +162,7 @@ function buildDocDefinition(data: InvoiceData): TDocumentDefinitions {
         table: {
           headerRows: 1,
           widths: ['*', 70, 50, 70],
-          body: [
+          body: ([
             [
               { text: 'Description', style: 'tableHeader' },
               { text: 'Price', style: 'tableHeader' },
@@ -176,7 +171,7 @@ function buildDocDefinition(data: InvoiceData): TDocumentDefinitions {
             ],
             ...lineItemRows,
             ...totalsRows,
-          ],
+          ] as TableCell[][]),
         },
         layout: {
           hLineColor: () => BORDER_COLOR,
